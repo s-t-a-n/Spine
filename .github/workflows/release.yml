@@ -1,0 +1,53 @@
+name: release
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'  # Trigger on version tag pushes (e.g., v1.0.0)
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: ${{ runner.os }}-platformio-${{ hashFiles('**/platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-platformio-
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install platformio
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && github.ref_type == 'tag'  # Only run on tag push events
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
