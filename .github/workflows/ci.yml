@@ -1,0 +1,62 @@
+name: ci
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v2
+        with:
+          path: ~/.platformio
+          key: ${{ runner.os }}-platformio-${{ hashFiles('**/platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-platformio-
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+
+      - name: Build
+        run: pio run
+
+      - name: Static code analysis
+        run: pio check --fail-on-defect high -e mock
+
+      - name: Unittests
+        run: pio test -e unittest
+
+  linter:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    name: Format check.
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: DoozyX/clang-format-lint-action@v0.14
+        with:
+          source: './src'
+          extensions: 'h,hpp,c,cpp'
+          clangFormatVersion: 14
