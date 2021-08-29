@@ -31,3 +31,5 @@ jobs:
       run: pio run -e megaatmega2560
     - name: Run platformio static code analysis
       run: pio check
+    - name: Run all tests in library folders
+      run: find ./lib/ -maxdepth 1 -type d -exec bash -c "cd {}; if [ -d ./test ]; then pio test -e native; fi" \; 
