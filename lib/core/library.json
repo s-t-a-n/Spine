@@ -1,0 +1,26 @@
+{
+  "name": "Spine/Core",
+  "version": "0.0.1",
+  "description": "Core: Core library of Spine, contains various generic standard includes and debugging",
+  "keywords": "robotics, spine, core",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/codamrobotics/Spine.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Stan Verschuuren",
+      "email": "stan@wopwop.cc",
+      "url": "https://github.com/s-t-a-n",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/codamrobotics/Spine",
+  "dependencies": {
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}
