@@ -1,0 +1,26 @@
+{
+  "name": "Spine",
+  "version": "0.0.1",
+  "description": "Reusable components library for Arduino aimed at robotics.",
+  "keywords": "robotics, framework, spine",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/codamrobotics/Spine.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Stan Verschuuren",
+      "email": "stan@wopwop.cc",
+      "url": "https://github.com/s-t-a-n",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/codamrobotics/Spine",
+  "dependencies": {
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}
