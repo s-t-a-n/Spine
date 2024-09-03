@@ -1,6 +1,6 @@
 #pragma once
 
-#include <spine/filter/implementations/ewma.hpp>
+#include "spine/filter/implementations/ewma.hpp"
 
 namespace spn::tracker {
 
