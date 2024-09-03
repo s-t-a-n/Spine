@@ -1,9 +1,12 @@
 # Spine
 
-![PlatformIO CI](https://github.com/krakakai/Spine/actions/workflows/platformio.yml/badge.svg)
-![Formatting](https://github.com/krakakai/Spine/actions/workflows/clang_format.yml/badge.svg)
+![ci](https://github.com/s-t-a-n/Spine/actions/workflows/ci.yml/badge.svg)
+[![last commit](https://badgen.net/github/last-commit/s-t-a-n/KasKas)](https://GitHub.com/s-t-a-n/Spine/commit/)
+[![license](https://img.shields.io/github/license/s-t-a-n/KasKas.svg)](https://github.com/s-t-a-n/Spine/blob/master/LICENSE)
 
-Spine is a reusable components library aimed at robotics, providing a range of core functionalities such as signal processing, an eventsystems, logging, data streaming, and hardware abstraction layers for Arduino, STM32, and mock environments. It also includes various data structures and controllers that are embedded friendly.
+Spine is a reusable components library aimed at robotics, providing a range of core functionalities such as signal
+processing, an eventsystems, logging, data streaming, and hardware abstraction layers for Arduino, STM32, and mock
+environments. It also includes various data structures and controllers that are embedded friendly.
 
 ## Design philosophy
 
@@ -13,19 +16,23 @@ Spine is a reusable components library aimed at robotics, providing a range of c
 
 ## Core features
 
-- Hardware Abstraction Layer: HAL aimed at removing platform specified code. Theoretically allowing a seemless jump from for example Arduino, to STM32, to ESP32, to mock as all platforms are essentially doing the same thing.  
+- Hardware Abstraction Layer: HAL aimed at removing platform specified code. Theoretically allowing a seemless jump from
+  for example Arduino, to STM32, to ESP32, to mock as all platforms are essentially doing the same thing.
 
 ### Contents
 
 - **Controllers**: Includes PID controller, SetReset-Latch.
 - **Core**: Provides datetime and time utilities, debugging tools, exception handling, and scheduling.
 - **Event System**: Manages events and pipelines.
-- **Filters**: Offers various filter implementations rolled into a filterstack including simple bandpass, EWMA, inverting, transpositiong and passthrough.
-- **I/O**: Contains generic sensor interface and various streams with support for buffered streams and UART 'transactions'.
-- **Platform**: Abstraction layers for GPIO, HAL, bus-protocols (I2C, UART). Currently only Arduino and native X86 are supported.
-- **Structure**: Various data structures such as arrays, ring buffers, stacks, memorypools, static string and vectors that adhere to single allocation principle to eliminate fragmentation.
+- **Filters**: Offers various filter implementations rolled into a filterstack including simple bandpass, EWMA,
+  inverting, transpositiong and passthrough.
+- **I/O**: Contains generic sensor interface and various streams with support for buffered streams and UART '
+  transactions'.
+- **Platform**: Abstraction layers for GPIO, HAL, bus-protocols (I2C, UART). Currently only Arduino and native X86 are
+  supported.
+- **Structure**: Various data structures such as arrays, ring buffers, stacks, memorypools, static string and vectors
+  that adhere to single allocation principle to eliminate fragmentation.
 - **Tracker**: Tools for monitoring average changes and runaway conditions.
-
 
 ## How to run
 
@@ -87,3 +94,4 @@ int main() {
     // deactivate peripherals here
 }
 ```
+
