@@ -6,7 +6,7 @@ namespace spn::tracker {
 
 using spn::filter::EWMA;
 
-template<typename T>
+template<typename ValueType = double>
 class AverageChange {
 public:
     struct Config {
@@ -14,11 +14,11 @@ public:
     };
 
     AverageChange(const Config&& cfg)
-        : _cfg(std::move(cfg)), _last_element({}), _ma(EWMA<T>::Config{.K = _cfg.last_n_elements}) {
+        : _cfg(std::move(cfg)), _last_element({}), _ma(EWMA<>::Config{.K = _cfg.last_n_elements}) {
         _ma.reset_to({});
     }
 
-    T avg_chance(T new_reading) {
+    ValueType avg_chance(ValueType new_reading) {
         _ma.new_sample(std::fabs(new_reading - _last_element));
         _last_element = new_reading;
         return _ma.value();
@@ -27,7 +27,7 @@ public:
 private:
     const Config _cfg;
 
-    T _last_element = {};
-    EWMA<T> _ma;
+    ValueType _last_element = {};
+    EWMA<ValueType> _ma;
 };
 } // namespace spn::tracker

@@ -3,10 +3,8 @@
 #include "spine/core/debugging.hpp"
 #include "spine/filter/filter.hpp"
 
-#include <AH/Math/MinMaxFix.hpp>
-
-#include <AH/STL/cstdint>
-#include <AH/STL/utility>
+#include <cstdint>
+#include <utility>
 
 namespace spn::filter {
 

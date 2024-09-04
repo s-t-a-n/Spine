@@ -73,8 +73,8 @@ public:
 
     /// autotune the proportional weights for the target_setpoint
     /// using https://github.com/jackw01/arduino-pid-autotuner
-    void autotune(const TuneConfig& tune_config, std::function<void(double)> process_setter,
-                  std::function<double(void)> process_getter, std::function<void(void)> loop = {}) {
+    Tunings autotune(const TuneConfig& tune_config, std::function<void(double)> process_setter,
+                     std::function<double(void)> process_getter, std::function<void(void)> loop = {}) {
         DBG("Starting autotune");
 
         using spn::core::time::AlarmTimer;
@@ -149,7 +149,7 @@ public:
             if (const auto cycle = tuner.getCycle(); cycle == previous_cycle + 1) {
                 previous_cycle++;
                 const auto duration = HAL::millis() - previous_cycle_start;
-                const time_ms remaining = (tune_config.cycles - cycle) * duration;
+                [[maybe_unused]] const time_ms remaining = (tune_config.cycles - cycle) * duration;
                 DBG("Cycle %u complete in %i seconds, remaining: %i minutes", cycle, time_s(duration).printable(),
                     time_m(remaining).printable());
                 previous_cycle_start = HAL::millis();
@@ -179,20 +179,8 @@ public:
                 HAL::delay(interval);
             }
         }
-
-        // Turn the output off here.
-        process_setter(0);
-
-        // todo: integrate into config when consistent configs are a thing
-        // Get PID gains - set your PID controller's gains to these
-        double kp = tuner.getKp();
-        double ki = tuner.getKi();
-        double kd = tuner.getKd();
-
-        while (true) {
-            DBG("Autotuning complete, results: kp: %f, ki: %f, kd: %f", kp, ki, kd);
-            HAL::delay(time_s(1));
-        }
+        process_setter(0); // Turn the output off.
+        return Tunings{.Kp = tuner.getKp(), .Ki = tuner.getKi(), .Kd = tuner.getKd()};
     }
 
     /// get the response
