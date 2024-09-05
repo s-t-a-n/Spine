@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/github/license/s-t-a-n/KasKas.svg)](https://github.com/s-t-a-n/Spine/blob/master/LICENSE)
 
 Spine is a reusable components library aimed at robotics, providing a range of core functionalities such as signal
-processing, an eventsystems, logging, data streaming, and hardware abstraction layers for Arduino, STM32, and mock
+processing, an eventsystem, logging, data streaming, and hardware abstraction layers for Arduino, STM32, and mock
 environments. It also includes various data structures and controllers that are embedded friendly.
 
 ## Design philosophy
