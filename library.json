@@ -1,24 +1,21 @@
 {
   "name": "Spine",
   "version": "0.0.1",
-  "description": "Reusable components library for Arduino aimed at robotics.",
-  "keywords": "robotics, framework, spine",
-  "repository":
-  {
+  "description": "Embedded C++ reusable components library aimed at robotics.",
+  "keywords": "robotics, framework, generics, spine",
+  "repository": {
     "type": "git",
-    "url": "https://github.com/codamrobotics/Spine.git"
+    "url": "https://github.com/s-t-a-n/Spine.git"
   },
-  "authors":
-  [
+  "authors": [
     {
       "name": "Stan Verschuuren",
-      "email": "stan@wopwop.cc",
       "url": "https://github.com/s-t-a-n",
       "maintainer": true
     }
   ],
-  "license": "MIT",
-  "homepage": "https://github.com/codamrobotics/Spine",
+  "license": "LGPL-3.0",
+  "homepage": "https://github.com/s-t-a-n/Spine",
   "dependencies": {
   },
   "frameworks": "*",
