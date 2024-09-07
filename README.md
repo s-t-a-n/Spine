@@ -2,7 +2,7 @@
 
 ![ci](https://github.com/s-t-a-n/Spine/actions/workflows/ci.yml/badge.svg)
 [![last commit](https://badgen.net/github/last-commit/s-t-a-n/KasKas)](https://GitHub.com/s-t-a-n/Spine/commit/)
-[![license](https://img.shields.io/github/license/s-t-a-n/KasKas.svg)](https://github.com/s-t-a-n/Spine/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/s-t-a-n/KasKas.svg)](https://github.com/s-t-a-n/Spine/blob/main/LICENSE)
 
 Spine is a reusable components library aimed at robotics, providing a range of core functionalities such as signal
 processing, an eventsystem, logging, data streaming, and hardware abstraction layers for Arduino, STM32, and mock
