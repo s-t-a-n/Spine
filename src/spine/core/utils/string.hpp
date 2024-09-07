@@ -1,6 +1,6 @@
 #pragma once
 
-#include <charconv>
+// #include <charconv>
 #include <string>
 #include <string_view>
 #include <unordered_set>
@@ -47,13 +47,25 @@ inline std::size_t find_first_of(const std::string_view& strv, const std::string
 }
 
 /// Returns a double read from a string_view, or 0 when no double could be found
+// inline double to_double(const std::string_view& sv) {
+//     double result;
+//
+//     auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), result);
+//     if (ec == std::errc()) {
+//         return result;
+//     }
+//     return 0.0;
+// }
+
 inline double to_double(const std::string_view& sv) {
-    double result;
-    auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), result);
-    if (ec == std::errc()) {
-        return result;
+    char* end;
+    double result = std::strtod(sv.data(), &end);
+
+    if (end == sv.data() || *end != '\0') {
+        return 0.0; // Handle conversion error
     }
-    return 0.0;
+
+    return result;
 }
 
 } // namespace spn::core::utils
