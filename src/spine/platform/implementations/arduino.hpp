@@ -13,21 +13,18 @@
 #    include "spine/platform/protocols/i2c.hpp"
 #    include "spine/platform/protocols/uart.hpp"
 
-#    include <AH/Math/FixArduinoMacros.hpp>
-#    include <AH/Math/MinMaxFix.hpp>
-#    include <Arduino_Helpers.h>
 #    include <ArxSmartPtr.h>
 #    include <Wire.h>
 
-#    include <AH/STL/algorithm>
-#    include <AH/STL/cmath>
-#    include <AH/STL/cstddef>
-#    include <AH/STL/cstdint>
-#    include <AH/STL/cstdlib>
-#    include <AH/STL/limits>
-#    include <AH/STL/memory>
-#    include <AH/STL/type_traits>
-#    include <AH/STL/utility>
+#    include <algorithm>
+#    include <cmath>
+#    include <cstddef>
+#    include <cstdint>
+#    include <cstdlib>
+#    include <limits>
+#    include <memory>
+#    include <type_traits>
+#    include <utility>
 
 #    if defined(NATIVE)
 

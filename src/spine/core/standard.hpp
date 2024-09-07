@@ -5,23 +5,13 @@
 
 #include "spine/platform/hal.hpp"
 
-#if defined(ARDUINO)
-#    include <AH/STL/cmath>
-#    include <AH/STL/cstdint>
-#    include <AH/STL/initializer_list>
-#    include <AH/STL/memory>
-#    include <AH/STL/optional>
-#    include <AH/STL/type_traits>
-#    include <AH/STL/utility>
-#else
-#    include <cmath>
-#    include <cstdint>
-#    include <initializer_list>
-#    include <memory>
-#    include <optional>
-#    include <type_traits>
-#    include <utility>
-#endif
+#include <cmath>
+#include <cstdint>
+#include <initializer_list>
+#include <memory>
+#include <optional>
+#include <type_traits>
+#include <utility>
 
 // undo some of Arduino's annoying syntax sugar
 #if defined(abs)

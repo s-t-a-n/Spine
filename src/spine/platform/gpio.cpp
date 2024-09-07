@@ -4,12 +4,6 @@
 #include "spine/core/time.hpp"
 #include "spine/platform/hal.hpp"
 
-#if defined(ARDUINO)
-#    include <AH/STL/algorithm>
-#else
-#    include <algorithm>
-#endif
-
 namespace spn::platform::detail {
 
 void fade_to(void (*set_value)(void*, double), void* imp, double value, double setpoint, double increment,
