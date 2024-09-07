@@ -32,7 +32,7 @@ public:
         if (length == 0) return {};
         length -= 1; // ignore delimiter
         char* str;
-        if (peek_at(&str, 0) == false) return {};
+        if (peek_at(&str, 0) == false) return std::nullopt;
         return std::string_view(str, length);
     }
 
