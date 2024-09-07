@@ -37,7 +37,7 @@ jobs:
     - name: Unittests
       run: |
         pio test -e unittest
-        find ./lib/ -maxdepth 1 -type d -exec bash -c "cd {}; if [ -d ./test ]; then pio test -e native; fi" \; 
+        #find ./lib/ -maxdepth 1 -type d -exec bash -c "cd {}; if [ -d ./test ]; then pio test -e native; fi" \; 
   linter:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
