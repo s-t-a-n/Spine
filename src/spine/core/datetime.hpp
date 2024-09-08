@@ -1,3 +1,15 @@
+/*********************************************************************************************
+ * Datetime
+ *
+ * This library was originally created by JeeLabs / Adafruit.
+ * It provides core functionality for handling datetime.
+ *
+ * Downloaded on 6-08-2024 from https://github.com/adafruit/TinyRTCLib/blob/master/TinyRTClib.h
+ *
+ * Modifications by Stan:
+ * - Removed unneeded functionality
+ *********************************************************************************************/
+
 #include <spine/core/time.hpp>
 
 #include <climits>
