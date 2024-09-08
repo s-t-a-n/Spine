@@ -8,8 +8,8 @@
 #    define min(a, b) std::min(a, b)
 #endif
 
+#include <../../src/spine/eventsystem/eventsystem.hpp>
 #include <limits.h>
-#include <spine/eventsystem/eventsystem.hpp>
 #include <unity.h>
 
 using namespace spn::core;
