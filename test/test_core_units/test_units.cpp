@@ -1,11 +1,13 @@
 #include <limits.h>
-#include <spine/core/time.hpp>
+#include <spine/core/si_units.hpp>
 #include <unity.h>
 
 // using spn::core::time::time_ms;
 // using spn::core::time::time_s;
 
 namespace {
+
+// Only test time; assume function of other units is equivalent.
 
 void ut_time_basics() {
     // assignment
