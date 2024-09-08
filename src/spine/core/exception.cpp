@@ -1,6 +1,7 @@
 #include "spine/core/exception.hpp"
 
 #include "spine/core/debugging.hpp"
+#include "spine/core/logging.hpp"
 #include "spine/platform/hal.hpp"
 
 #include <memory>

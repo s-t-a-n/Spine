@@ -1,4 +1,5 @@
 #pragma once
+#include "spine/core/logging.hpp"
 
 #ifdef ARDUINO
 
