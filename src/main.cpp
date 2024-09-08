@@ -6,6 +6,10 @@
 #include "spine/core/schedule.hpp"
 #include "spine/core/si_units.hpp"
 #include "spine/core/timers.hpp"
+#include "spine/core/utils/concatenate.hpp"
+#include "spine/core/utils/enum.hpp"
+#include "spine/core/utils/string.hpp"
+#include "spine/core/utils/time_repr.hpp"
 #include "spine/eventsystem/eventsystem.hpp"
 #include "spine/filter/filter.hpp"
 #include "spine/filter/filterstack.hpp"
@@ -39,8 +43,6 @@
 #include "spine/structure/static_string.hpp"
 #include "spine/structure/tuple.hpp"
 #include "spine/structure/vector.hpp"
-#include "spine/tracker/average_change.hpp"
-#include "spine/tracker/run_away.hpp"
 
 void setup() {
     HAL::initialize(HAL::Config{.baudrate = 115200});
