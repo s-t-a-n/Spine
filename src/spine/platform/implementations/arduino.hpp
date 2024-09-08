@@ -11,7 +11,6 @@
 #    include "spine/core/debugging.hpp"
 #    include "spine/platform/gpio.hpp"
 #    include "spine/platform/platform.hpp"
-#    include "spine/platform/protocols/i2c.hpp"
 #    include "spine/platform/protocols/uart.hpp"
 
 #    include <ArxSmartPtr.h>
@@ -263,32 +262,6 @@ private:
     void (*_callback)();
 };
 
-class ArduinoI2C : public I2C<ArduinoI2C> {
-public:
-    // https://docs.particle.io/reference/device-os/api/wire-i2c/pins-i2c/
-    struct Config {};
-
-    ArduinoI2C(Config&& cfg) : _cfg(std::move(cfg)) {}
-
-    static void initialize() { Wire.begin(); }
-    static size_t available() { return Wire.available(); };
-    static size_t read(uint8_t* buffer, uint16_t length) { return Wire.readBytes(buffer, length); }
-    static size_t read() { return Wire.read(); }
-    static size_t write(uint8_t* buffer, size_t length, uint8_t address) {
-        Wire.beginTransmission(address);
-        const auto bytes_written = Wire.write(buffer, length);
-        if (const auto transmission_status = Wire.endTransmission(); transmission_status == 0) {
-            return bytes_written;
-        } else {
-            DBG("Wire transmission failed with status: %i", transmission_status);
-            return 0;
-        }
-    }
-
-private:
-    const Config _cfg;
-};
-
 // the minds of the Arduino team for some obscure reason have left an incomplete 'HardwareSerial' stream
 // that doesnt implement 'availableForWrite'. We are left to wonder why a UART/USART class would inherit from a Serial
 // class and not the other way around (Interface>Implementation). Since SAM is the only platform from Arduino's own
@@ -352,7 +325,7 @@ struct ArduinoConfig {
     uint32_t baudrate;
 };
 
-struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoI2C, ArduinoUART> {
+struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoUART> {
 public:
     // PRINTING
     static void initialize(Config&& cfg) {

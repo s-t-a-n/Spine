@@ -7,7 +7,6 @@
 using HAL = spn::platform::Platform<spn::platform::Arduino, //
                                     spn::platform::ArduinoConfig, //
                                     spn::platform::ArduinoGPIO, //
-                                    spn::platform::ArduinoI2C, //
                                     spn::platform::ArduinoUART>;
 using ArduinoConfig = spn::platform::ArduinoConfig;
 
@@ -16,7 +15,6 @@ using ArduinoConfig = spn::platform::ArduinoConfig;
 using HAL = spn::platform::Platform<spn::platform::Mock, //
                                     spn::platform::MockConfig, //
                                     spn::platform::MockGPIO, //
-                                    spn::platform::MockI2C, //
                                     spn::platform::MockUART>;
 using MockConfig = spn::platform::MockConfig;
 

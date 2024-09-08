@@ -7,7 +7,7 @@
 
 namespace spn::platform {
 
-template<typename PlatformImp, typename PlatformConfig, typename GPIOImp, typename I2CImp, typename UARTImp>
+template<typename PlatformImp, typename PlatformConfig, typename GPIOImp, typename UARTImp>
 struct Platform {
     using DigitalOutput = typename GPIOImp::DigitalOutput;
     using DigitalInput = typename GPIOImp::DigitalInput;
@@ -73,7 +73,6 @@ struct Platform {
     /// Returns the amount of allocatable bytes
     static unsigned long free_memory() { return PlatformImp::free_memory(); }
 
-    using I2C = I2CImp;
     using UART = UARTImp;
 };
 } // namespace spn::platform

@@ -6,7 +6,6 @@
 #    include "spine/io/stream/stream.hpp"
 #    include "spine/platform/gpio.hpp"
 #    include "spine/platform/platform.hpp"
-#    include "spine/platform/protocols/i2c.hpp"
 #    include "spine/platform/protocols/uart.hpp"
 
 #    include <algorithm>
@@ -131,23 +130,6 @@ private:
     void (*_callback)();
 };
 
-/// not implemented
-class MockI2C : public I2C<MockI2C> {
-public:
-    struct Config {};
-
-    MockI2C(Config&& cfg) : _cfg(std::move(cfg)) {}
-
-    static void initialize() {}
-    static uint16_t available() { return 0; };
-    static uint16_t read(uint8_t* buffer, uint16_t length) { return 0; }
-    static uint8_t read() { return 0; }
-    static uint16_t write(uint8_t* buffer, uint16_t length, uint8_t address) { return 0; }
-
-private:
-    const Config _cfg;
-};
-
 class Print {
 public:
     virtual size_t write(uint8_t) = 0;
@@ -197,7 +179,7 @@ static inline struct MockState {
     time_t micros = 0;
 } g_mock_state;
 
-struct Mock : Platform<Mock, MockConfig, MockGPIO, MockI2C, MockUART> {
+struct Mock : Platform<Mock, MockConfig, MockGPIO, MockUART> {
     static void initialize(Config&& cfg){};
 
     static void halt(const char* msg = nullptr) {}
@@ -213,7 +195,6 @@ struct Mock : Platform<Mock, MockConfig, MockGPIO, MockI2C, MockUART> {
 
     static void printflush() {}
 
-    // TIMING
     static time_ms millis() { return time_ms(g_mock_state.millis + g_mock_state.micros / 1000); }
     static time_us micros() { return time_us(g_mock_state.micros + g_mock_state.millis * 1000); }
     static void delay_us(time_us us) { g_mock_state.micros += us.raw(); }

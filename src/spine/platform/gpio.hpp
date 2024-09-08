@@ -39,14 +39,19 @@ void fade_to(void (*set_value)(void*, double), void* imp, double value, double s
 template<typename GPIOImp>
 class AnalogueOutput {
 public:
+    /// Initialize a port/pin
     void initialize() { static_cast<GPIOImp>(this)->initialize(); }
+
+    /// Set the output to the provided `value`
     void set_value(double value) {
         _value = value;
         ((GPIOImp*)(this))->set_value(value);
     }
 
+    /// Returns the currently active value
     double value() const { return _value; }
 
+    /// Set a `value` in a (short) amount of time to reduce sudden rushes of current
     void fade_to(double setpoint, double increment = 0.1, time_ms increment_interval = time_ms(250)) {
         const auto set_v = [](void* imp, double value) -> void { ((AnalogueOutput*)imp)->set_value(value); };
         spn::platform::detail::fade_to(set_v, (void*)this, _value, setpoint, increment, increment_interval);
@@ -59,22 +64,29 @@ private:
 
 template<typename GPIOImp>
 struct AnalogueInput {
+    /// Initialize an analogue input port/pin
     void initialize() { static_cast<GPIOImp>(this)->initialize(); }
-    // todo: find a way to set stuff like read/write resolution and frequency for analog
-    // void set_reference_voltage(double v, bool external = false) {
-    // static_cast<GPIOImp>(this)->set_reference_voltage(v);
-    // }
+
+    /// Reads the Analogue input port/pin
     double read() { return static_cast<GPIOImp>(this)->read(); }
 };
+
+// todo: Add an ADC/DAC configuration blocks to set up stuff like read/write resolution, ref voltage and sampling
+// frequency
 
 template<typename GPIOImp>
 struct Interrupt {
     using TriggerType = ::TriggerType;
 
+    /// Intializes the interrupt (doesn't attach it)
     void initialize() { static_cast<GPIOImp>(this)->initialize(); }
+
+    /// Attaches the interrupt to the callback.
     void attach_interrupt(void (*callback)() = nullptr, TriggerType trigger = TriggerType::UNDEFINED) {
         static_cast<GPIOImp>(this)->attach_interrupt(callback, trigger);
     }
+
+    /// Detaches the interrupt from the callback
     void detach_interrupt() { static_cast<GPIOImp>(this)->detach_interrupt(); }
 };
 
