@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace spn::platform {
 
 template<typename I2CImp>
@@ -22,13 +24,13 @@ public:
     uint16_t write(uint8_t* buffer, uint16_t length, uint8_t address) {
         return static_cast<I2CImp>(this)->write(buffer, length, address);
     }
-    I2C::Status status() { return _status; }
+    Status status() { return _status; }
 
 protected:
     void set_status(I2C::Status status) { _status = status; }
 
 private:
-    Status _status;
+    Status _status = Status::OK;
 };
 
 } // namespace spn::platform

@@ -398,7 +398,6 @@ public:
 
     static void printflush() { Serial.flush(); }
 
-    // TIMING
     static time_ms millis() { return time_ms(::millis()); }
     static time_us micros() { return time_us(::micros()); }
     static void delay_us(time_us us) { ::delayMicroseconds(us.raw<uint32_t>()); }
