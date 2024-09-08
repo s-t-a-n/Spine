@@ -3,7 +3,6 @@
 #include "spine/core/datetime.hpp"
 #include "spine/core/debugging.hpp"
 #include "spine/core/exception.hpp"
-#include "spine/core/optional.hpp"
 #include "spine/core/schedule.hpp"
 #include "spine/core/standard.hpp"
 #include "spine/core/time.hpp"
