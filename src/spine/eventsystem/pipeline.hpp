@@ -2,10 +2,13 @@
 
 #include "spine/core/si_units.hpp"
 #include "spine/core/timers.hpp"
+#include "spine/core/utils/string.hpp"
 #include "spine/platform/hal.hpp"
 
 #include <array>
 // #include <charconv>
+#include "spine/core/utils/time_repr.hpp"
+
 #include <iterator>
 #include <numeric>
 
@@ -145,65 +148,10 @@ public:
                 }
                 len += i.size();
             };
-
             put("Pipeline: [");
-
-            // for (auto it = _pipe.begin(); it != _pipe.end(); ++it) {
-            //     auto& future = *it;
-            //     const auto t_left = future->time_until_future();
-            //
-            //     // todo: make generic function on time
-            //     std::array<char, 32> buffer;
-            //     std::string_view unit;
-            //     if (time_ms(t_left).raw() < 1000) {
-            //         unit = "ms"; // milliseconds
-            //         auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),
-            //         time_ms(t_left).raw()); put(std::string_view(buffer.data(), ptr - buffer.data()));
-            //     } else if (time_s(t_left).raw() < 900) {
-            //         unit = "s"; // seconds
-            //         auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),
-            //         time_s(t_left).raw()); put(std::string_view(buffer.data(), ptr - buffer.data()));
-            //     } else if (time_m(t_left).raw() > 0) {
-            //         unit = "m"; // minute
-            //         auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),
-            //         time_m(t_left).raw()); put(std::string_view(buffer.data(), ptr - buffer.data()));
-            //     } else {
-            //         unit = "h"; // hours
-            //         auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),
-            //         time_h(t_left).raw()); put(std::string_view(buffer.data(), ptr - buffer.data()));
-            //     }
-            //     put(unit);
-            //
-            //     if (it != _pipe.end()) // Add comma if not the last element
-            //         put(", ");
-            // }
-            // put("]");
             for (auto it = _pipe.begin(); it != _pipe.end(); ++it) {
                 auto& future = *it;
-                const auto t_left = future->time_until_future();
-
-                std::array<char, 32> buffer;
-                std::string_view unit;
-
-                if (time_ms(t_left).raw() < 1000) {
-                    unit = "ms";
-                    std::snprintf(buffer.data(), buffer.size(), "%ld", time_ms(t_left).raw());
-                    put(std::string_view(buffer.data()));
-                } else if (time_s(t_left).raw() < 900) {
-                    unit = "s";
-                    std::snprintf(buffer.data(), buffer.size(), "%ld", time_s(t_left).raw());
-                    put(std::string_view(buffer.data()));
-                } else if (time_m(t_left).raw() > 0) {
-                    unit = "m";
-                    std::snprintf(buffer.data(), buffer.size(), "%ld", time_m(t_left).raw());
-                    put(std::string_view(buffer.data()));
-                } else {
-                    unit = "h";
-                    std::snprintf(buffer.data(), buffer.size(), "%ld", time_h(t_left).raw());
-                    put(std::string_view(buffer.data()));
-                }
-
-                put(unit);
+                put(utils::repr(future->time_until_future()));
                 if (it != _pipe.end()) put(", ");
             }
             put("]");

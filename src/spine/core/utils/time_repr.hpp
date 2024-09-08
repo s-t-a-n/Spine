@@ -3,11 +3,12 @@
 #include "spine/core/si_units.hpp"
 
 #include <array>
-#include <charconv>
+// #include <charconv>
 #include <cstring>
 #include <iterator>
 #include <numeric>
 #include <optional>
+#include <variant>
 
 namespace spn::core::utils {
 
@@ -33,9 +34,9 @@ namespace spn::core::utils {
 /// Handles microseconds (us), milliseconds (ms), seconds (s), minutes (m),
 /// hours (h), and days (d). Uses 900 seconds as the cutoff for minutes.
 template<typename TimeType>
-static std::string repr(const TimeType& t) {
+inline std::string repr(const TimeType& t) {
     auto buffer = std::array<char, 64>();
-    std::string_view unit;
+    // std::string_view unit;
 
     auto raw = (time_us(t).raw() < 1000)   ? time_us(t).raw()
                : (time_ms(t).raw() < 1000) ? time_ms(t).raw()
@@ -45,19 +46,26 @@ static std::string repr(const TimeType& t) {
                : (time_d(t).raw() > 0)     ? time_d(t).raw()
                                            : 0;
 
-    unit = (time_us(t).raw() < 1000)   ? "us"
-           : (time_ms(t).raw() < 1000) ? "ms"
-           : (time_s(t).raw() < 900)   ? "s"
-           : (time_m(t).raw() < 1440)  ? "m"
-           : (time_h(t).raw() < 24)    ? "h"
-           : (time_d(t).raw() > 0)     ? "d"
-                                       : "unknown";
+    auto unit = (time_us(t).raw() < 1000)   ? "us"
+                : (time_ms(t).raw() < 1000) ? "ms"
+                : (time_s(t).raw() < 900)   ? "s"
+                : (time_m(t).raw() < 1440)  ? "m"
+                : (time_h(t).raw() < 24)    ? "h"
+                : (time_d(t).raw() > 0)     ? "d"
+                                            : "unknown";
 
-    auto [ptr, _] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), raw);
-    std::string result(ptr - buffer.data() + unit.size(), '\0');
-    std::memcpy(result.data(), buffer.data(), ptr - buffer.data());
-    std::memcpy(result.data() + (ptr - buffer.data()), unit.data(), unit.size());
-    return result;
+    /// todo: this is a workaround, see issue with charconv: https://github.com/s-t-a-n/Spine/issues/21
+    auto size = std::snprintf(buffer.data(), buffer.size(), "%i%s", raw, unit);
+    if (size < 0 || static_cast<size_t>(size) >= buffer.size()) {
+        return "Error";
+    }
+    return std::string(buffer.data(), size);
+
+    // auto [ptr, _] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), raw);
+    // std::string result(ptr - buffer.data() + unit.size(), '\0');
+    // std::memcpy(result.data(), buffer.data(), ptr - buffer.data());
+    // std::memcpy(result.data() + (ptr - buffer.data()), unit.data(), unit.size());
+    // return result;
 }
 
 /*
@@ -79,7 +87,8 @@ static std::string repr(const TimeType& t) {
  */
 
 // Function to parse a string like "10us", "2h", or "1d" to a Time object
-std::optional<std::variant<time_us, time_ms, time_s, time_m, time_h, time_d>> parse_time(const std::string_view input) {
+inline std::optional<std::variant<time_us, time_ms, time_s, time_m, time_h, time_d>>
+parse_time(const std::string_view input) {
     if (input.empty()) return std::nullopt;
 
     // Find the position of the first non-digit character
