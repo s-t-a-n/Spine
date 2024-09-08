@@ -2,12 +2,20 @@
 // Copyright (c) 2016-2020 jackw01
 // This code is distrubuted under the MIT License, see LICENSE for details
 
-// Downloaded on the 14th of May 2024 from https://github.com/jackw01/arduino-pid-autotuner
-// Inlined into Spine by Stan with the following edits:
-// - naming made consistent within Spine
-// - use Spine's time units
-// - added hysteresis to overcome bouncing
-// - remove unnecessary functionality
+/*********************************************************************************************
+ * PID automated tuning (Ziegler-Nichols/relay method) for Arduino and compatible boards
+ * Copyright (c) 2016-2020 jackw01
+ *
+ * This library was originally created by jackw01 and is licensed under MIT.
+ *
+ * Downloaded on 14-05-2024 from https://github.com/jackw01/arduino-pid-autotuner
+ *
+ * Modifications by Stan:
+ * - naming made consistent within Spine
+ * - use Spine's time units
+ * - added hysteresis to overcome bouncing
+ * - remove unnecessary functionality
+ **********************************************************************************************/
 
 #pragma once
 

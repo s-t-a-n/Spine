@@ -1,16 +1,17 @@
-/**********************************************************************************************
+/*********************************************************************************************
  * Arduino PID Library - Version 1.2.1
- * by Brett Beauregard <br3ttb@gmail.com> brettbeauregard.com
  *
- * This Library is licensed under the MIT License
+ * This library was originally created by Brett Beauregard <br3ttb@gmail.com> brettbeauregard.com
+ * and licensed under the MIT License
+ *
+ * Downloaded on 14-05-2024 from https://github.com/br3ttb/Arduino-PID-Library
+ *
+ * Modifications by Stan:
+ * - naming made consistent within Spine
+ * - use Spine's time units
+ * - math is mostly consistent with original, deduplicated some functions
+ * - remove unnecessary functionality
  **********************************************************************************************/
-
-// Downloaded on the 14th of May 2024 from https://github.com/br3ttb/Arduino-PID-Library
-// Inlined into Spine by Stan with the following edits:
-// - naming made consistent within Spine
-// - use Spine's time units
-// - math is mostly consistent with original, deduplicated some functions
-// - remove unnecessary functionality
 
 #include "spine/core/debugging.hpp"
 #include "spine/core/time.hpp"
