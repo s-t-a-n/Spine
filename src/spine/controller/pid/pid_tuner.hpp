@@ -3,6 +3,11 @@
 // This code is distrubuted under the MIT License, see LICENSE for details
 
 // Downloaded on the 14th of May 2024 from https://github.com/jackw01/arduino-pid-autotuner
+// Inlined into Spine by Stan with the following edits:
+// - naming made consistent within Spine
+// - use Spine's time units
+// - added hysteresis to overcome bouncing
+// - remove unnecessary functionality
 
 #pragma once
 
@@ -16,7 +21,7 @@ namespace spn::controller {
 class PIDAutotuner {
 public:
     // Constants for Ziegler-Nichols tuning mode
-    enum class ZNMode { BasicPID, LessOvershoot, NoOvershoot };
+    enum class Aggressiveness { BasicPID, LessOvershoot, NoOvershoot };
 
     PIDAutotuner() {}
 
@@ -27,12 +32,12 @@ public:
     // outputRange: min and max values of the output that can be used to control the system (0, 255 for analogWrite)
     // znMode: Ziegler-Nichols tuning mode (znModeBasicPID, znModeLessOvershoot, znModeNoOvershoot)
     // tuningCycles: number of cycles that the tuning runs for (optional, default is 10)
-    void setTargetInputValue(double target) { targetInputValue = target; }
-    void setLoopInterval(time_ms interval) { loopInterval = interval; }
+    void set_target_input_value(double target) { targetInputValue = target; }
+    void set_loop_interval(time_ms interval) { loopInterval = interval; }
 
     // Set hysteresis; the minimal overshoot over `targetInputValue`
     // This is to discourage a sensor bouncing below and over the `targetInputValue` causing a cycle with a false length
-    void setHysteresis(double hysteresis) { targetHysteresis = std::fabs(hysteresis); }
+    void set_hysteresis(double hysteresis) { targetHysteresis = std::fabs(hysteresis); }
 
     // Set output range
     void setOutputRange(double lower_limit, double upper_limit) {
@@ -40,12 +45,12 @@ public:
         maxOutput = upper_limit;
     }
     // Set Ziegler-Nichols tuning mode
-    void setZNMode(ZNMode zn) { znMode = zn; }
+    void set_aggressiveness(Aggressiveness zn) { znMode = zn; }
     // Set tuning cycles
-    void setTuningCycles(int tuneCycles) { cycles = tuneCycles; }
+    void set_tuning_cycles(int tuneCycles) { cycles = tuneCycles; }
 
     // Must be called immediately before the tuning loop starts
-    void startTuningLoop(time_ms ms) {
+    void start_tuning_loop(time_ms ms) {
         cycle = 0; // Cycle counter
         output = true; // Current output state
         outputValue = maxOutput;
@@ -59,7 +64,7 @@ public:
     // Automatically tune PID
     // This function must be run in a loop at the same speed as the PID loop being tuned
     // See README for more details - https://github.com/jackw01/arduino-pid-autotuner/blob/master/README.md
-    double tunePID(double input, time_ms ms) {
+    double do_autotune(double input, time_ms ms) {
         // Useful information on the algorithm used (Ziegler-Nichols method/Relay method)
         // http://www.processcontrolstuff.net/wp-content/uploads/2015/02/relay_autot-2.pdf
         // https://en.wikipedia.org/wiki/Ziegler%E2%80%93Nichols_method
@@ -126,11 +131,11 @@ public:
             // https://en.wikipedia.org/wiki/Ziegler%E2%80%93Nichols_method
 
             double kpConstant, tiConstant, tdConstant;
-            if (znMode == ZNMode::BasicPID) {
+            if (znMode == Aggressiveness::BasicPID) {
                 kpConstant = 0.6;
                 tiConstant = 0.5;
                 tdConstant = 0.125;
-            } else if (znMode == ZNMode::LessOvershoot) {
+            } else if (znMode == Aggressiveness::LessOvershoot) {
                 kpConstant = 0.33;
                 tiConstant = 0.5;
                 tdConstant = 0.33;
@@ -160,7 +165,7 @@ public:
         }
 
         // If loop is done, disable output and calculate averages
-        if (isFinished()) {
+        if (is_finished()) {
             output = false;
             outputValue = minOutput;
             kp = pAverage / (cycle - 1);
@@ -172,15 +177,15 @@ public:
     }
 
     // Get results of most recent tuning
-    double getKp() { return kp; };
-    double getKi() { return ki; };
-    double getKd() { return kd; };
+    double get_Kp() { return kp; };
+    double get_Ki() { return ki; };
+    double get_Kd() { return kd; };
 
     // Is the tuning loop finished?
-    bool isFinished() { return (cycle >= cycles); }
+    bool is_finished() { return (cycle >= cycles); }
 
     // return number of tuning cycle
-    int getCycle() { return cycle; }
+    int get_cycle() { return cycle; }
 
 private:
 private:
@@ -188,17 +193,15 @@ private:
     double targetHysteresis = 0;
     time_ms loopInterval;
     double minOutput, maxOutput;
-    ZNMode znMode = ZNMode::NoOvershoot;
+    Aggressiveness znMode = Aggressiveness::NoOvershoot;
     int cycles = 10;
 
-    // See startTuningLoop()
-    int cycle;
-    bool output;
-    double outputValue;
+    int cycle; // current cycle
+    bool output; // is output on
+    double outputValue; // current output value
     time_ms t1, t2, tHigh, tLow;
     double max, min;
     double pAverage, iAverage, dAverage;
-
     double kp, ki, kd;
 };
 

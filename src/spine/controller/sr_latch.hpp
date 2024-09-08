@@ -4,8 +4,6 @@
 #include "spine/core/time.hpp"
 #include "spine/core/timers.hpp"
 
-#include <cmath>
-
 namespace spn::controller {
 
 /// Set-Reset Latch
@@ -19,17 +17,17 @@ public:
     struct Config {
         double high;
         double low;
-        time_ms minimal_on_time = time_ms(0);
-        time_ms maximal_on_time = time_ms(0);
-        time_ms minimal_off_time = time_ms(0);
-        time_ms maximal_off_time = time_ms(0);
+        time_ms minimal_on_time = time_ms{};
+        time_ms maximal_on_time = time_ms{};
+        time_ms minimal_off_time = time_ms{};
+        time_ms maximal_off_time = time_ms{};
     };
 
     using State = LogicalState;
 
     SRLatch(const Config&& cfg) : _cfg(std::move(cfg)), _last_turned(Timer(HAL::millis() - _cfg.minimal_off_time)) {}
 
-    void initialize(){};
+    void initialize(){}; // boilerplate
 
     void new_reading(double value) {
         if (_value == LogicalState::ON && _last_turned.timeSinceLast(Timer::NoReset) < _cfg.minimal_on_time) return;
@@ -50,10 +48,10 @@ public:
         }
 
         if (value > _cfg.high) {
-            DBG("SRLatch triggered by high value of %f (lim: %f)", value, _cfg.high);
+            DBG("SRLatch: triggered by high value of %f (lim: %f)", value, _cfg.high);
             set(State::ON);
         } else if (value < _cfg.low) {
-            DBG("SRLatch triggered by low value of %f (lim: %f)", value, _cfg.low);
+            DBG("SRLatch: triggered by low value of %f (lim: %f)", value, _cfg.low);
             set(State::OFF);
         }
     }
@@ -61,16 +59,15 @@ public:
 
 protected:
     void set(const State state) {
+        DBG("SRLatch: Setting state: %i", state);
         _value = state;
         _last_turned.reset();
-        DBG("Setting state: %i", state);
     }
 
 private:
     const Config _cfg;
 
     State _value = State::OFF;
-
     Timer _last_turned;
 };
 
