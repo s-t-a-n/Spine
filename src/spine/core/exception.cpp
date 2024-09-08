@@ -25,8 +25,7 @@ void Exception::throw_error() const {
         eh->handle_exception(*this);
     }
 
-    char msg[128];
-    snprintf(msg, sizeof(msg), "%s was thrown: %s", error_type(), m_error_msg);
-    HAL::halt(msg);
+    LOG("%s was thrown: %s, halting without handling exception", error_type(), m_error_msg);
+    HAL::halt();
 }
 } // namespace spn::core
