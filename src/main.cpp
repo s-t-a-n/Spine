@@ -28,7 +28,6 @@
 #include "spine/platform/hal.hpp"
 #include "spine/platform/implementations/arduino.hpp"
 #include "spine/platform/platform.hpp"
-#include "spine/platform/protocols/i2c.hpp"
 #include "spine/platform/protocols/uart.hpp"
 #include "spine/structure/array.hpp"
 #include "spine/structure/blockbuffer.hpp"

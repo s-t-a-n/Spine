@@ -243,12 +243,8 @@ public:
 
 #    if defined(__AVR_ATmega8__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
         ::attachInterrupt(_cfg.pin, callback_actual, mode_bits);
-#    elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-#    elif defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644__) || defined(__AVR_ATmega1284P__)                    \
-        || defined(__AVR_ATmega1284__)
-#    elif defined(ARDUINO_SAM_DUE)
 #    else
-        assert(digitalPinToAnalogInput(_cfg.pin) != NOT_AN_INTERRUPT);
+        assert(digitalPinToInterrupt(_cfg.pin) != NOT_AN_INTERRUPT);
         ::attachInterrupt(digitalPinToInterrupt(_cfg.pin), callback_actual, mode_bits);
 #    endif
     }
@@ -326,8 +322,6 @@ struct ArduinoConfig {
 };
 
 struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoUART> {
-public:
-    // PRINTING
     static void initialize(Config&& cfg) {
 #    if defined(NATIVE)
         ARDUINO_MOCK_ALL();
@@ -336,18 +330,15 @@ public:
             Serial.begin(cfg.baudrate);
         }
 
-        // todo: set this up separately?
+        // todo: set this up separately in an ADC/DAC module
         analogReadResolution(10); // 0-1023
         analogWriteResolution(8); // 0-255
     };
 
     static void halt(const char* msg = NULL) {
         LOG("Halting with reason: %s", msg ? msg : "[not specified]");
-
         delay(time_s(2));
-
         noInterrupts();
-
         while (true) {
         };
     }
