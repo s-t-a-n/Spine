@@ -21,16 +21,17 @@ using spn::structure::Vector;
 
 // forward declarations
 class EventSystem;
-// class EventSystemController;
 class EventStore;
 
+/// An event
 class Event : public Future {
 public:
     using Id = size_t;
 
 public:
-    // a crude data object meant solely to convey a single value known by the sender and receiver.
+    /// A crude data object meant solely to convey a single value known by the sender and receiver.
     class Data {
+        // todo: can this be made more useful and less closed for expansion?
     public:
         Data() = default;
         explicit Data(time_ms time) : _value(time) {}
@@ -74,17 +75,14 @@ public:
     Id id() const { return _id; }
     const Data& data() const { return _data; }
 
-    // protected:
     Event() = default;
 
 private:
     Id _id;
     Data _data;
-    // Tracker _tracker;
 
     friend EventStore;
     friend EventSystem;
-    //    friend EventSystemController;
 };
 
 class EventHandler {
@@ -138,7 +136,6 @@ public:
     }
 
     ~EventSystem() {
-        DBG("Destroying eventsystem");
         for (size_t i = 0; i < _map.size(); i++) {
             _map[i].reset();
         }
@@ -163,12 +160,13 @@ public:
 
     void detach(EventHandler& handler);
 
-    // external users may wish to directly trigger an event they have laying around
+    /// Directly trigger a provided event
     void trigger(const std::shared_ptr<Event>& event) {
         assert(event);
         trigger(*event.get());
     }
 
+    /// Directly trigger a provided event
     void trigger(const Event& event) {
         const auto id = event.id();
         assert(id < _map.size());
@@ -180,14 +178,16 @@ public:
     };
 
     template<typename IdType>
+    /// Directly trigger an event for a provided ID
     void trigger(IdType id, const Event::Data& data = {}) {
         trigger(event(id, time_ms(0)));
     }
 
     template<typename IdType>
+    /// Returns an event for the given id, time_from_now and data
     std::shared_ptr<Event> event(IdType id, const time_ms& time_from_now, const Event::Data& data = {}) {
         auto event = _store.acquire();
-        assert(event); // try to catch gracefully here for use in nested calls
+        assert(event); // catch gracefully here for use in nested calls
         if (!event) return nullptr;
 
         event->_id = static_cast<Event::Id>(id);
@@ -197,42 +197,27 @@ public:
     }
 
     template<typename IdType>
+    /// Schedule an event to happen in `time_from_now` time
     void schedule(IdType id, const time_ms& time_from_now, const Event::Data& data = {}) {
         schedule(event(id, time_from_now, data));
     }
 
-    void schedule(std::shared_ptr<Event>&& event) {
-        // DBGF("Scheduling event %u seconds from now", time_s(event.get()->_time_from_now).raw<unsigned>());
-        _pipeline.push(std::move(event));
-    }
+    /// Schedule a provided event
+    void schedule(std::shared_ptr<Event>&& event) { _pipeline.push(std::move(event)); }
 
+    /// Main loop of event system. It is crucial that this loop is called often enough to fire events in time
     void loop() {
-        // int i = 0;
-        // for (auto& f : _pipeline._pipe) {
-        //     auto& ff = *f.get();
-        //     DBGF("%i: Time until future: %i", i++, ff.time_until_future().raw<int>());
-        // }
-        // DBGF("futures in pipeline :%u, expired futures in pipeline :%u)", _pipeline.contains_futures(),
-        // _pipeline.contains_expired_futures());
-        // DBGF("freemem: %i", HAL::free_memory());
-
         while (_pipeline.contains_expired_futures()) {
             // we have futures ready to be processed
-            // DBGF("picking up future (has futures in pipeline :%u, has expired futures in pipeline :%u)",
-            //      _pipeline.contains_futures(), _pipeline.contains_expired_futures());
             auto future = _pipeline.expire();
-
             assert(future != nullptr);
-
             auto event = *reinterpret_cast<Event*>(future.get());
-            // DBGF("triggering event with id: %i", ENUM_IDX(event.id()));
             trigger(event);
         }
 
-        // DBG("EventSystem: loop()");
         if (_cfg.delay_between_ticks) {
             if (_pipeline.contains_futures())
-                HAL::delay_ms(std::min(_pipeline.timeUntilNextFuture().raw(), _cfg.max_delay_between_ticks.raw()));
+                HAL::delay_ms(std::min(_pipeline.time_until_next_future().raw(), _cfg.max_delay_between_ticks.raw()));
             else
                 HAL::delay(_cfg.min_delay_between_ticks);
         }

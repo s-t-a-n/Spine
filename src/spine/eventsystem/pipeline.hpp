@@ -3,14 +3,11 @@
 #include "spine/core/si_units.hpp"
 #include "spine/core/timers.hpp"
 #include "spine/core/utils/string.hpp"
+#include "spine/core/utils/time_repr.hpp"
 #include "spine/platform/hal.hpp"
 
-#include <array>
 // #include <charconv>
-#include "spine/core/utils/time_repr.hpp"
-
 #include <iterator>
-#include <numeric>
 
 namespace spn::eventsystem {
 
@@ -19,24 +16,30 @@ using namespace spn::core;
 // forward declaration
 class Pipeline;
 
+/// A moment in the future determined with time_from_now (relative to the system clock)
 class Future {
 public:
-    // protected:
     Future(time_ms time_from_now = time_ms{0})
         : _time_from_now(time_from_now), _timer(time::AlarmTimer(time_from_now)){};
 
-    // private:
     bool operator<(const Future& other) const { return _timer.time_from_now() < other._timer.time_from_now(); }
     bool operator==(const Future& other) const { return _timer.time_from_now() == other._timer.time_from_now(); }
 
+    /// Reschedule a future to happen at a different moment (this has no effect when the future is already in the
+    /// pipeline)
     void reschedule(time_ms time_from_now = time_ms{0}) {
         _time_from_now = time_from_now != time_ms(0) ? time_from_now : _time_from_now;
         assert(_time_from_now > time_ms{});
         _timer = time::AlarmTimer(_time_from_now);
     };
 
+    /// Returns true if the event is ready to fire
     bool expired() { return _timer.expired(); }
+
+    /// Returns the moment (in absolute system time) in the future when the event should fire
     time_ms future() { return _timer.future(); }
+
+    /// Returns the time (relative from the system time) until the event should fire
     time_ms time_until_future() { return _timer.time_from_now(); }
 
 protected:
@@ -52,85 +55,46 @@ class Pipeline {
 public:
     using Pipe = spn::structure::Vector<std::shared_ptr<Future>>;
 
-public:
     Pipeline(size_t events_cap = 128) : _pipe(Pipe(events_cap)) {}
 
+    /// Push a new future in the pipeline (inserting it in chronological order)
     void push(std::shared_ptr<Future>&& future) {
         assert(_pipe.size() < _pipe.max_size());
         future->reschedule();
 
-        // size_t j = 0;
-        // for (auto& spf : _pipe) {
-        //     auto& ff = *spf.get();
-        //
-        //     DBGF("OTHER (me:%p) idx: %u: @ %i ms(in %i ms) ", this, j++, ff.future().raw<int>(),
-        //          ff.time_until_future().raw<int>());
-        // }
-
-        // todo: move this into sorted container
         size_t i = 0;
         for (auto& other_future : _pipe) {
-            // auto& ff = *spf.get();
-
-            // DBGF("OTHER idx: %u: @ %i ms(in %i s) ", i, time_ms(ff.future()).raw<int>(),
-            // time_s(ff.time_until_future()).raw<int>());
             if (future->time_until_future().raw<int32_t>() < other_future->time_until_future().raw<int32_t>()) {
-                // if (future->time_until_future() < other_future->time_until_future()) {
-                // DBGF("future raw: %ld, other raw: %ld", future->time_until_future().raw<int32_t>(),
-                // other_future->time_until_future().raw<int32_t>());
-                // DBGF("future raw: %i, other raw: %i", future->time_until_future().raw<int>(),
-                //      other_future->time_until_future().raw<int>());
-                // assert(future->time_until_future().raw<TimeRaw>() <
-                // other_future->time_until_future().raw<TimeRaw>()); assert(future->time_until_future().raw<int>() <
-                // other_future->time_until_future().raw<int>());
-                // DBGF("JUMPING QUEUE idx: %u: @ %i ms(in %i ms) jumps in front of @ %i ms(in %i ms) ", i,
-                // future->future().raw<int>(), future->time_until_future().raw<int>(),
-                // other_future->future().raw<int>(), other_future->time_until_future().raw<int>());
-                auto last_size = _pipe.size();
-                // DBGF("Inserting into spot: %i", i);
+                [[maybe_unused]] auto last_size = _pipe.size();
                 _pipe.insert(i, std::move(future));
                 assert(last_size + 1 == _pipe.size());
-
-                // i = 0;
-                // for (auto& spf : _pipe) {
-                //     auto& ff = *spf.get();
-                //
-                //     DBGF("OTHER POST(me:%p) idx: %u: @ %i ms(in %i s) ", this, j++, time_ms(ff.future()).raw<int>(),
-                //          time_s(ff.time_until_future()).raw<int>());
-                // }
                 return;
             }
             i++;
         }
-
-        // DBGF("pushing back");
         _pipe.push_back(future);
     }
 
+    /// Takes the first next future to fire from the pipeline
     [[nodiscard]] std::shared_ptr<Future> expire() {
         assert(!_pipe.empty());
         if (_pipe.empty()) return nullptr;
 
-        // size_t j = 0;
-        // for (auto& spf : _pipe) {
-        //     auto& ff = *spf.get();
-        //
-        //     DBGF("EXPIRE OTHER (me:%p) idx: %u: @ %i ms(in %i s) ", this, j++, time_ms(ff.future()).raw<int>(),
-        //          time_s(ff.time_until_future()).raw<int>());
-        // }
-
         const auto future = _pipe.pop_front();
-        // const auto use_count = future.use_count();
-        // const auto futere_raw = *future;
         assert(future); // gracefully catch
         assert(future->expired()); // gracefully catch
         if (!future->expired()) return nullptr;
         return future;
     }
+
+    /// Returns true if the pipeline contains any futures that are ready to fire
     [[nodiscard]] bool contains_expired_futures() const { return contains_futures() && _pipe.peek_front()->expired(); }
+
+    /// Returns true if the pipeline contains any futures whatsoever
     [[nodiscard]] bool contains_futures() const { return !_pipe.empty(); }
 
-    [[nodiscard]] time_ms timeUntilNextFuture() const {
+    /// Returns the time (relative to the system clock) until the first next expirable future
+    [[nodiscard]] time_ms time_until_next_future() const {
         if (!contains_futures()) {
             return time_ms(0);
         }
@@ -139,6 +103,7 @@ public:
         return future <= current ? time_ms(0) : future - current;
     }
 
+    /// Returns a string representation of the Pipeline's content
     std::string to_string() const {
         auto pipeline_repr = [&](std::string* s, bool length_only) -> size_t {
             size_t len = 0;
@@ -175,7 +140,10 @@ public:
         return result;
     }
 
-    // private:
+    /// Returns the internal pipe for external inspection (probably only under testing)
+    const Pipe& pipe() const { return _pipe; }
+
+private:
     Pipe _pipe;
 };
 

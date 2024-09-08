@@ -115,7 +115,7 @@ void ut_ev_basics() {
     TEST_ASSERT_EQUAL(true, all_sp_usecounts_are(sc.store(), 1));
 
     auto i = 0;
-    for (auto& ev : sc.pipeline()._pipe) {
+    for (auto& ev : sc.pipeline().pipe()) {
         TEST_ASSERT_EQUAL(true, i++ == 0);
         TEST_ASSERT_EQUAL(true, ev != nullptr);
         TEST_ASSERT_EQUAL(true, ev->future() > time_ms(0));
