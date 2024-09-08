@@ -31,7 +31,7 @@ public:
     ValueType value(const double new_sample) {
         ValueType new_value = new_sample;
         for (auto& sf : _filters) {
-            assert(sf.has_value());
+            assert(sf.get() != nullptr);
             new_value = sf->value(new_value);
         }
         return new_value;
