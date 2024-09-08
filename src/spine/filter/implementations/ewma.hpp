@@ -8,8 +8,8 @@
 
 namespace spn::filter {
 
-// Exponential weighted moving average
 template<typename ValueType = double>
+/// Exponential weighted moving average
 class EWMA : public Filter<ValueType> {
 public:
     struct Config {
@@ -24,6 +24,7 @@ public:
     static std::unique_ptr<EWMA> Short() { return std::make_unique<EWMA>(Config{.K = 10}); }
     static std::unique_ptr<EWMA> Long() { return std::make_unique<EWMA>(Config{.K = 100}); }
 
+    /// Takes a new sample, returns filtered value
     ValueType value(const ValueType sample) override {
         if (_n == 0) {
             ++_n;
@@ -32,16 +33,18 @@ public:
         return _value = _value + ((sample - _value) / std::min(++_n, _cfg.K));
     }
 
+    /// Returns filtered value
     ValueType value() const override { return _value; }
+    ValueType operator()(ValueType reading) { return value(reading); }
 
+    /// Takes a new sample (syntax sugar)
     void new_sample(ValueType sample) override { value(sample); }
 
+    /// Reset the filter's internal value to the provided value, discarding all earlier values
     void reset_to(ValueType value) override {
         _value = value;
         _n = 0;
     }
-
-    ValueType operator()(ValueType reading) { return value(reading); }
 
 private:
     const Config _cfg;

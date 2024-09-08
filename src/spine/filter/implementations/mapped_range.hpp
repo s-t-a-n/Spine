@@ -8,8 +8,8 @@
 
 namespace spn::filter {
 
-// Map a value from an input range to and output range
 template<typename ValueType = double>
+/// Filter that map a value from an input range to an output range
 class MappedRange : public Filter<ValueType> {
 public:
     struct Config {
@@ -26,12 +26,15 @@ public:
     }
     ~MappedRange() override = default;
 
+    /// Provides a filter that returns a percentage for a value in a given range
     static std::unique_ptr<MappedRange> Percentage(double input_lower_limit = 0.0, double input_upper_limit = 1.0) {
         return std::make_unique<MappedRange>(Config{.input_lower_limit = input_lower_limit,
                                                     .input_upper_limit = input_upper_limit,
                                                     .output_lower_limit = 0,
                                                     .output_upper_limit = 100});
     }
+
+    /// Provides a filter that returns a permillage for a value in a given range
     static std::unique_ptr<MappedRange> Permillage(double input_lower_limit = 0.0, double input_upper_limit = 1.0) {
         return std::make_unique<MappedRange>(Config{.input_lower_limit = input_lower_limit,
                                                     .input_upper_limit = input_upper_limit,
@@ -39,6 +42,7 @@ public:
                                                     .output_upper_limit = 1000});
     }
 
+    /// Take a new sample, returns filtered value (throws when value is out of range)
     ValueType value(ValueType sample) override {
         if (sample < _cfg.input_lower_limit || sample > _cfg.input_upper_limit) {
             DBG("--------------------------------------------------------------------------");
@@ -55,13 +59,15 @@ public:
                               * (_cfg.output_upper_limit - _cfg.output_lower_limit);
     }
 
+    /// Returns filtered value
     ValueType value() const override { return _value; }
+    ValueType operator()(ValueType reading) { return value(reading); }
 
+    /// Takes a new sample (syntax sugar)
     void new_sample(ValueType sample) override { value(sample); }
 
+    /// Reset the filter's internal value to the provided value (has no effect on this filter)
     void reset_to(ValueType value) override { _value = value; }
-
-    ValueType operator()(ValueType reading) { return value(reading); }
 
 private:
     const Config _cfg;

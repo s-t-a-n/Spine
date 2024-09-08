@@ -11,8 +11,8 @@
 
 namespace spn::filter {
 
-// Accepts values when they fall within limits
 template<typename ValueType = double>
+/// Filter that accepts new values within a logarithmic distance of the last value
 class BandPass : public Filter<ValueType> {
 public:
     enum class Mode { RELATIVE, ABSOLUTE };
@@ -38,6 +38,7 @@ public:
         bool throw_on_rejection_limit = true;
     };
 
+    /// Returns a Broadband filter
     static std::unique_ptr<BandPass> Broad() {
         return std::make_unique<BandPass>(Config{.mode = Mode::RELATIVE,
                                                  .mantissa = 1,
@@ -47,7 +48,6 @@ public:
                                                  .throw_on_rejection_limit = true});
     }
 
-    // K: length of frame
     BandPass(const Config&& cfg) : _cfg(std::move(cfg)) {
         static_assert(std::is_floating_point_v<ValueType>, "ValueType must be a floating point type");
         assert(_cfg.mantissa >= 1.0 && _cfg.mantissa < 10.0); // sanity
@@ -55,59 +55,58 @@ public:
     }
     ~BandPass() override = default;
 
+    /// Provide a new sample for filtering (optionally throws if value is out of band)
+    void new_sample(const ValueType sample) override {
+        if (_value == DefaultValue) BandPass::reset_to(sample);
+        if (_cfg.mode == Mode::RELATIVE) BandPass::update_limits();
+
+        if (sample >= _lower && sample <= _upper) {
+            _value = sample;
+            _rejections = 0;
+            return;
+        }
+
+        DBG("--------------------------------------------------------------------------");
+        DBG("Bandpass rejected value of %f, limits: low: %f, high: %f", sample, _lower, _upper);
+        DBG("--------------------------------------------------------------------------");
+
+        if (++_rejections > _cfg.rejection_limit) {
+            if (_cfg.throw_on_rejection_limit) {
+                spn::throw_exception(spn::runtime_exception("BandPass: rejection limit reached"));
+            }
+            _value = sample;
+        }
+    }
+
+    /// Take a sample, returns the filtered value
     ValueType value(const ValueType sample) override {
         new_sample(sample);
         return _value;
     }
 
-    void new_sample(const ValueType sample) override {
-        if (_value == DefaultValue) BandPass::reset_to(sample);
-        if (_cfg.mode == Mode::RELATIVE) BandPass::update_limits();
-        if (sample >= _lower && sample <= _upper) {
-            // DBGF("Accepting value of %f", reading);
-            _value = sample;
-            _rejections = 0;
-        } else {
-            DBG("--------------------------------------------------------------------------");
-            DBG("Bandpass rejected value of %f, limits: low: %f, high: %f", sample, _lower, _upper);
-            DBG("--------------------------------------------------------------------------");
-            if (++_rejections > _cfg.rejection_limit) {
-                if (_cfg.throw_on_rejection_limit) {
-                    spn::throw_exception(spn::runtime_exception("BandPass: rejection limit reached"));
-                }
-                _value = sample;
-            }
-        }
-    }
-
+    /// Returns the filtered value
     ValueType value() const override { return _value; }
-
-    void reset_to(ValueType reading) override { _value = reading; }
-
     ValueType operator()(ValueType reading) { return value(reading); }
 
+    /// Reset the filter's internal value to a provided value (next sample will be filtered based on this value)
+    void reset_to(ValueType reading) override { _value = reading; }
+
 protected:
-    // BandPass specific functions
     void update_limits() {
         ValueType compensated_midpoint = _cfg.mode == Mode::RELATIVE ? _value + _cfg.offset : _cfg.offset;
         _upper = compensated_midpoint + std::pow(_cfg.mantissa * 10, (_cfg.decades + 1));
         _lower = compensated_midpoint - std::pow(_cfg.mantissa * 10, (_cfg.decades + 1));
-
-        // DBGF("Setting limts of %f to %f with midpoint %f offset %f and last value %f", _lower, _upper,
-        //      compensated_midpoint, _cfg.offset, _value);
     }
 
-protected:
+    /// Arbitrary value to be used as a default value
     const ValueType DefaultValue = ValueType(-789.123456789);
 
 private:
     const Config _cfg;
 
     ValueType _value = DefaultValue;
-
     ValueType _lower;
     ValueType _upper;
-
     int _rejections = 0;
 };
 
