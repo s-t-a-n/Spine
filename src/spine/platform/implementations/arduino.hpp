@@ -13,7 +13,6 @@
 #    include "spine/platform/platform.hpp"
 #    include "spine/platform/protocols/uart.hpp"
 
-#    include <ArxSmartPtr.h>
 #    include <Wire.h>
 
 #    include <algorithm>
