@@ -8,11 +8,19 @@ Spine is a reusable components library aimed at robotics, providing a range of c
 processing, an eventsystem, logging, data streaming, and hardware abstraction layers for Arduino, STM32, and mock
 environments. It also includes various data structures and controllers that are embedded friendly.
 
+Aimed at RISC-like platforms. I have choosen to drop 8/16 bit AVR as their compilers have aged so far that c++14 is
+barely supported, let alone critical STL stuff like array, shared_ptr or optional. This is why you can find an array and
+vector implementation, even though in FilterStack, an STL's vector implementation is used.
+
 ## Design philosophy
 
 - reusability and readability over raw speed
-- single allocation to combat our ultimate nemesisl; fragmentation
+- single allocation to combat our ultimate nemesis; fragmentation
 - not to be extensive, but to be simple to use
+- nothing should be added that is not immediately needed
+- performance by hardware first; choose to sacrifice speed/space when doing so increases maintainability. For example:
+  be generous with debugging statements (which take RAM/flash space) and extend flash rather than using obscure
+  error codes
 
 ## Core features
 
@@ -22,7 +30,7 @@ environments. It also includes various data structures and controllers that are 
 ### Contents
 
 - **Controllers**: Includes PID controller, SetReset-Latch.
-- **Core**: Provides datetime and time utilities, debugging tools, exception handling, and scheduling.
+- **Core**: Provides si-units and datetime utilities, debugging tools, exception handling, and scheduling.
 - **Event System**: Manages events and pipelines.
 - **Filters**: Offers various filter implementations rolled into a filterstack including simple bandpass, EWMA,
   inverting, transpositiong and passthrough.
