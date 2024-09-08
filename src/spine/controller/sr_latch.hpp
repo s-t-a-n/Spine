@@ -1,7 +1,7 @@
 #pragma once
 
 #include "spine/core/debugging.hpp"
-#include "spine/core/time.hpp"
+#include "spine/core/si_units.hpp"
 #include "spine/core/timers.hpp"
 
 namespace spn::controller {

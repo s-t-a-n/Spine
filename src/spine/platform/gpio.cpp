@@ -1,7 +1,7 @@
 #include "spine/platform/gpio.hpp"
 
 #include "spine/core/debugging.hpp"
-#include "spine/core/time.hpp"
+#include "spine/core/si_units.hpp"
 #include "spine/platform/hal.hpp"
 
 namespace spn::platform::detail {

@@ -10,7 +10,7 @@
  * - Removed unneeded functionality
  *********************************************************************************************/
 
-#include <spine/core/time.hpp>
+#include <spine/core/si_units.hpp>
 
 #include <climits>
 #include <cstdint>

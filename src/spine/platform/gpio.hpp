@@ -1,6 +1,6 @@
 #pragma once
 
-#include "spine/core/time.hpp"
+#include "spine/core/si_units.hpp"
 
 enum LogicalState { OFF, ON, UNDEFINED };
 enum class TriggerType { RISING_EDGE, FALLING_EDGE, RISING_AND_FALLING_EDGE, UNDEFINED };
