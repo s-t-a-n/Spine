@@ -1,7 +1,7 @@
 #pragma once
 
-#include "spine/controller/pid/pid_controller.hpp"
-#include "spine/controller/pid/pid_tuner.hpp"
+#include "spine/controller/implementations/pid/pid_controller.hpp"
+#include "spine/controller/implementations/pid/pid_tuner.hpp"
 #include "spine/core/debugging.hpp"
 #include "spine/core/timers.hpp"
 
@@ -150,7 +150,7 @@ public:
             // Call tunePID() with the input value and current time in microseconds
             const double control_value = tuner.do_autotune(process_value, iteration_start);
 
-            DBG("Cycle %u/%u: PV: %f, CV: %f", tuner.getCycle(), tune_config.cycles, process_value, control_value);
+            DBG("Cycle %u/%u: PV: %f, CV: %f", tuner.get_cycle(), tune_config.cycles, process_value, control_value);
 
             // Set the output - tunePid() will return values within the range configured
             // by setOutputRange(). Don't change the value or the tuning results will be
