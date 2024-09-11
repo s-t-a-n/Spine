@@ -7,29 +7,22 @@
 
 namespace spn::structure {
 
-// sliced memory pool
-// useful for safely passing stuff around without reallocation
 template<typename T>
+/// Pool of reusable objects using reference counting.
 class Pool {
 protected:
     using Pointer = std::shared_ptr<T>;
 
 public:
     Pool(size_t size) : _pointers(Vector<Pointer>(size)) {}
-
     ~Pool() {
-        DBG("Destroying pool");
-        for (size_t i = 0; i < _pointers.size(); ++i) {
+        for (size_t i = 0; i < _pointers.size(); ++i)
             depopulate().reset();
-        }
         assert(_pointers.empty());
     }
-
     Pool(const Pool& other) : _pointers(other._pointers), _lookup_index(other._lookup_index) {}
     Pool& operator=(const Pool& other) {
-        if (&other == this) {
-            return *this;
-        }
+        if (&other == this) return *this;
         _pointers = other._pointers;
         _lookup_index = other._lookup_index;
         return *this;
@@ -41,82 +34,50 @@ public:
         return *this;
     }
 
+    /// Populate the pool with a raw pointer object.
     void populate(T* obj) {
         assert(!_pointers.full());
         _pointers.emplace_back(std::shared_ptr<T>(obj));
     }
 
+    /// Populate the pool with an r-value object.
     void populate(T&& obj) {
         assert(!_pointers.full());
         _pointers.emplace_back(std::make_shared<T>(std::move(obj)));
     }
 
+    /// Populate the pool with a shared_ptr object.
     void populate(std::shared_ptr<T> obj) {
         assert(!_pointers.full());
         _pointers.emplace_back(std::move(obj));
     }
 
+    /// Depopulate a single element from the pool.
     [[nodiscard]] Pointer&& depopulate() {
         assert(!_pointers.empty());
         return std::move(_pointers.pop_front());
     }
 
+    /// Returns true if the pool is fully populated.
     bool is_fully_populated() { return _pointers.full(); }
 
+    /// Returns a pointer-object from the pool if available, or a nullptr;
     Pointer acquire() {
         assert(is_fully_populated());
-        // try first to follow previous access order
-        // we assume that it is most common for memory to be accessed and released in order
-
-        // paranoia
-        // Serial.print("Free memory: ");
-        // Serial.println(HAL::free_memory());
-        // HAL::print(F("Acquire ("));
-        // HAL::print(_pointers.size());
-        // HAL::print(F("): "));
-        for (ArrayBase::Size i = 0; i < _pointers.size(); ++i) {
-            const auto use_count = _pointers[i].use_count();
-            // HAL::print(use_count);
-            if (use_count == 0) {
-                assert(_pointers[i]);
-                assert(_pointers[i].get());
-            }
-        }
-        // HAL::println("");
-
+        // Assume that it is most common for memory to be accessed and released in order; look in the back
         const auto skipped = _lookup_index;
         for (; _lookup_index < _pointers.size(); ++_lookup_index) {
-            if (_pointers[_lookup_index].use_count() == 1) {
-                return _pointers[_lookup_index];
-            }
+            if (_pointers[_lookup_index].use_count() == 1) return _pointers[_lookup_index];
         }
-        _lookup_index = 0;
-
-        // miss, loop until where previous loop started
-        for (size_t i = 0; i < skipped && i < _pointers.size(); ++i) {
-            if (_pointers[i].use_count() == 1) {
-                return _pointers[i];
-            }
+        _lookup_index = 0; // Look in the front
+        for (size_t i = 0; i < skipped && i < _pointers.size();) {
+            if (_pointers[i].use_count() == 1) return _pointers[i];
+            ++i;
         }
         return nullptr;
     };
 
-    // todo: integrate these two into caching function
-    bool can_acquire() {
-        const auto skipped = _lookup_index;
-        for (auto i = _lookup_index; i < _pointers.size(); i++) {
-            if (_pointers[i].use_count() == 1) {
-                return true;
-            }
-        }
-        for (size_t i = 0; i < skipped && i < _pointers.size(); i++) {
-            if (_pointers[i].use_count() == 1) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    /// Return amount of objects in the pool.
     size_t size() const { return _pointers.size(); }
 
 protected:

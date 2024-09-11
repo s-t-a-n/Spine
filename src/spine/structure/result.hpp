@@ -10,11 +10,6 @@ namespace spn::structure {
 
 namespace detail {
 
-// C++ has its quirks, such as std::variant not allowing duplicate types in its template parameters.
-// This unique solution was crafted with the assistance of ChatGPT 3.5 to handle such cases elegantly.
-// (note from monkey: the whole lot below with exception of the Result class is chatgpt's doing after untangling
-// kilometers of compiler errors into a quite neat solution)
-
 // Helper metafunctions for unique type list creation
 template<typename...>
 struct TypeList {};

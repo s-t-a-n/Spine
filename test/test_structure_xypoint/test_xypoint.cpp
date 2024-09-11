@@ -57,28 +57,28 @@ void ut_xypoint_math() {
 
     vec c;
     c = a;
-    c.Add(b);
+    c.add(b);
     TEST_ASSERT_TRUE(c == a + b);
 
     c = a;
-    c.Substract(b);
+    c.subtract(b);
     TEST_ASSERT_TRUE(c == a - b);
 
     for (double i = -100; i < 100; i++) {
         c = a;
-        c.ScalarMultiplication(i);
+        c.scalar_multiplication(i);
         TEST_ASSERT_TRUE(c == vec(i * a.x, i * a.y));
     }
 
     c = a;
-    double m = c.Mag();
+    double m = c.mag();
     TEST_ASSERT_TRUE(m == sqrt(5));
 
     c = a;
-    c.Normalize();
+    c.normalize();
     TEST_ASSERT_TRUE(c == vec(a.x / m, a.y / m));
 
-    c = a.Dot(b);
+    c = a.dot(b);
     TEST_ASSERT_TRUE(c == vec(a.x * b.x, a.y * b.y));
 }
 

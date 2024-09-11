@@ -1,7 +1,5 @@
 #pragma once
 
-#include "spine/platform/hal.hpp"
-
 namespace spn::structure {
 
 /*
@@ -14,15 +12,7 @@ struct XYZPoint {
 
     XYZPoint() : x(0), y(0), z(0) {}
     XYZPoint(T x_value, T y_value, T z_value) : x(x_value), y(y_value), z(z_value) {}
-    XYZPoint(const XYZPoint& other) { *this = other; }
-    ~XYZPoint() = default;
 
-    XYZPoint& operator=(const XYZPoint& other) {
-        x = other.x;
-        y = other.y;
-        z = other.z;
-        return *this;
-    }
     XYZPoint operator+(const XYZPoint& other) const { return XYZPoint<T>(x + other.x, y + other.y, z + other.z); }
     XYZPoint operator-(const XYZPoint& other) const { return XYZPoint<T>(x - other.x, y - other.y, z - other.z); }
     XYZPoint operator*(const XYZPoint& other) const { return XYZPoint<T>(x * other.x, y * other.y, z * other.z); }
@@ -31,29 +21,29 @@ struct XYZPoint {
     bool operator==(const XYZPoint& other) const { return (x == other.x && y == other.y && z == other.z); }
     bool operator!=(const XYZPoint& other) const { return (x != other.x || y != other.y || z != other.z); }
 
-    void Add(const XYZPoint& other) {
+    void add(const XYZPoint& other) {
         x += other.x;
         y += other.y;
         z += other.z;
     }
-    void Substract(const XYZPoint& other) {
+    void subtract(const XYZPoint& other) {
         x -= other.x;
         y -= other.y;
         z -= other.z;
     }
-    void ScalarMultiplication(T s) {
+    void scalar_multiplication(T s) {
         x *= s;
         y *= s;
         z *= s;
     }
-    T Mag() const { return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)); }
-    void Normalize() {
-        T mag = this->Mag();
+    T mag() const { return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)); }
+    void normalize() {
+        T mag = this->mag();
         x /= mag;
         y /= mag;
         z /= mag;
     }
-    XYZPoint Dot(const XYZPoint& other) const { return XYZPoint<T>(x * other.x, y * other.y, z * other.z); }
+    XYZPoint dot(const XYZPoint& other) const { return XYZPoint<T>(x * other.x, y * other.y, z * other.z); }
 };
 
 /*
@@ -66,14 +56,7 @@ struct XYPoint {
 
     XYPoint() : x(0), y(0) {}
     XYPoint(T x_value, T y_value) : x(x_value), y(y_value) {}
-    XYPoint(const XYPoint& other) { *this = other; }
-    ~XYPoint() = default;
 
-    XYPoint& operator=(const XYPoint& other) {
-        x = other.x;
-        y = other.y;
-        return *this;
-    }
     XYPoint operator+(const XYPoint& other) const { return XYPoint<T>(x + other.x, y + other.y); }
     XYPoint operator-(const XYPoint& other) const { return XYPoint<T>(x - other.x, y - other.y); }
     XYPoint operator*(const XYPoint& other) const { return XYPoint<T>(x * other.x, y * other.y); }
@@ -82,25 +65,25 @@ struct XYPoint {
     bool operator==(const XYPoint& other) const { return (x == other.x && y == other.y); }
     bool operator!=(const XYPoint& other) const { return (x != other.x || y != other.y); }
 
-    void Add(const XYPoint& other) {
+    void add(const XYPoint& other) {
         x += other.x;
         y += other.y;
     }
-    void Substract(const XYPoint& other) {
+    void subtract(const XYPoint& other) {
         x -= other.x;
         y -= other.y;
     }
-    void ScalarMultiplication(T s) {
+    void scalar_multiplication(T s) {
         x *= s;
         y *= s;
     }
-    T Mag() const { return sqrt(pow(x, 2) + pow(y, 2)); }
-    void Normalize() {
-        T mag = this->Mag();
+    T mag() const { return sqrt(pow(x, 2) + pow(y, 2)); }
+    void normalize() {
+        T mag = this->mag();
         x /= mag;
         y /= mag;
     }
-    XYPoint Dot(const XYPoint& other) const { return XYPoint<T>(x * other.x, y * other.y); }
+    XYPoint dot(const XYPoint& other) const { return XYPoint<T>(x * other.x, y * other.y); }
 };
 
 } // namespace spn::structure

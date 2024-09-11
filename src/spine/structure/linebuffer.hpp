@@ -1,6 +1,5 @@
 #pragma once
 
-#include "spine/core/debugging.hpp"
 #include "spine/structure/ringbuffer.hpp"
 
 #include <optional>
@@ -47,8 +46,6 @@ public:
         }
         pop(); // get rid off delimiter
         buffer[length] = '\0'; // guarantee null determination
-
-        DBG("get_next_line: {%s}, length: %i", buffer, length);
         return length;
     }
 
@@ -61,7 +58,7 @@ public:
             char v;
             pop(v);
         }
-        pop(); // get rid off delimiter
+        pop(); // get rid of delimiter
         return true;
     }
 

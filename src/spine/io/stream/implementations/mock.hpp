@@ -1,10 +1,8 @@
 #pragma once
 
 #include "spine/core/debugging.hpp"
-// #include "spine/io/stream/buffered_stream.hpp"
 #include "spine/io/stream/stream.hpp"
 #include "spine/structure/ringbuffer.hpp"
-// #include "spine/structure/vector.hpp"
 
 #include <vector>
 
@@ -65,10 +63,10 @@ protected:
 private:
     Config _cfg;
 
-    spn::structure::RingBuffer<uint8_t> _stdin;
-    spn::structure::RingBuffer<uint8_t> _stdout;
+    structure::RingBuffer<uint8_t> _stdin;
+    structure::RingBuffer<uint8_t> _stdout;
 
-    spn::structure::RingBuffer<uint8_t>* _active_in;
-    spn::structure::RingBuffer<uint8_t>* _active_out;
+    structure::RingBuffer<uint8_t>* _active_in;
+    structure::RingBuffer<uint8_t>* _active_out;
 };
 } // namespace spn::io

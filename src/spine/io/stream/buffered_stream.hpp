@@ -1,9 +1,7 @@
 #pragma once
 
-#include "spine/core/debugging.hpp"
 #include "spine/io/stream/stream.hpp"
 #include "spine/io/stream/transaction.hpp"
-#include "spine/platform/hal.hpp"
 #include "spine/structure/linebuffer.hpp"
 
 #include <memory>
@@ -30,9 +28,6 @@ public:
     size_t buffered_write(const char* const buffer, size_t lenght, bool rollover = false) {
         return _output_buffer.push(buffer, lenght, rollover);
     }
-    // size_t buffered_write(const uint8_t* const buffer, size_t lenght, bool rollover = false) {
-    // return buffered_write(reinterpret_cast<const char* const>(buffer), lenght, rollover);
-    // }
 
     /// Returns true if a delimited line was found
     bool has_line() const { return _input_buffer.length_of_next_line() > 0; }

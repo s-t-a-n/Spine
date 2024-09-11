@@ -48,11 +48,6 @@ public:
     };
 
     virtual void flush() { assert(!"Virtual base function called"); }
-
-protected:
-    // Config _cfg;
-    // spn::structure::LineBuffer _input_buffer;
-    // spn::structure::LineBuffer _output_buffer;
 };
 
 } // namespace spn::io

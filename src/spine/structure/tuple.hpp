@@ -2,8 +2,8 @@
 
 namespace spn::structure {
 
-/// a naive tuple implementation
 template<typename T0, typename T1>
+/// A naive tuple that does the trick.
 struct Tuple {
 public:
     Tuple(const T0& first, const T1& second) : m_t0(first), m_t1(second) {}

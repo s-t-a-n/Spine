@@ -63,12 +63,10 @@ void ut_pool_allocation_basics() {
         TEST_ASSERT_EQUAL(2 * size, sum_of_sp_usecounts(p));
         TEST_ASSERT_EQUAL(true, all_sp_usecounts_are(p, 2));
         TEST_ASSERT_EQUAL(false, bool(p.acquire()));
-        TEST_ASSERT_EQUAL(false, bool(p.can_acquire()));
 
         // verify that a slice becomes available when the shared ptr reaches a single reference to self
         { auto r = results.pop_back(); }
         TEST_ASSERT_EQUAL(true, bool(p.acquire()));
-        TEST_ASSERT_EQUAL(true, bool(p.can_acquire()));
         TEST_ASSERT_EQUAL(results.size() * 2 + 1, sum_of_sp_usecounts(p));
 
         // verify depopulate function and verify it's order of release
@@ -77,7 +75,6 @@ void ut_pool_allocation_basics() {
             TEST_ASSERT_EQUAL(true, bool(r_s));
             TEST_ASSERT_EQUAL_INT16(i, r_s->v);
         }
-        TEST_ASSERT_EQUAL(false, bool(p.can_acquire()));
         TEST_ASSERT_EQUAL(false, bool(p.acquire()));
 
         results.clear();
@@ -122,12 +119,10 @@ void ut_pool_repeat_use() {
         }
         TEST_ASSERT_EQUAL(true, all_sp_usecounts_are(p, 2));
         TEST_ASSERT_EQUAL(false, bool(p.acquire()));
-        TEST_ASSERT_EQUAL(false, bool(p.can_acquire()));
         results.clear();
         TEST_ASSERT_EQUAL(true, all_sp_usecounts_are(p, 1));
 
         TEST_ASSERT_EQUAL(true, bool(p.acquire()));
-        TEST_ASSERT_EQUAL(true, bool(p.can_acquire()));
         for (int i = 0; i < size; ++i) {
             auto r_s = p.acquire();
             TEST_ASSERT_EQUAL(true, r_s != nullptr);
@@ -135,7 +130,6 @@ void ut_pool_repeat_use() {
         }
         TEST_ASSERT_EQUAL(true, all_sp_usecounts_are(p, 2));
         TEST_ASSERT_EQUAL(false, bool(p.acquire()));
-        TEST_ASSERT_EQUAL(false, bool(p.can_acquire()));
         results.clear();
         TEST_ASSERT_EQUAL(true, all_sp_usecounts_are(p, 1));
 

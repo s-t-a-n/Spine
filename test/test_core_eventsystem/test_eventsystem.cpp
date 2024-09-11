@@ -1,16 +1,14 @@
-#if defined(ARDUINO) && defined(EMBEDDED)
-#    include <Arduino.h>
-#elif defined(ARDUINO)
-#    include <ArduinoFake.h>
-#endif
+// #if defined(ARDUINO) && defined(EMBEDDED)
+// #    include <Arduino.h>
+// #elif defined(ARDUINO)
+// #    include <ArduinoFake.h>
+// #endif
 
-#ifndef min
-#    define min(a, b) std::min(a, b)
-#endif
+#include "spine/eventsystem/eventsystem.hpp"
 
-#include <../../src/spine/eventsystem/eventsystem.hpp>
-#include <limits.h>
 #include <unity.h>
+
+#include <limits>
 
 using namespace spn::core;
 

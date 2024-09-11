@@ -4,15 +4,7 @@
 #include "spine/platform/hal.hpp"
 #include "spine/structure/array.hpp"
 
-// #if not defined(ARDUINO)
-// #    include <cstring>
-// #endif
-
 namespace spn::structure {
-
-/*******************************************************************************
-** Vector
-*******************************************************************************/
 
 // Topographical layout
 // m_head = 1
@@ -28,10 +20,7 @@ class Vector : public Array<T> {
 public:
     using Size = ArrayBase::Size;
 
-    // Vector(EmptyArrayTag&&);
-
     Vector(Size max_size);
-    // Vector(uint8_t* buffer, Size max_size);
     template<Size CAP>
     Vector(T (&store)[CAP], Size size = 0);
     Vector(Size max_size, T init_value);
@@ -91,8 +80,6 @@ private:
         memmove((char*)&this->m_store[idx], (char*)&this->m_store[m_head], size() * sizeof(T));
         const auto new_tail = idx + size();
         const auto new_head = idx;
-        // DBGF("memmoving to idx %i, head:%i, tail:%i, newhead:%i, newtail:%i, size:%i", idx, m_head, m_tail, new_head,
-        //      new_tail, size());
 
         // todo, optimize: only wipe elements that overlapped
         // todo: convert this brutal C-stuff into nice and fluffy CPP-stuff
@@ -109,16 +96,6 @@ private:
     Size m_head = 0;
     Size m_tail = 0;
 };
-
-/*******************************************************************************
-** Vector Definitions
-*******************************************************************************/
-
-// template<typename T>
-// Vector<T>::Vector(EmptyArrayTag&&) : Array<T>(EmptyArrayTag{}), m_head(0), m_tail(0) {}
-
-// template<typename T>
-// Vector<T>::Vector(uint8_t* buffer, ArrayBase::Size max_size) : Array<T>(buffer, max_size) {}
 
 template<typename T>
 Vector<T>::Vector(ArrayBase::Size max_size) : Array<T>(max_size) {}
@@ -155,10 +132,7 @@ const T& Vector<T>::operator[](ArrayBase::Size index) const {
 
 template<typename T>
 void Vector<T>::push_back(const T& item) {
-    if (m_tail >= this->max_size() && m_head > 0) {
-        // make space
-        rearrange(0);
-    }
+    if (m_tail >= this->max_size() && m_head > 0) rearrange(0);
     assert(m_tail < this->max_size());
 
     if (m_tail < this->max_size()) this->m_store[m_tail++] = item;
@@ -166,11 +140,9 @@ void Vector<T>::push_back(const T& item) {
 
 template<typename T>
 void Vector<T>::emplace_back(const T&& item) {
-    if (m_tail >= this->max_size() && m_head > 0) {
-        // make space
-        rearrange(0);
-    }
+    if (m_tail >= this->max_size() && m_head > 0) rearrange(0);
     assert(m_tail < this->max_size());
+
     if (m_tail < this->max_size()) {
         assert(sizeof(item) == sizeof(T));
         this->m_store[m_tail++] = std::move(item);
@@ -203,12 +175,6 @@ void Vector<T>::push_front(const T& item) {
         this->m_store[--m_head] = item;
         return;
     }
-    // DBGF("push_front, size: %i, m_head: %i, m_tail: %i", size(), m_head, m_tail);
-    //
-    // for (auto v : *this) {
-    //     HAL::print(v.use_count());
-    // }
-    // HAL::println("");
 
     // todo: use `rearrange()`
     // todo: convert this brutal C-stuff into nice and fluffy CPP-stuff
@@ -218,11 +184,6 @@ void Vector<T>::push_front(const T& item) {
 
     this->m_store[m_head] = item;
     m_tail++;
-
-    // for (auto v : *this) {
-    //     HAL::print(v.use_count());
-    // }
-    // HAL::println("");
 }
 
 template<typename T>
@@ -265,23 +226,12 @@ void Vector<T>::insert(ArrayBase::Size index, const T& item) {
         push_front(item);
         return;
     }
-
     if (m_head + index >= m_tail) {
         push_back(item);
         return;
     }
-
-    if (m_tail >= this->max_size() && m_head > 0) {
-        // make space
-        rearrange(0);
-    }
+    if (m_tail >= this->max_size() && m_head > 0) rearrange(0);
     assert(m_tail < this->max_size());
-
-    // DBGF("memmove target idx:%i, source idx: %i, length: %i, sizeof: %i", m_head + index + 1, m_head + index,
-    //      (m_tail - (m_head + index)), sizeof(T));
-
-    // DBGF("vector inserting @ %i, max_size: %i, size: %i m_head: %i, m_tail: %i", index, this->max_size(),
-    // this->size(), m_head, m_tail);
 
     // todo: convert this brutal C-stuff into nice and fluffy CPP-stuff
     memmove((char*)&this->m_store[m_head + index + 1], (char*)&this->m_store[m_head + index],
@@ -314,7 +264,6 @@ T Vector<T>::remove(ArrayBase::Size index) {
 
 template<typename T>
 void Vector<T>::clear() {
-    // todo: inefficient
     for (auto& v : *this) {
         const auto _ = pop_back();
     }

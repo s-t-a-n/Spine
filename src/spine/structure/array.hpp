@@ -1,7 +1,5 @@
 #pragma once
 
-#include "spine/core/debugging.hpp"
-
 #include <algorithm>
 #include <cstdint>
 #include <cstdlib>
@@ -12,8 +10,7 @@ namespace spn::structure {
 
 class ArrayBase {
 public:
-    // using Size = ptrdiff_t;
-    using Size = unsigned long int;
+    using Size = size_t;
 };
 
 /*******************************************************************************
@@ -57,17 +54,9 @@ public:
 ** Array
 *******************************************************************************/
 
-// struct EmptyArrayTag {};
-
 template<typename T>
 class Array : public ArrayBase {
 public:
-    // static_assert(std::is_copy_constructible_v<T>);
-    // static_assert(std::is_constructible_v<T>);
-
-public:
-    // Array(EmptyArrayTag&&);
-
     Array(Size max_size);
     Array(uint8_t* buffer, Size buffer_length);
     Array(Size max_size, T init_value);
@@ -85,9 +74,6 @@ public:
     using const_iterator = ArrayIterator<const T>;
     using reverse_iterator = ArrayReverseIterator<T>;
     using const_reverse_iterator = ArrayReverseIterator<const T>;
-
-    // template<Size CAP>
-    // void setBackingStore(T (&store)[CAP]);
 
     T& at(Size index) const;
     T& operator[](Size index);
@@ -129,13 +115,6 @@ private:
     bool m_store_is_internal;
 };
 
-/*******************************************************************************
-** Array Definitions
-*******************************************************************************/
-
-// template<typename T>
-// Array<T>::Array(EmptyArrayTag&&) : m_store(nullptr), m_max_size(0), m_store_is_internal(false) {}
-
 template<typename T>
 template<ArrayBase::Size CAP>
 Array<T>::Array(T (&store)[CAP]) : m_store(store), m_max_size(CAP), m_store_is_internal(false) {}
@@ -171,7 +150,6 @@ Array<T>::~Array() {
     if (m_store_is_internal) {
         std::free(m_store);
         m_store = nullptr;
-        DBG("Deleting array with size: %i", m_max_size);
     }
 }
 
@@ -217,14 +195,6 @@ Array<T>& Array<T>::operator=(const std::initializer_list<T>& value_list) noexce
     *this = Array<T>(value_list);
     return *this;
 }
-
-// template<typename T>
-// template<ArrayBase::Size CAP>
-// void Array<T>::setBackingStore(T (&store)[CAP]) {
-//     static_assert(CAP > 0, "setting backing store with empty size is not allowed.");
-//     m_store = store;
-//     m_max_size = CAP;
-// }
 
 template<typename T>
 T& Array<T>::at(Size index) const {
