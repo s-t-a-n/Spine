@@ -21,7 +21,6 @@
 #include "spine/io/sensor.hpp"
 #include "spine/io/stream/buffered_stream.hpp"
 #include "spine/io/stream/implementations/mock.hpp"
-#include "spine/io/stream/implementations/uart.hpp"
 #include "spine/io/stream/stream.hpp"
 #include "spine/io/stream/transaction.hpp"
 #include "spine/platform/gpio.hpp"
