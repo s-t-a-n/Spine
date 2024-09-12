@@ -125,9 +125,9 @@ DateTime::DateTime(int year, int month, int day, int hour, int min, int sec, int
  */
 DateTime::DateTime(const char* date, const char* time) {
     static const char month_names[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
-    static char month_buff[4] = {'0', '0', '0', '0'};
+    static char month_buff[5] = {'0', '0', '0', '0', '\0'};
     int year, day;
-    sscanf(date, "%s %2d %4d", month_buff, &day, &year);
+    sscanf(date, "%4s %2d %4d", month_buff, &day, &year);
     int month = (strstr(month_names, month_buff) - month_names) / 3 + 1;
     _tm.tm_year = year - 1900;
     _tm.tm_mon = month - 1;

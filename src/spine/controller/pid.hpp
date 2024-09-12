@@ -122,7 +122,7 @@ public:
 
         tuner.set_tuning_cycles(tune_config.cycles);
 
-        DBG("Starting autotuning for %u cycles", tune_config.cycles);
+        DBG("Starting autotuning for %i cycles", tune_config.cycles);
 
         // This must be called immediately before the tuning loop
         // Must be called with the current time in microseconds
@@ -139,7 +139,7 @@ public:
                 previous_cycle++;
                 const auto duration = HAL::millis() - previous_cycle_start;
                 [[maybe_unused]] const time_ms remaining = (tune_config.cycles - cycle) * duration;
-                DBG("Cycle %u complete in %i seconds, remaining: %i minutes", cycle, time_s(duration).printable(),
+                DBG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, time_s(duration).printable(),
                     time_m(remaining).printable());
                 previous_cycle_start = HAL::millis();
             }
@@ -150,7 +150,7 @@ public:
             // Call tunePID() with the input value and current time in microseconds
             const double control_value = tuner.do_autotune(process_value, iteration_start);
 
-            DBG("Cycle %u/%u: PV: %f, CV: %f", tuner.get_cycle(), tune_config.cycles, process_value, control_value);
+            DBG("Cycle %i/%i: PV: %f, CV: %f", tuner.get_cycle(), tune_config.cycles, process_value, control_value);
 
             // Set the output - tunePid() will return values within the range configured
             // by setOutputRange(). Don't change the value or the tuning results will be

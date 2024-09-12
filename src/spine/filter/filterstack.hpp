@@ -24,7 +24,7 @@ public:
     /// Detach a filter for a provided slot's index
     Filter<ValueType> detach_filter(uint8_t index) {
         assert(index < _filters.size());
-        return std::move(_filters.remove(index));
+        return _filters.remove(index);
     }
 
     /// Take a new sample, returns filtered value

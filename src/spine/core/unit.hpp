@@ -111,7 +111,7 @@ public:
     }
 
 private:
-    T _value;
+    T _value = 0;
 
     template<typename TagOther>
     T from_other(const Unit<U, TagOther, T>& other) const {

@@ -25,13 +25,13 @@ struct Platform {
     template<typename T>
     /// Print to monitor (no newline)
     static void print(T&& msg) {
-        PlatformImp::print(std::move(msg));
+        PlatformImp::print(std::forward<T>(msg));
     };
 
     template<typename T>
     /// Print to monitor (with newline)
     static void println(T&& msg) {
-        PlatformImp::println(std::move(msg));
+        PlatformImp::println(std::forward<T>(msg));
     };
 
     /// Flush to monitor

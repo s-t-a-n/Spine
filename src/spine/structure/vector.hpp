@@ -256,7 +256,7 @@ T Vector<T>::remove(ArrayBase::Size index) {
             m_tail = 0;
             m_head = 0;
         }
-        return std::move(removed);
+        return removed;
     }
     assert(!"remove was called with illegal index");
     return {};

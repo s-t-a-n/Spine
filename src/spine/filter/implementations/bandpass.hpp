@@ -53,7 +53,6 @@ public:
         assert(_cfg.mantissa >= 1.0 && _cfg.mantissa < 10.0); // sanity
         BandPass::update_limits();
     }
-    ~BandPass() override = default;
 
     /// Provide a new sample for filtering (optionally throws if value is out of band)
     void new_sample(const ValueType sample) override {

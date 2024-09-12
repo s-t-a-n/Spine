@@ -33,17 +33,18 @@ public:
     bool has_line() const { return _input_buffer.length_of_next_line() > 0; }
 
     /// Returns a std::string_view of the next available line or nullopt if no line is present in the buffer.
-    std::optional<std::string_view> get_next_line_view(std::optional<size_t> discovered_length = std::nullopt) {
+    std::optional<std::string_view> get_next_line_view(const std::optional<size_t>& discovered_length = std::nullopt) {
         return _input_buffer.get_next_line_view(discovered_length);
     }
 
     /// Writes the next available line into `buffer` and returns the amount of bytes read
-    size_t get_next_line(char* buffer, size_t max_length, std::optional<size_t> discovered_length = std::nullopt) {
+    size_t get_next_line(char* buffer, size_t max_length,
+                         const std::optional<size_t>& discovered_length = std::nullopt) {
         return _input_buffer.get_next_line(buffer, max_length, discovered_length);
     }
 
     /// Drop the next available line from the buffer. Returns `true` when a message was succesfully dropped
-    bool drop_next_line(std::optional<size_t> discovered_length = std::nullopt) {
+    bool drop_next_line(const std::optional<size_t>& discovered_length = std::nullopt) {
         return _input_buffer.drop_next_line(discovered_length);
     }
 

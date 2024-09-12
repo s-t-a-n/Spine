@@ -55,7 +55,7 @@ public:
     /// Depopulate a single element from the pool.
     [[nodiscard]] Pointer&& depopulate() {
         assert(!_pointers.empty());
-        return std::move(_pointers.pop_front());
+        return _pointers.pop_front();
     }
 
     /// Returns true if the pool is fully populated.

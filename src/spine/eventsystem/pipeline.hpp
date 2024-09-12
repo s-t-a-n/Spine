@@ -133,8 +133,6 @@ public:
         // Second pass to build the string
         pipeline_repr(&result, false);
 
-        if (result.capacity() > total_length)
-            DBG("to_string reallocated: was %u, is %u", total_length, result.capacity());
         assert(result.size() <= total_length); // no reallocation
         assert(result.capacity() == total_length); // no reallocation
         return result;

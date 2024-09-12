@@ -160,7 +160,7 @@ private:
 
     time_ms _last_time;
     double _cumulative_output;
-    double _last_reading;
+    double _last_reading = 0;
 
     time_ms _sampling_time;
     double _output_lower_limit;

@@ -185,32 +185,32 @@ public:
     }
 
     // Get results of most recent tuning
-    double get_Kp() { return kp; };
-    double get_Ki() { return ki; };
-    double get_Kd() { return kd; };
+    double get_Kp() const { return kp; };
+    double get_Ki() const { return ki; };
+    double get_Kd() const { return kd; };
 
     // Is the tuning loop finished?
-    bool is_finished() { return (cycle >= cycles); }
+    bool is_finished() const { return (cycle >= cycles); }
 
     // return number of tuning cycle
-    int get_cycle() { return cycle; }
+    int get_cycle() const { return cycle; }
 
 private:
 private:
     double targetInputValue = 0;
     double targetHysteresis = 0;
-    time_ms loopInterval;
-    double minOutput, maxOutput;
+    time_ms loopInterval = {};
+    double minOutput = 0, maxOutput = 0;
     Aggressiveness znMode = Aggressiveness::NoOvershoot;
     int cycles = 10;
 
-    int cycle; // current cycle
-    bool output; // is output on
-    double outputValue; // current output value
-    time_ms t1, t2, tHigh, tLow;
-    double max, min;
-    double pAverage, iAverage, dAverage;
-    double kp, ki, kd;
+    int cycle = 0; // current cycle
+    bool output = false; // is output on
+    double outputValue = 0; // current output value
+    time_ms t1 = {}, t2 = {}, tHigh = {}, tLow = {};
+    double max = 0, min = 0;
+    double pAverage = 0, iAverage = 0, dAverage = 0;
+    double kp = 0, ki = 0, kd = 0;
 };
 
 } // namespace spn::controller

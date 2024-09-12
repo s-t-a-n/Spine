@@ -78,8 +78,8 @@ public:
     Event() = default;
 
 private:
-    Id _id;
-    Data _data;
+    Id _id = {};
+    Data _data = {};
 
     friend EventStore;
     friend EventSystem;
