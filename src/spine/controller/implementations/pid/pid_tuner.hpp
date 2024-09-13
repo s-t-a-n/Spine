@@ -113,7 +113,7 @@ public:
             tLow = t2 - t1;
 
             // Calculate Ku (ultimate gain)
-            // Formula given is Ku = 4d / πa
+            // Formula given is Ku = 4d / (pi * a)
             // d is the amplitude of the output signal
             // a is the amplitude of the input signal
             const double ku = (4.0 * ((maxOutput - minOutput) / 2.0)) / (M_PI * (max - min) / 2.0);
