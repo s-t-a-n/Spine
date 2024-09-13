@@ -1,0 +1,4 @@
+doxysphinx==3.3.10
+sphinxcontrib-doxylink==1.12.3
+sphinx-rtd-theme==2.0.0
+sphinx==7.4.7
