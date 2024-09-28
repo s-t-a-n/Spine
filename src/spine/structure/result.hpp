@@ -74,45 +74,32 @@ struct Wrapper {
 
 } // namespace detail
 
-// inspired by the work of Ryan Lucas:
-// https://github.com/rlucas585/webserv/blob/develop/src/Result/src/result.hpp
+// Only slightly inspired on Rust's Result structure.
+// Kudos to Ryan Lucas @ github.com/rlucas585 for the inspiration
 
-/// Container for working through data with
+/// Container for function-driven processing with safety by default
 template<typename T, typename E = T, typename I = T>
 class Result {
 public:
-    enum class Type : uint8_t { UNDEFINED, OK, INTERMEDIARY, FAILED };
+    Result() : _type(Type::NO_VALUE) {}
 
-public:
-    Result() : _type(Type::UNDEFINED) {}
-
-    Result(const Result& other) : _v(other._v), _type(other._type) {}
-    Result(Result&& other) noexcept : _v(std::move(other._v)), _type(other._type) {}
-    Result& operator=(const Result& other) {
-        if (this == &other) return *this;
-        _v = other._v;
-        _type = other._type;
-        return *this;
-    }
-    Result& operator=(Result&& other) noexcept {
-        if (this == &other) return *this;
-        _v = std::move(other._v);
-        _type = other._type;
-        return *this;
-    }
+    Result(const Result& other) = default;
+    Result(Result&& other) noexcept = default;
+    Result& operator=(const Result& other) = default;
+    Result& operator=(Result&& other) noexcept = default;
     ~Result() = default;
 
     Result(const T& v) : _v(std::in_place, WrappedT(v)), _type(Type::OK) {}
     Result(T&& v) : _v(std::in_place, WrappedT(std::move(v))), _type(Type::OK) {}
 
-    bool is_success() const { return _type == Type::OK; }
-
     static Result intermediary(const I& v) { return Result(Type::INTERMEDIARY, WrappedI(v)); }
     static Result intermediary(I&& v) { return Result(Type::INTERMEDIARY, WrappedI(std::move(v))); }
-    bool is_intermediary() const { return _type == Type::INTERMEDIARY; }
 
     static Result failed(const E& v) { return Result(Type::FAILED, WrappedE(v)); }
     static Result failed(E&& v) { return Result(Type::FAILED, WrappedE(std::move(v))); }
+
+    bool is_success() const { return _type == Type::OK; }
+    bool is_intermediary() const { return _type == Type::INTERMEDIARY; }
     bool is_failed() const { return _type == Type::FAILED; }
 
     operator bool() const { return _type == Type::OK; }
@@ -157,24 +144,94 @@ public:
     const T& operator*() const { return value(); }
 
     template<typename F>
+    /// Chain multiple processors together. Falls through chain immediately on failure or success.
     Result chain(F&& func) {
-        using ResultType = Result<std::decay_t<T>, std::decay_t<E>, std::decay_t<I>>;
-        static_assert(std::is_same_v<ResultType, decltype(func(std::declval<I&>()))>,
-                      "Function passed to chain must return a Result<T, E, I> type.");
+        using ExpectedResult = Result<std::decay_t<T>, std::decay_t<E>, std::decay_t<I>>;
+        static_assert(std::is_invocable_r_v<ExpectedResult, F, I&>,
+                      "Function passed to chain must return a Result<T, E, I> and take I& as a parameter.");
         if (is_failed() || is_success()) {
             return *this;
         }
         return func(intermediary_value_mut());
     }
 
+    template<typename F>
+    auto map(F&& func) const -> Result<std::invoke_result_t<F, const T&>, E, I> {
+        using NewResultType = Result<std::invoke_result_t<F, const T&>, E, I>;
+        if (is_success()) return NewResultType(func(value()));
+        if (is_failed()) return NewResultType::failed(error_value());
+        if (is_intermediary()) return NewResultType::intermediary(intermediary_value());
+        return NewResultType(); // NO_VALUE case
+    }
+
+    template<typename F>
+    auto map_error(F&& func) const -> Result<T, std::invoke_result_t<F, const E&>, I> {
+        using NewResultType = Result<T, std::invoke_result_t<F, const E&>, I>;
+        if (is_failed()) return NewResultType::failed(func(error_value()));
+        if (is_success()) return NewResultType(value());
+        if (is_intermediary()) return NewResultType::intermediary(intermediary_value());
+        return NewResultType(); // NO_VALUE case
+    }
+
+    template<typename F>
+    auto map_intermediary(F&& func) const -> Result<T, E, std::invoke_result_t<F, const I&>> {
+        using NewResultType = Result<T, E, std::invoke_result_t<F, const I&>>;
+        if (is_intermediary()) return NewResultType::intermediary(func(intermediary_value()));
+        if (is_success()) return NewResultType(value());
+        if (is_failed()) return NewResultType::failed(error_value());
+        return NewResultType(); // NO_VALUE case
+    }
+
+    template<typename F>
+    auto and_then(F&& func) const -> std::invoke_result_t<F, const T&> {
+        using NewResultType = std::invoke_result_t<F, const T&>;
+        if (is_success()) return func(value()); // Chain the operation
+        if (is_failed()) return NewResultType::failed(error_value());
+        if (is_intermediary()) return NewResultType::intermediary(intermediary_value());
+        return NewResultType(); // NO_VALUE case
+    }
+
+    template<typename F>
+    auto or_else(F&& func) const -> std::invoke_result_t<F, const E&> {
+        using NewResultType = std::invoke_result_t<F, const E&>;
+        if (is_failed()) return func(error_value());
+        if (is_success()) return NewResultType(value());
+        if (is_intermediary()) return NewResultType::intermediary(intermediary_value());
+        return NewResultType(); // NO_VALUE case
+    }
+
+    template<typename SuccessFn, typename ErrorFn, typename IntermediaryFn>
+    auto match(SuccessFn&& success_fn, ErrorFn&& error_fn, IntermediaryFn&& intermediary_fn) const {
+        if (is_success()) return success_fn(value());
+        if (is_intermediary()) return intermediary_fn(intermediary_value());
+        return error_fn(error_value());
+    }
+
+    T value_or(T&& default_value) const {
+        if (is_success()) return value();
+        return std::forward<T>(default_value);
+    }
+
+    E error_or(E&& default_error) const {
+        if (is_failed()) return error_value();
+        return std::forward<E>(default_error);
+    }
+
+    template<typename F>
+    T unwrap_or_else(F&& fallback_func) const {
+        if (is_success()) return value();
+        return fallback_func();
+    }
+
 protected:
     I& intermediary_value_mut() {
         assert(is_intermediary());
-        assert(_v && std::holds_alternative<WrappedI>(*_v));
         return std::get<WrappedI>(*_v);
     }
 
 private:
+    enum class Type : uint8_t { NO_VALUE, OK, INTERMEDIARY, FAILED };
+
     using WrappedT = detail::Wrapper<T>;
     using WrappedE = detail::Wrapper<E>;
     using WrappedI = detail::Wrapper<I>;

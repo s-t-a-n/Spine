@@ -32,7 +32,7 @@ void ut_result_basics() {
     TEST_ASSERT_EQUAL(true, failed_result.is_failed());
 }
 
-void ut_result_parser() {
+void ut_result_basic_parser() {
     class Parser {
     public:
         using ParserResult = Result<double, std::string>;
@@ -85,7 +85,7 @@ void ut_result_parser() {
     TEST_ASSERT_EQUAL_STRING("stage_double: value was 0", result_conditional_error.error_value().c_str());
 }
 
-void ut_result_parser_chain() {
+void ut_result_chain() {
     class Parser {
     public:
         using ParseResult = spn::structure::Result<double, std::string, int>;
@@ -149,7 +149,7 @@ void ut_result_parser_chain() {
     TEST_ASSERT_EQUAL(42, result_early_success.value());
 }
 
-void ut_result_parser_chain_intermediary() {
+void ut_result_chain_intermediary() {
     class Parser {
     public:
         struct ParserHandle {
@@ -185,7 +185,7 @@ void ut_result_parser_chain_intermediary() {
     TEST_ASSERT_EQUAL(7, result.value());
 }
 
-void ut_result_parser_chain_single_type() {
+void ut_result_chain_single_type() {
     class Parser {
     public:
         struct Message {
@@ -222,15 +222,114 @@ void ut_result_parser_chain_single_type() {
     TEST_ASSERT_EQUAL_STRING("hello world world", result.value().value.c_str());
 }
 
+void ut_result_map() {
+    using ResultType = Result<int, std::string, int>;
+
+    auto result = ResultType(10);
+    auto mapped_result = result.map([](const int& value) { return value * 2; });
+
+    TEST_ASSERT_TRUE(mapped_result.is_success());
+    TEST_ASSERT_EQUAL(20, mapped_result.value());
+
+    auto failed_result = ResultType::failed("error");
+    auto mapped_error_result = failed_result.map_error([](const std::string& err) { return err + " modified"; });
+
+    TEST_ASSERT_TRUE(mapped_error_result.is_failed());
+    TEST_ASSERT_EQUAL_STRING("error modified", mapped_error_result.error_value().c_str());
+}
+
+void ut_result_map_intermediary() {
+    using ResultType = Result<int, std::string, int>;
+
+    auto intermediary_result = ResultType::intermediary(5);
+    auto mapped_intermediary =
+        intermediary_result.map_intermediary([](const int& intermediary) { return intermediary + 10; });
+
+    TEST_ASSERT_TRUE(mapped_intermediary.is_intermediary());
+    TEST_ASSERT_EQUAL(15, mapped_intermediary.intermediary_value());
+}
+
+void ut_result_and_then() {
+    using ResultType = Result<int, std::string, int>;
+
+    auto result = ResultType(10);
+    auto chained_result = result.and_then([](const int& value) { return ResultType(value * 2); });
+
+    TEST_ASSERT_TRUE(chained_result.is_success());
+    TEST_ASSERT_EQUAL(20, chained_result.value());
+
+    auto failed_result = ResultType::failed("error");
+    auto chained_on_error = failed_result.and_then([](const int& value) {
+        return ResultType(value * 2); // should not be invoked
+    });
+
+    TEST_ASSERT_TRUE(chained_on_error.is_failed());
+    TEST_ASSERT_EQUAL_STRING("error", chained_on_error.error_value().c_str());
+}
+
+void ut_result_or_else() {
+    using ResultType = Result<int, std::string, int>;
+
+    auto failed_result = ResultType::failed("error");
+    auto recovered_result = failed_result.or_else([](const std::string& err) {
+        return ResultType(42); // Fallback in case of error
+    });
+
+    TEST_ASSERT_TRUE(recovered_result.is_success());
+    TEST_ASSERT_EQUAL(42, recovered_result.value());
+}
+
+void ut_result_match() {
+    using ResultType = Result<int, std::string, int>;
+
+    auto result = ResultType(10);
+    int matched_value =
+        result.match([](const int& value) { return value * 2; }, [](const std::string& error) { return -1; },
+                     [](const int& intermediary) { return 0; });
+    TEST_ASSERT_EQUAL(20, matched_value);
+
+    auto failed_result = ResultType::failed("error");
+    int matched_failed_value =
+        failed_result.match([](const int& value) { return value * 2; }, [](const std::string& error) { return -1; },
+                            [](const int& intermediary) { return 0; });
+    TEST_ASSERT_EQUAL(-1, matched_failed_value);
+}
+
+void ut_result_value_or_error_or() {
+    using ResultType = Result<int, std::string, int>;
+
+    auto result = ResultType::failed("error");
+    int default_value = result.value_or(42);
+    TEST_ASSERT_EQUAL(42, default_value);
+
+    std::string default_error = result.error_or("default error");
+    TEST_ASSERT_EQUAL_STRING("error", default_error.c_str());
+}
+
+void ut_result_unwrap_or_else() {
+    using ResultType = Result<int, std::string, int>;
+
+    auto result = ResultType::failed("error");
+    int fallback_value = result.unwrap_or_else([]() { return 42; });
+    TEST_ASSERT_EQUAL(42, fallback_value);
+}
+
 } // namespace
 
 int run_all_tests() {
     UNITY_BEGIN();
     RUN_TEST(ut_result_basics);
-    RUN_TEST(ut_result_parser);
-    RUN_TEST(ut_result_parser_chain);
-    RUN_TEST(ut_result_parser_chain_intermediary);
-    RUN_TEST(ut_result_parser_chain_single_type);
+    RUN_TEST(ut_result_basic_parser);
+    RUN_TEST(ut_result_chain);
+    RUN_TEST(ut_result_chain_intermediary);
+    RUN_TEST(ut_result_chain_single_type);
+    RUN_TEST(ut_result_map);
+    RUN_TEST(ut_result_map_intermediary);
+    RUN_TEST(ut_result_and_then);
+    RUN_TEST(ut_result_or_else);
+    RUN_TEST(ut_result_match);
+    RUN_TEST(ut_result_value_or_error_or);
+    RUN_TEST(ut_result_unwrap_or_else);
     return UNITY_END();
 }
 
