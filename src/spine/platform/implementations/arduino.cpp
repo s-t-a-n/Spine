@@ -1,6 +1,6 @@
-#include "spine/platform/implementations/arduino.hpp"
-
 #if defined(ARDUINO)
+
+#    include "spine/platform/implementations/arduino.hpp"
 
 namespace spn::platform {
 
