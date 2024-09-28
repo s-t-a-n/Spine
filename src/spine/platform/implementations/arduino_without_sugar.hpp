@@ -1,5 +1,7 @@
 #pragma once
 
+#include "spine/platform/protocols/uart.hpp" // UART RX/TX buffer size defines
+
 #include <Arduino.h>
 
 // Undefine Arduino-specific macros if they are defined

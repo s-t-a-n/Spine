@@ -2,6 +2,14 @@
 
 #include "spine/io/stream/stream.hpp"
 
+#if not defined(SERIAL_TX_BUFFER_SIZE)
+#    define SERIAL_TX_BUFFER_SIZE 256 // Per standard, use an RX buffer of 256 bytes
+#endif
+
+#if not defined(SERIAL_RX_BUFFER_SIZE)
+#    define SERIAL_RX_BUFFER_SIZE 256 // Per standard, use an TX buffer of 256 bytes
+#endif
+
 namespace spn::platform {
 
 template<typename UARTImp>
