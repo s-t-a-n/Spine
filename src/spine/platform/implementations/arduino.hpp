@@ -18,6 +18,10 @@
 #include <type_traits>
 #include <utility>
 
+// Platform specific includes
+#ifdef ARDUINO_ARCH_ESP32
+#    include "driver/uart.h" // ESP32-specific include to manipulate the RX/TX buffer.
+#endif
 
 namespace spn::platform {
 
@@ -277,6 +281,11 @@ struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoUAR
 #endif
         if (cfg.baudrate > 0) {
             Serial.begin(cfg.baudrate);
+
+#ifdef ARDUINO_ARCH_ESP32
+            uart_driver_delete(UART_NUM_0); // Reinstall the UART driver with custom RX and TX buffer sizes
+            uart_driver_install(UART_NUM_0, SERIAL_RX_BUFFER_SIZE, SERIAL_TX_BUFFER_SIZE, 0, NULL, 0);
+#endif // Both AVR's and STM's rolls of Arduino respect the SERIAL_RX/TX_BUFFER_SIZE macros
         }
 
         // todo: set this up separately in an ADC/DAC module
