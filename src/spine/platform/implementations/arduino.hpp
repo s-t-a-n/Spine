@@ -1,73 +1,23 @@
 #pragma once
+#include "spine/core/debugging.hpp"
 #include "spine/core/logging.hpp"
+#include "spine/platform/gpio.hpp"
+#include "spine/platform/implementations/arduino_without_sugar.hpp"
+#include "spine/platform/platform.hpp"
+#include "spine/platform/protocols/uart.hpp"
 
-#ifdef ARDUINO
+#include <Wire.h>
 
-#    if not defined(UNITTEST)
-#        include "spine/platform/implementations/arduino_without_sugar.hpp"
-#    else
-#        include <ArduinoFake.h>
-#    endif
-#    include "spine/core/debugging.hpp"
-#    include "spine/platform/gpio.hpp"
-#    include "spine/platform/platform.hpp"
-#    include "spine/platform/protocols/uart.hpp"
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <limits>
+#include <memory>
+#include <type_traits>
+#include <utility>
 
-#    include <Wire.h>
-
-#    include <algorithm>
-#    include <cmath>
-#    include <cstddef>
-#    include <cstdint>
-#    include <cstdlib>
-#    include <limits>
-#    include <memory>
-#    include <type_traits>
-#    include <utility>
-
-#    if defined(NATIVE)
-
-#        define ARDUINO_MOCK_ALL()                                                                                     \
-            {                                                                                                          \
-                using namespace fakeit;                                                                                \
-                When(Method(ArduinoFake(), pinMode)).Return();                                                         \
-                When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();                                              \
-                When(Method(ArduinoFake(), digitalRead)).AlwaysReturn(0);                                              \
-                When(Method(ArduinoFake(), analogRead)).AlwaysReturn(0);                                               \
-                When(Method(ArduinoFake(), analogWrite)).AlwaysReturn();                                               \
-                When(Method(ArduinoFake(), analogReference)).AlwaysReturn();                                           \
-                When(Method(ArduinoFake(), delay)).AlwaysReturn();                                                     \
-                When(Method(ArduinoFake(), millis)).AlwaysReturn(0);                                                   \
-                When(Method(ArduinoFake(), micros)).AlwaysReturn(0);                                                   \
-                When(Method(ArduinoFake(), cli)).AlwaysReturn();                                                       \
-                When(OverloadedMethod(ArduinoFake(Serial), print, size_t(char))).AlwaysReturn();                       \
-                When(OverloadedMethod(ArduinoFake(Serial), print, size_t(const char*))).AlwaysReturn();                \
-                When(OverloadedMethod(ArduinoFake(Serial), print, size_t(unsigned char, int))).AlwaysReturn();         \
-                When(OverloadedMethod(ArduinoFake(Serial), print, size_t(int, int))).AlwaysReturn();                   \
-                When(OverloadedMethod(ArduinoFake(Serial), print, size_t(long, int))).AlwaysReturn();                  \
-                When(OverloadedMethod(ArduinoFake(Serial), print, size_t(double, int))).AlwaysReturn();                \
-                When(OverloadedMethod(ArduinoFake(Serial), print, size_t(unsigned int, int))).AlwaysReturn();          \
-                When(OverloadedMethod(ArduinoFake(Serial), print, size_t(unsigned long, int))).AlwaysReturn();         \
-                When(OverloadedMethod(ArduinoFake(Serial), println, size_t())).AlwaysReturn();                         \
-                When(OverloadedMethod(ArduinoFake(Serial), println, size_t(char))).AlwaysReturn();                     \
-                When(OverloadedMethod(ArduinoFake(Serial), println, size_t(const char*))).AlwaysReturn();              \
-                When(OverloadedMethod(ArduinoFake(Serial), println, size_t(unsigned char, int))).AlwaysReturn();       \
-                When(OverloadedMethod(ArduinoFake(Serial), println, size_t(int, int))).AlwaysReturn();                 \
-                When(OverloadedMethod(ArduinoFake(Serial), println, size_t(long, int))).AlwaysReturn();                \
-                When(OverloadedMethod(ArduinoFake(Serial), println, size_t(double, int))).AlwaysReturn();              \
-                When(OverloadedMethod(ArduinoFake(Serial), println, size_t(unsigned int, int))).AlwaysReturn();        \
-                When(OverloadedMethod(ArduinoFake(Serial), println, size_t(unsigned long, int))).AlwaysReturn();       \
-                When(Method(ArduinoFake(Serial), end)).AlwaysReturn();                                                 \
-                When(Method(ArduinoFake(Serial), flush)).AlwaysReturn();                                               \
-                When(Method(ArduinoFake(Serial), available)).Return(0, 1);                                             \
-                When(OverloadedMethod(ArduinoFake(Serial), write, size_t(uint8_t))).Return(1);                         \
-                When(OverloadedMethod(ArduinoFake(Serial), begin, void(unsigned long))).AlwaysReturn();                \
-            }
-#    else
-#        define ARDUINO_MOCK_ALL()                                                                                     \
-            {}
-
-#    endif
 
 namespace spn::platform {
 
@@ -131,9 +81,9 @@ public:
     ~ArduinoAnalogueOutput() {}
 
     void initialize() {
-#    if defined(EMBEDDED)
+#if defined(EMBEDDED)
         analogWriteResolution(_cfg.resolution);
-#    endif
+#endif
         set_value(0.0);
     }
 
@@ -240,12 +190,12 @@ public:
         _mode = mode_actual;
         _callback = callback_actual;
 
-#    if defined(__AVR_ATmega8__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
+#if defined(__AVR_ATmega8__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
         ::attachInterrupt(_cfg.pin, callback_actual, mode_bits);
-#    else
+#else
         assert(digitalPinToInterrupt(_cfg.pin) != NOT_AN_INTERRUPT);
         ::attachInterrupt(digitalPinToInterrupt(_cfg.pin), callback_actual, mode_bits);
-#    endif
+#endif
     }
 
     void detach_interrupt() { ::detachInterrupt(_cfg.pin); }
@@ -261,11 +211,11 @@ private:
 // that doesnt implement 'availableForWrite'. We are left to wonder why a UART/USART class would inherit from a Serial
 // class and not the other way around (Interface>Implementation). Since SAM is the only platform from Arduino's own
 // lineup that is supported, we make a special case for this board.
-#    if defined(SAM)
-#        define UART_T ::UARTClass
-#    else
-#        define UART_T ::HardwareSerial
-#    endif
+#if defined(SAM)
+#    define UART_T ::UARTClass
+#else
+#    define UART_T ::HardwareSerial
+#endif
 
 class ArduinoUART : public UART<ArduinoUART> {
 public:
@@ -322,9 +272,9 @@ struct ArduinoConfig {
 
 struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoUART> {
     static void initialize(Config&& cfg) {
-#    if defined(NATIVE)
+#if defined(NATIVE)
         ARDUINO_MOCK_ALL();
-#    endif
+#endif
         if (cfg.baudrate > 0) {
             Serial.begin(cfg.baudrate);
         }
@@ -370,5 +320,3 @@ struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoUAR
 };
 
 } // namespace spn::platform
-
-#endif
