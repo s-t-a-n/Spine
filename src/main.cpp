@@ -4,6 +4,7 @@
 #include "spine/core/debugging.hpp"
 #include "spine/core/exception.hpp"
 #include "spine/core/meta/enum.hpp"
+#include "spine/core/meta/unique_type_variant.hpp"
 #include "spine/core/schedule.hpp"
 #include "spine/core/timers.hpp"
 #include "spine/core/utils/concatenate.hpp"

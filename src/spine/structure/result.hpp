@@ -1,6 +1,7 @@
 #pragma once
 
 #include "spine/core/debugging.hpp"
+#include "spine/core/meta/unique_type_variant.hpp"
 
 #include <optional>
 #include <type_traits>
@@ -8,71 +9,7 @@
 
 namespace spn::structure {
 
-namespace detail {
-
-// Helper metafunctions for unique type list creation
-template<typename...>
-struct TypeList {};
-
-template<typename List, typename T>
-struct Prepend;
-
-template<typename... Ts, typename T>
-struct Prepend<TypeList<Ts...>, T> {
-    using type = TypeList<T, Ts...>;
-};
-
-template<typename List, typename T>
-struct Contains;
-
-template<typename T>
-struct Contains<TypeList<>, T> : std::false_type {};
-
-template<typename Head, typename... Tail, typename T>
-struct Contains<TypeList<Head, Tail...>, T>
-    : std::conditional_t<std::is_same_v<Head, T>, std::true_type, Contains<TypeList<Tail...>, T>> {};
-
-template<typename List, typename T>
-constexpr bool Contains_v = Contains<List, T>::value;
-
-template<typename... Ts>
-struct UniqueHelper;
-
-template<typename Head, typename... Tail>
-struct UniqueHelper<Head, Tail...> {
-    using type =
-        std::conditional_t<Contains_v<typename UniqueHelper<Tail...>::type, Head>, typename UniqueHelper<Tail...>::type,
-                           typename Prepend<typename UniqueHelper<Tail...>::type, Head>::type>;
-};
-
-template<>
-struct UniqueHelper<> {
-    using type = TypeList<>;
-};
-
-template<typename... Ts>
-using Unique = typename UniqueHelper<Ts...>::type;
-
-// Convert TypeList to std::variant
-template<typename>
-struct ToVariant;
-
-template<typename... Ts>
-struct ToVariant<TypeList<Ts...>> {
-    using type = std::variant<Ts...>;
-};
-
-/// Wrapper to create unique types
-template<typename T>
-struct Wrapper {
-    T value;
-    Wrapper(T&& v) : value(std::forward<T>(v)) {}
-    Wrapper(const T& v) : value(v) {}
-    operator T&() { return value; }
-    operator const T&() const { return value; }
-};
-
-} // namespace detail
+namespace uv = spn::core::meta::unique_variant;
 
 // Only slightly inspired on Rust's Result structure.
 // Kudos to Ryan Lucas @ github.com/rlucas585 for the inspiration
@@ -232,11 +169,11 @@ protected:
 private:
     enum class Type : uint8_t { NO_VALUE, OK, INTERMEDIARY, FAILED };
 
-    using WrappedT = detail::Wrapper<T>;
-    using WrappedE = detail::Wrapper<E>;
-    using WrappedI = detail::Wrapper<I>;
+    using WrappedT = uv::Wrapper<T>;
+    using WrappedE = uv::Wrapper<E>;
+    using WrappedI = uv::Wrapper<I>;
 
-    using Value = typename detail::ToVariant<detail::Unique<WrappedT, WrappedE, WrappedI>>::type;
+    using Value = typename uv::ToVariant<uv::Unique<WrappedT, WrappedE, WrappedI>>::type;
 
     Result(Type type, const Value& v) : _v(v), _type(type) {}
     Result(Type type, Value&& v) : _v(std::move(v)), _type(type) {}
