@@ -10,7 +10,7 @@
  * - Removed unneeded functionality
  *********************************************************************************************/
 
-#include <spine/structure/units/si.hpp>
+#include "spine/structure/units/si.hpp"
 
 #include <climits>
 #include <cstdint>

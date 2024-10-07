@@ -1,10 +1,10 @@
 #pragma once
 
 #include "spine/core/debugging.hpp"
-#include "spine/core/timers.hpp"
 #include "spine/eventsystem/pipeline.hpp"
 #include "spine/structure/array.hpp"
 #include "spine/structure/pool.hpp"
+#include "spine/structure/time/timers.hpp"
 #include "spine/structure/units/si.hpp"
 #include "spine/structure/vector.hpp"
 

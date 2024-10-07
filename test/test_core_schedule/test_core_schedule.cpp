@@ -1,5 +1,6 @@
+#include "spine/structure/time/schedule.hpp"
+
 #include <limits.h>
-#include <spine/core/schedule.hpp>
 #include <unity.h>
 
 namespace {

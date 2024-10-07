@@ -10,7 +10,7 @@
  * - Removed unneeded functionality
  *********************************************************************************************/
 
-#include "spine/core/datetime.hpp"
+#include "datetime.hpp"
 
 #include "spine/core/debugging.hpp"
 
