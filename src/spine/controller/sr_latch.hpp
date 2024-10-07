@@ -27,7 +27,7 @@ public:
 
     SRLatch(const Config&& cfg) : _cfg(std::move(cfg)), _last_turned(Timer(HAL::millis() - _cfg.minimal_off_time)) {}
 
-    void initialize() {}; // boilerplate
+    void initialize(){}; // boilerplate
 
     void new_reading(double value) {
         if (_value == LogicalState::ON && _last_turned.time_since_last(Timer::NoReset) < _cfg.minimal_on_time) return;

@@ -20,7 +20,7 @@ class Pipeline;
 class Future {
 public:
     Future(time_ms time_from_now = time_ms{0})
-        : _time_from_now(time_from_now), _timer(time::AlarmTimer(time_from_now)) {};
+        : _time_from_now(time_from_now), _timer(time::AlarmTimer(time_from_now)){};
 
     bool operator<(const Future& other) const { return _timer.time_from_now() < other._timer.time_from_now(); }
     bool operator==(const Future& other) const { return _timer.time_from_now() == other._timer.time_from_now(); }
