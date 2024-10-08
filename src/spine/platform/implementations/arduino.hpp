@@ -1,4 +1,14 @@
 #pragma once
+
+#define SPINE_PLATFORM_CAP_UART
+#define SPINE_PLATFORM_CAP_GPIO
+#define SPINE_PLATFORM_CAP_GPIO_INTERRUPTS
+#define SPINE_PLATFORM_CAP_ADC
+#define SPINE_PLATFORM_CAP_PWM
+#define SPINE_PLATFORM_CAP_PRINT
+#define SPINE_PLATFORM_CAP_PRINTF
+#define SPINE_PLATFORM_CAP_MEMORY_METRICS
+
 #include "spine/core/debugging.hpp"
 #include "spine/core/logging.hpp"
 #include "spine/platform/gpio.hpp"
@@ -264,17 +274,19 @@ private:
 struct ArduinoGPIO {
     using DigitalOutput = ArduinoDigitalOutput;
     using DigitalInput = ArduinoDigitalInput;
+    using Interrupt = ArduinoInterrupt;
+};
+
+struct ArduinoAnalogue {
     using AnalogueOutput = ArduinoAnalogueOutput;
     using AnalogueInput = ArduinoAnalogueInput;
-
-    using Interrupt = ArduinoInterrupt;
 };
 
 struct ArduinoConfig {
     uint32_t baudrate;
 };
 
-struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoUART> {
+struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoAnalogue, ArduinoUART> {
     static void initialize(Config&& cfg) {
 #if defined(NATIVE)
         ARDUINO_MOCK_ALL();

@@ -2,18 +2,51 @@
 
 #include "spine/structure/units/si.hpp"
 
-#include <cstdarg>
-#include <cstdio>
-
+#if defined(SPINE_PLATFORM_CAP_PRINTF)
+#    include <cstdarg>
+#    include <cstdio>
+#endif
 namespace spn::platform {
 
-template<typename PlatformImp, typename PlatformConfig, typename GPIOImp, typename UARTImp>
+#if defined(SPINE_PLATFORM_CAP_GPIO_INTERRUPTS) and not defined(SPINE_PLATFORM_CAP_GPIO)
+#    error "SPINE_PLATFORM_CAP_GPIO_INTERRUPTS was defined without SPINE_PLATFORM_CAP_GPIO"
+#endif
+
+template<typename PlatformImp, typename PlatformConfig
+#if defined(SPINE_PLATFORM_CAP_GPIO)
+         ,
+         typename GPIOImp
+#endif
+#if defined(SPINE_PLATFORM_CAP_ADC) || defined(SPINE_PLATFORM_CAP_PWM)
+         ,
+         typename AnalogueImp
+#endif
+#if defined(SPINE_PLATFORM_CAP_UART)
+         ,
+         typename UARTImp
+#endif
+         >
 struct Platform {
+#if defined(SPINE_PLATFORM_CAP_GPIO)
     using DigitalOutput = typename GPIOImp::DigitalOutput;
     using DigitalInput = typename GPIOImp::DigitalInput;
-    using AnalogueOutput = typename GPIOImp::AnalogueOutput;
-    using AnalogueInput = typename GPIOImp::AnalogueInput;
+#endif
+#if defined(SPINE_PLATFORM_CAP_PWM)
+    using AnalogueOutput = typename AnalogueImp::AnalogueOutput;
+#endif
+
+#if defined(SPINE_PLATFORM_CAP_ADC)
+    using AnalogueInput = typename AnalogueImp::AnalogueInput;
+#endif
+
+#if defined(SPINE_PLATFORM_CAP_GPIO_INTERRUPTS)
     using Interrupt = typename GPIOImp::Interrupt;
+#endif
+
+#if defined(SPINE_PLATFORM_CAP_UART)
+    using UART = UARTImp;
+#endif
+
     using Config = PlatformConfig;
 
     /// Initialize the platform (i.e. set up monitor, etc)
@@ -22,6 +55,7 @@ struct Platform {
     /// Halt the platform (disables all interrupts), optional prints a message to monitor provided by `msg`
     static void halt(const char* msg = nullptr) { PlatformImp::halt(msg); }
 
+#if defined(SPINE_PLATFORM_CAP_PRINT)
     template<typename T>
     /// Print to monitor (no newline)
     static void print(T&& msg) {
@@ -37,6 +71,7 @@ struct Platform {
     /// Flush to monitor
     static void printflush() { PlatformImp::printflush(); }
 
+#    if defined(SPINE_PLATFORM_CAP_PRINTF)
     /// Print to monitor using the printf delivery mechanism
     static void printf(const char* format, ...) {
         constexpr auto buffer_length = 256; // completely arbitrary
@@ -48,6 +83,8 @@ struct Platform {
         va_end(args);
         print(buffer);
     }
+#    endif
+#endif
 
     /// Returns the milliseconds expired since application start up (rolls around)
     static time_ms millis() { return PlatformImp::millis(); }
@@ -70,9 +107,9 @@ struct Platform {
     /// Sleep this thread for the provided `ms` in milliseconds
     static void delay_ms(uint32_t ms) { PlatformImp::delay_ms(time_ms(ms)); };
 
+#if defined(SPINE_PLATFORM_CAP_MEMORY_METRICS)
     /// Returns the amount of allocatable bytes
     static unsigned long free_memory() { return PlatformImp::free_memory(); }
-
-    using UART = UARTImp;
+#endif
 };
 } // namespace spn::platform

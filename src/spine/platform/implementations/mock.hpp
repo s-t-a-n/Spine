@@ -2,6 +2,15 @@
 
 #ifdef NATIVE
 
+#    define SPINE_PLATFORM_CAP_UART
+#    define SPINE_PLATFORM_CAP_GPIO
+#    define SPINE_PLATFORM_CAP_GPIO_INTERRUPTS
+#    define SPINE_PLATFORM_CAP_ADC
+#    define SPINE_PLATFORM_CAP_PWM
+#    define SPINE_PLATFORM_CAP_PRINT
+#    define SPINE_PLATFORM_CAP_PRINTF
+#    define SPINE_PLATFORM_CAP_MEMORY_METRICS
+
 #    include "spine/core/debugging.hpp"
 #    include "spine/io/stream/stream.hpp"
 #    include "spine/platform/gpio.hpp"
@@ -162,10 +171,12 @@ private:
 struct MockGPIO {
     using DigitalOutput = MockDigitalOutput;
     using DigitalInput = MockDigitalInput;
+    using Interrupt = MockInterrupt;
+};
+
+struct MockAnalogue {
     using AnalogueOutput = MockAnalogueOutput;
     using AnalogueInput = MockAnalogueInput;
-
-    using Interrupt = MockInterrupt;
 };
 
 struct MockConfig {
@@ -179,7 +190,7 @@ static inline struct MockState {
     time_t micros = 0;
 } g_mock_state;
 
-struct Mock : Platform<Mock, MockConfig, MockGPIO, MockUART> {
+struct Mock : Platform<Mock, MockConfig, MockGPIO, MockAnalogue, MockUART> {
     static void initialize(Config&& cfg){};
 
     static void halt(const char* msg = nullptr) {}
