@@ -22,7 +22,6 @@
 #include "spine/io/stream/transaction.hpp"
 #include "spine/platform/gpio.hpp"
 #include "spine/platform/hal.hpp"
-#include "spine/platform/platform.hpp"
 #include "spine/platform/protocols/uart.hpp"
 #include "spine/structure/array.hpp"
 #include "spine/structure/linebuffer.hpp"
