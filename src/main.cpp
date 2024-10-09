@@ -41,13 +41,13 @@
 void setup() {
     HAL::initialize(HAL::Config{.baudrate = 115200});
     HAL::delay_ms(500); // give time for monitor to connect after flashing
-    LOG("Wake up");
+    SPN_LOG("Wake up");
 
-    LOG("End of setup. Entering main program.");
+    SPN_LOG("End of setup. Entering main program.");
 }
 
 void loop() {
-    DBG("loop");
+    SPN_DBG("loop");
     HAL::delay_ms(1000);
 }
 

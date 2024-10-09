@@ -48,10 +48,10 @@ public:
         }
 
         if (value > _cfg.high) {
-            DBG("SRLatch: triggered by high value of %f (lim: %f)", value, _cfg.high);
+            SPN_DBG("SRLatch: triggered by high value of %f (lim: %f)", value, _cfg.high);
             set(State::ON);
         } else if (value < _cfg.low) {
-            DBG("SRLatch: triggered by low value of %f (lim: %f)", value, _cfg.low);
+            SPN_DBG("SRLatch: triggered by low value of %f (lim: %f)", value, _cfg.low);
             set(State::OFF);
         }
     }

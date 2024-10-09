@@ -75,7 +75,7 @@ public:
     /// Autotune the proportional weights for the target_setpoint
     Tunings autotune(const TuneConfig& tune_config, std::function<void(double)> process_setter,
                      std::function<double(void)> process_getter, std::function<void(void)> loop = {}) {
-        LOG("Starting autotune");
+        SPN_LOG("Starting autotune");
 
         using spn::core::time::AlarmTimer;
         const auto block_until_setpoint = [&](const double setpoint, time_ms timeout = time_ms(0),
@@ -84,16 +84,16 @@ public:
             while (process_getter() < setpoint && (!timer.expired() || timeout == time_ms(0))) {
                 process_setter(_cfg.output_upper_limit);
                 if (loop) loop();
-                DBG("Waiting until temperature of %.2f C reaches %.2f C, saturating thermal capacitance",
-                    process_getter(), setpoint);
+                SPN_DBG("Waiting until temperature of %.2f C reaches %.2f C, saturating thermal capacitance",
+                        process_getter(), setpoint);
                 HAL::delay(time_ms(1000));
             }
             process_setter(_cfg.output_lower_limit);
             if (loop) loop();
             if (saturated) return;
             while (process_getter() > setpoint && (!timer.expired() || timeout == time_ms(0))) {
-                DBG("Waiting until temperature of %.2f C reaches %.2f C, unloading thermal capacitance",
-                    process_getter(), setpoint);
+                SPN_DBG("Waiting until temperature of %.2f C reaches %.2f C, unloading thermal capacitance",
+                        process_getter(), setpoint);
                 HAL::delay(time_ms(1000));
             }
         };
@@ -132,7 +132,7 @@ public:
 
         tuner.set_tuning_cycles(tune_config.cycles);
 
-        LOG("Starting autotuning loop for %i cycles", tune_config.cycles);
+        SPN_LOG("Starting autotuning loop for %i cycles", tune_config.cycles);
 
         // This must be called immediately before the tuning loop
         // Must be called with the current time in microseconds
@@ -149,8 +149,8 @@ public:
                 previous_cycle++;
                 const auto duration = HAL::millis() - previous_cycle_start;
                 [[maybe_unused]] const time_ms remaining = (tune_config.cycles - cycle) * duration;
-                DBG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, time_s(duration).printable(),
-                    time_m(remaining).printable());
+                SPN_DBG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, time_s(duration).printable(),
+                        time_m(remaining).printable());
                 previous_cycle_start = HAL::millis();
             }
 
@@ -160,7 +160,7 @@ public:
             // Call tunePID() with the input value and current time in microseconds
             const double control_value = tuner.do_autotune(process_value, iteration_start);
 
-            LOG("Cycle %i/%i: PV: %f, CV: %f", tuner.get_cycle(), tune_config.cycles, process_value, control_value);
+            SPN_LOG("Cycle %i/%i: PV: %f, CV: %f", tuner.get_cycle(), tune_config.cycles, process_value, control_value);
 
             // Set the output - tunePid() will return values within the range configured
             // by setOutputRange(). Don't change the value or the tuning results will be

@@ -10,7 +10,7 @@ int main() {
         MyExceptionHandler() {}
 
         void handle_exception(const spn::core::Exception& exception) override {
-            ERR("MyExceptionHandler: Handling exception: %s", exception.error_type());
+            SPN_ERR("MyExceptionHandler: Handling exception: %s", exception.error_type());
             // perform a safe shutdown
         }
     };

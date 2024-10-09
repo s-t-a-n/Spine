@@ -19,7 +19,7 @@ struct Zephyr : Platform<Zephyr, ZephyrConfig> {
 
     static void halt(const char* msg = nullptr) {
         if (msg) {
-            LOG_ERR("System halt: %s", msg);
+            SPN_LOG_ERR("System halt: %s", msg);
         }
         k_panic(); // Halt the system in Zephyr
     }
