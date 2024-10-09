@@ -44,7 +44,7 @@ public:
 
 protected:
     void initialize_impl() {}
-    void set_state_impl(LogicalState state) {}
+    void set_state_impl(core::LogicalState state) {}
 
     friend DigitalOutput;
 

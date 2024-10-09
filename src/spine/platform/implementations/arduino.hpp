@@ -48,8 +48,8 @@ public:
 protected:
     void initialize_impl() { pinMode(_cfg.pin, OUTPUT); }
 
-    void set_state_impl(LogicalState state) {
-        if (state == LogicalState::ON) digitalWrite(_cfg.pin, !_cfg.active_on_low);
+    void set_state_impl(core::LogicalState state) {
+        if (state == core::LogicalState::ON) digitalWrite(_cfg.pin, !_cfg.active_on_low);
         else
             digitalWrite(_cfg.pin, _cfg.active_on_low);
     }
@@ -283,7 +283,7 @@ struct ArduinoAnalogue {
 };
 
 struct ArduinoConfig {
-    uint32_t baudrate;
+    uint32_t baudrate = 115200;
 };
 
 struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoAnalogue, ArduinoUART> {
