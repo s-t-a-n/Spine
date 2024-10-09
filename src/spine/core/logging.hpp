@@ -21,38 +21,64 @@ bool is_loggable(LogLevel level);
 
 namespace detail {
 void print(LogLevel level, const char* filename, int line_number, const char* function_name, const char* fmt, ...);
-
-#ifdef LOG_IMPL
-#    error "LOG_IMPL is already defined"
-#endif
-
-#define LOG_IMPL(level, ...)                                                                                           \
-    {                                                                                                                  \
-        if (spn::logging::is_loggable(level)) {                                                                        \
-            spn::logging::detail::print(level, __FILE__, __LINE__, __func__, __VA_ARGS__);                             \
-        }                                                                                                              \
-    }
 } // namespace detail
+
+#ifndef SPN_LOG_IMPL
+/// A user overloadable logging macro that takes a log level (see above) and a printf-style statement
+#    define SPN_LOG_IMPL(level, ...)                                                                                   \
+        {                                                                                                              \
+            if (spn::logging::is_loggable(level)) {                                                                    \
+                spn::logging::detail::print(level, __FILE__, __LINE__, __func__, __VA_ARGS__);                         \
+            }                                                                                                          \
+        }
+#endif
 
 } // namespace spn::logging
 
-#ifdef LOG
-#    error "LOG is already defined"
+/*
+ * LOG: an event that is logged to keep track of the machines normal operation.
+ */
+
+#ifdef SPN_LOG
+#    error "SPN_LOG is already defined"
 #endif
 
 /// Logging macro for informational messages
-#define LOG(...) LOG_IMPL(spn::logging::LogLevel::INFO, __VA_ARGS__)
+#define SPN_LOG(...) SPN_LOG_IMPL(spn::logging::LogLevel::INFO, __VA_ARGS__)
 
-#ifdef WARN
-#    error "WARN is already defined"
+// Alias for SPN_LOG if it was not previously defined.
+#ifndef LOG
+#    define LOG(...) SPN_LOG(__VA_ARGS__)
+#endif
+
+/*
+ * WARN: a recoverable problem that can occur under normal operation but is logged to keep track of.
+ */
+
+#ifdef SPN_WARN
+#    error "SPN_WARN is already defined"
 #endif
 
 /// Logging macro for warning messages
-#define WARN(...) LOG_IMPL(spn::logging::LogLevel::WARN, __VA_ARGS__)
+#define SPN_WARN(...) SPN_LOG_IMPL(spn::logging::LogLevel::WARN, __VA_ARGS__)
 
-#ifdef ERR
-#    error "ERR is already defined"
+// Alias for SPN_WARN if it was not previously defined.
+#ifndef WARN
+#    define WARN(...) SPN_WARN(__VA_ARGS__)
+#endif
+
+/*
+ * ERROR: a recoverable or unrecoverable problem that should not occur under normal operation.
+ */
+
+#ifdef SPN_ERR
+#    error "SPN_ERR is already defined"
 #endif
 
 /// Logging macro for error messages
-#define ERR(...) LOG_IMPL(spn::logging::LogLevel::ERR, __VA_ARGS__)
+#define SPN_ERR(...) SPN_LOG_IMPL(spn::logging::LogLevel::ERR, __VA_ARGS__)
+
+// Alias for SPN_ERR if it was not previously defined.
+#ifndef ERR
+#    define ERR(...) SPN_ERR(__VA_ARGS__)
+#endif
