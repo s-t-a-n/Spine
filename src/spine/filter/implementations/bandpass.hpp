@@ -65,9 +65,9 @@ public:
             return;
         }
 
-        DBG("--------------------------------------------------------------------------");
-        DBG("Bandpass rejected value of %f, limits: low: %f, high: %f", sample, _lower, _upper);
-        DBG("--------------------------------------------------------------------------");
+        SPN_DBG("--------------------------------------------------------------------------");
+        SPN_DBG("Bandpass rejected value of %f, limits: low: %f, high: %f", sample, _lower, _upper);
+        SPN_DBG("--------------------------------------------------------------------------");
 
         if (++_rejections > _cfg.rejection_limit) {
             if (_cfg.throw_on_rejection_limit) {

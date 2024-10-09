@@ -14,11 +14,11 @@ int main() {
     [[maybe_unused]] auto warnings_are_logged = is_loggable(LogLevel::WARN); // check if a particular level is enabled
     [[maybe_unused]] auto logging_level = log_level(); // get the current logging level
 
-    LOG("This is an information message. Used to signal events to a user that should be trackable in the logs")
-    WARN("This is a warning message. Used to signal abnormal behaviour to a user that is to be expected");
-    ERR("This is an error message. Used to signal erroneous behaviour to a user that should ideally not occur at all")
+    SPN_LOG("This is an information message. Used to signal events to a user that should be trackable in the logs")
+    SPN_WARN("This is a warning message. Used to signal abnormal behaviour to a user that is to be expected");
+    SPN_ERR("This is an error message. Used to signal erroneous behaviour to a user that should ideally not occur at all")
 
-    // See examples/core/debugging.cpp for the DBG macro that prints when SPINE_DEBUG is defined
+    // See examples/core/debugging.cpp for the SPN_DBG macro that prints when SPINE_DEBUG is defined
 
     return 0;
 }

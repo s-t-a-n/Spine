@@ -45,10 +45,10 @@ public:
     /// Take a new sample, returns filtered value (throws when value is out of range)
     ValueType value(ValueType sample) override {
         if (sample < _cfg.input_lower_limit || sample > _cfg.input_upper_limit) {
-            DBG("--------------------------------------------------------------------------");
-            DBG("MappedRange rejected value of %f, limits: lower: %f, upper: %f", sample, _cfg.input_lower_limit,
-                _cfg.input_upper_limit);
-            DBG("--------------------------------------------------------------------------");
+            SPN_DBG("--------------------------------------------------------------------------");
+            SPN_DBG("MappedRange rejected value of %f, limits: lower: %f, upper: %f", sample, _cfg.input_lower_limit,
+                    _cfg.input_upper_limit);
+            SPN_DBG("--------------------------------------------------------------------------");
             if (_cfg.throw_for_value_out_of_range) {
                 spn::throw_exception(spn::runtime_exception("MappedRange: Value out of range"));
             }
