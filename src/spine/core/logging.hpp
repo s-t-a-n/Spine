@@ -23,15 +23,13 @@ namespace detail {
 void print(LogLevel level, const char* filename, int line_number, const char* function_name, const char* fmt, ...);
 } // namespace detail
 
-#ifndef SPN_LOG_IMPL
 /// A user overloadable logging macro that takes a log level (see above) and a printf-style statement
-#    define SPN_LOG_IMPL(level, ...)                                                                                   \
-        {                                                                                                              \
-            if (spn::logging::is_loggable(level)) {                                                                    \
-                spn::logging::detail::print(level, __FILE__, __LINE__, __func__, __VA_ARGS__);                         \
-            }                                                                                                          \
-        }
-#endif
+#define SPN_LOG_IMPL(level, ...)                                                                                       \
+    {                                                                                                                  \
+        if (spn::logging::is_loggable(level)) {                                                                        \
+            spn::logging::detail::print(level, __FILE__, __LINE__, __func__, __VA_ARGS__);                             \
+        }                                                                                                              \
+    }
 
 } // namespace spn::logging
 
