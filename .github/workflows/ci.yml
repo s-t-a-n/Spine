@@ -51,17 +51,7 @@ jobs:
         run: pio test -e unittest
 
       - name: Find and run examples
-        run: |
-          EXAMPLES=$(find ./examples -name "*.cpp") # Find all examples
-          BUILD_DIR="./build" # it seems that without setting the --build-dir flag, the --keep-build-dir flag doesnt work
-          for example in $EXAMPLES; do # Loop through each example and build/run
-            echo "Building and running $example"
-            platformio ci "$example" --lib src --project-conf platformio.ini --keep-build-dir --build-dir $BUILD_DIR
-            rm $BUILD_DIR/src/*.cpp # if not removed, multiple definitions of main will be left behind
-          done
-          rm -rf $BUILD_DIR # clean up
-        env:
-          PLATFORMIO_BUILD_CACHE_DIR: .pio/build_cache
+        run: sh ./examples/build.sh
 
   linter:
     if: github.event.pull_request.draft == false
