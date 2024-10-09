@@ -17,13 +17,13 @@ public:
 
     /// Attach a filter to the provided slot's index
     void attach_filter(std::unique_ptr<Filter<ValueType>> filter) {
-        assert(_filters.size() < _filters.max_size());
+        spn_assert(_filters.size() < _filters.max_size());
         _filters.emplace_back(std::move(filter));
     }
 
     /// Detach a filter for a provided slot's index
     std::unique_ptr<Filter<ValueType>> detach_filter(uint8_t index) {
-        assert(index < _filters.size());
+        spn_assert(index < _filters.size());
         return _filters.remove(index);
     }
 
@@ -31,7 +31,7 @@ public:
     ValueType value(const double new_sample) {
         ValueType new_value = new_sample;
         for (auto& sf : _filters) {
-            assert(sf.get() != nullptr);
+            spn_assert(sf.get() != nullptr);
             new_value = sf->value(new_value);
         }
         return new_value;

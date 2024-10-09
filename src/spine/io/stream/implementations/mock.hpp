@@ -55,8 +55,8 @@ public:
 
 protected:
     void swap_streams() {
-        assert(_active_in != nullptr);
-        assert(_active_out != nullptr);
+        spn_assert(_active_in != nullptr);
+        spn_assert(_active_out != nullptr);
         std::swap(_active_in, _active_out);
     }
 

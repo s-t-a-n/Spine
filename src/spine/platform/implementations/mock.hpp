@@ -87,7 +87,7 @@ public:
 
     // value between 0 and 1 where 1 is the logical state ON
     void set_value(double value) {
-        assert(value >= 0.0 && value <= 1.0);
+        spn_assert(value >= 0.0 && value <= 1.0);
         if (_cfg.active_on_low) value = 1.0 - value;
     }
 

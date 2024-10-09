@@ -17,7 +17,7 @@ int main() {
 
     set_machine_exception_handler(std::make_unique<MyExceptionHandler>()); // set the machine's global exception handler
 
-    assert(false); // when this assertion fails, an exception will be raised. The machine's exception handler will then
+    spn_assert(false); // when this assertion fails, an exception will be raised. The machine's exception handler will then
                    // be called
 
     return 0;

@@ -44,7 +44,7 @@ public:
         : _cfg(cfg),
           _pid_backend(PIDController(&_input, &_output, &_setpoint, _cfg.tunings.Kp, _cfg.tunings.Ki, _cfg.tunings.Kd,
                                      PIDController::Proportionality::ON_MEASUREMENT, _cfg.direction)) {
-        assert(time_ms(_cfg.sample_interval).raw<>() > 0);
+        spn_assert(time_ms(_cfg.sample_interval).raw<>() > 0);
     }
     PID(const Config& cfg) : PID(Config(cfg)) {}
 
@@ -165,8 +165,8 @@ public:
             // Set the output - tunePid() will return values within the range configured
             // by setOutputRange(). Don't change the value or the tuning results will be
             // incorrect.
-            assert(control_value >= _cfg.output_lower_limit);
-            assert(control_value <= _cfg.output_upper_limit);
+            spn_assert(control_value >= _cfg.output_lower_limit);
+            spn_assert(control_value <= _cfg.output_upper_limit);
             process_setter(control_value);
 
             // This loop must run at the same speed as the PID control loop being tuned
@@ -184,7 +184,7 @@ public:
 
     /// Get the controller response
     double response() const {
-        assert(!std::isnan(_output));
+        spn_assert(!std::isnan(_output));
         return _output;
     }
 
