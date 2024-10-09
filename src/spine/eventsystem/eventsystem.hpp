@@ -40,27 +40,27 @@ public:
         explicit Data(uint32_t value) : _value(value) {}
 
         double value() const {
-            assert(_value);
+            spn_assert(_value);
             if (!_value) return {};
-            assert(std::holds_alternative<double>(*_value));
+            spn_assert(std::holds_alternative<double>(*_value));
             return std::get<double>(*_value);
         }
         uint32_t unsigned_value() const {
-            assert(_value);
+            spn_assert(_value);
             if (!_value) return {};
-            assert(std::holds_alternative<uint32_t>(*_value));
+            spn_assert(std::holds_alternative<uint32_t>(*_value));
             return std::get<uint32_t>(*_value);
         }
         time_ms ms() const {
-            assert(_value);
+            spn_assert(_value);
             if (!_value) return {};
-            assert(std::holds_alternative<time_ms>(*_value));
+            spn_assert(std::holds_alternative<time_ms>(*_value));
             return std::get<time_ms>(*_value);
         }
         time_s s() const {
-            assert(_value);
+            spn_assert(_value);
             if (!_value) return {};
-            assert(std::holds_alternative<time_s>(*_value));
+            spn_assert(std::holds_alternative<time_s>(*_value));
             return std::get<time_s>(*_value);
         }
 
@@ -89,17 +89,17 @@ class EventHandler {
 public:
     EventHandler(EventSystem* evsys) : _evsys(evsys) {}
 
-    virtual void handle_event(const Event& event) { assert(!"Virtual base function called"); };
+    virtual void handle_event(const Event& event) { spn_assert(!"Virtual base function called"); };
     virtual ~EventHandler() = default;
     void attach_event_system(EventSystem* evsys) {
-        assert(_evsys == nullptr);
-        assert(evsys != nullptr);
+        spn_assert(_evsys == nullptr);
+        spn_assert(evsys != nullptr);
         _evsys = evsys;
     }
 
 protected:
     EventSystem* evsys() {
-        assert(_evsys);
+        spn_assert(_evsys);
         return _evsys;
     };
 
@@ -143,7 +143,7 @@ public:
             auto ev = _store.depopulate();
             ev.reset();
         }
-        assert(_store.size() == 0);
+        spn_assert(_store.size() == 0);
     }
 
 public:
@@ -152,9 +152,9 @@ public:
     template<typename T>
     void attach(T id, EventHandler* handler) {
         auto idx = static_cast<Event::Id>(id);
-        assert(handler != nullptr);
-        assert(idx < _map.size());
-        assert(_map[idx]->size() < _cfg.handler_cap);
+        spn_assert(handler != nullptr);
+        spn_assert(idx < _map.size());
+        spn_assert(_map[idx]->size() < _cfg.handler_cap);
         _map[idx]->push_back(handler);
     };
 
@@ -162,16 +162,16 @@ public:
 
     /// Directly trigger a provided event
     void trigger(const std::shared_ptr<Event>& event) {
-        assert(event);
+        spn_assert(event);
         trigger(*event.get());
     }
 
     /// Directly trigger a provided event
     void trigger(const Event& event) {
         const auto id = event.id();
-        assert(id < _map.size());
-        assert(_map[id] != nullptr);
-        assert(!_map[id]->empty());
+        spn_assert(id < _map.size());
+        spn_assert(_map[id] != nullptr);
+        spn_assert(!_map[id]->empty());
         for (auto handler : *_map[id]) {
             handler->handle_event(event);
         }
@@ -187,7 +187,7 @@ public:
     /// Returns an event for the given id, time_from_now and data
     std::shared_ptr<Event> event(IdType id, const time_ms& time_from_now, const Event::Data& data = {}) {
         auto event = _store.acquire();
-        assert(event); // catch gracefully here for use in nested calls
+        spn_assert(event); // catch gracefully here for use in nested calls
         if (!event) return nullptr;
 
         event->_id = static_cast<Event::Id>(id);
@@ -210,7 +210,7 @@ public:
         while (_pipeline.contains_expired_futures()) {
             // we have futures ready to be processed
             auto future = _pipeline.expire();
-            assert(future != nullptr);
+            spn_assert(future != nullptr);
             auto event = *reinterpret_cast<Event*>(future.get());
             trigger(event);
         }

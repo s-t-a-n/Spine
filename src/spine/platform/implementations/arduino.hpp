@@ -103,7 +103,7 @@ public:
 
     // value between 0 and 1 where 1 is the logical state ON
     void set_value(double value) {
-        assert(value >= 0.0 && value <= 1.0);
+        spn_assert(value >= 0.0 && value <= 1.0);
         if (_cfg.active_on_low) value = 1.0 - value;
 
         analogWrite(_cfg.pin, int(value * std::pow(2, _cfg.resolution)));
@@ -189,10 +189,10 @@ public:
     void attach_interrupt(void (*callback)() = nullptr, TriggerType trigger = TriggerType::UNDEFINED) {
         int mode_bits;
         auto callback_actual = callback ? callback : _callback;
-        //        assert(callback_actual);
+        //        spn_assert(callback_actual);
 
         auto mode_actual = trigger != TriggerType::UNDEFINED ? trigger : _mode;
-        //        assert(mode_actual != Mode::NOP);
+        //        spn_assert(mode_actual != Mode::NOP);
 
         switch (mode_actual) {
         case TriggerType::RISING_AND_FALLING_EDGE: mode_bits = 1; break;
@@ -207,7 +207,7 @@ public:
 #if defined(__AVR_ATmega8__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
         ::attachInterrupt(_cfg.pin, callback_actual, mode_bits);
 #else
-        assert(digitalPinToInterrupt(_cfg.pin) != NOT_AN_INTERRUPT);
+        spn_assert(digitalPinToInterrupt(_cfg.pin) != NOT_AN_INTERRUPT);
         ::attachInterrupt(digitalPinToInterrupt(_cfg.pin), callback_actual, mode_bits);
 #endif
     }
@@ -243,11 +243,11 @@ public:
     void initialize() override { _stream_ref->setTimeout(_cfg.timeout.raw<unsigned long>()); }
 
     size_t available() const override {
-        assert(_stream_ref);
+        spn_assert(_stream_ref);
         return static_cast<size_t>(_stream_ref->available());
     };
     size_t available_for_write() const override {
-        assert(_stream_ref);
+        spn_assert(_stream_ref);
         return static_cast<size_t>(_stream_ref->availableForWrite());
     }
 

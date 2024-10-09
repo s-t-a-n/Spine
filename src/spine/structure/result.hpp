@@ -48,38 +48,38 @@ public:
     operator bool() const { return _type == Type::OK; }
 
     const E& error_value() const {
-        assert(is_failed());
-        assert(_v && std::holds_alternative<WrappedE>(*_v));
+        spn_assert(is_failed());
+        spn_assert(_v && std::holds_alternative<WrappedE>(*_v));
         return std::get<WrappedE>(*_v);
     }
 
     const I& intermediary_value() const {
-        assert(is_intermediary());
-        assert(_v && std::holds_alternative<WrappedI>(*_v));
+        spn_assert(is_intermediary());
+        spn_assert(_v && std::holds_alternative<WrappedI>(*_v));
         return std::get<WrappedI>(*_v);
     }
 
     const T& value() const {
-        assert(is_success());
-        assert(_v && std::holds_alternative<WrappedT>(*_v));
+        spn_assert(is_success());
+        spn_assert(_v && std::holds_alternative<WrappedT>(*_v));
         return std::get<WrappedT>(*_v);
     }
 
     E unwrap_error_value() {
-        assert(is_failed());
-        assert(_v && std::holds_alternative<WrappedE>(*_v));
+        spn_assert(is_failed());
+        spn_assert(_v && std::holds_alternative<WrappedE>(*_v));
         return std::move(std::get<WrappedE>(*_v));
     }
 
     I unwrap_intermediary_value() {
-        assert(is_intermediary());
-        assert(_v && std::holds_alternative<WrappedI>(*_v));
+        spn_assert(is_intermediary());
+        spn_assert(_v && std::holds_alternative<WrappedI>(*_v));
         return std::move(std::get<WrappedI>(*_v));
     }
 
     T unwrap() {
-        assert(is_success() || is_intermediary());
-        assert(_v && std::holds_alternative<WrappedT>(*_v));
+        spn_assert(is_success() || is_intermediary());
+        spn_assert(_v && std::holds_alternative<WrappedT>(*_v));
         return std::move(std::get<WrappedT>(*_v));
     }
 
@@ -168,7 +168,7 @@ public:
 
 protected:
     I& intermediary_value_mut() {
-        assert(is_intermediary());
+        spn_assert(is_intermediary());
         return std::get<WrappedI>(*_v);
     }
 

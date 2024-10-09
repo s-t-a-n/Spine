@@ -13,7 +13,7 @@ std::unique_ptr<ExceptionHandler> _g_handler = nullptr;
 }
 
 void set_machine_exception_handler(std::unique_ptr<ExceptionHandler> handler) {
-    assert(_g_handler == nullptr);
+    spn_assert(_g_handler == nullptr);
     _g_handler.swap(handler);
 }
 

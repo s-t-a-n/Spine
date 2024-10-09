@@ -17,20 +17,20 @@ public:
 
     size_t read(char* const buffer, size_t length) { return read((uint8_t*)buffer, length); };
     virtual size_t read(uint8_t* buffer, size_t length) {
-        assert(!"Virtual base function called");
+        spn_assert(!"Virtual base function called");
         return -1;
     };
     virtual bool read(uint8_t& value) {
-        assert(!"Virtual base function called");
+        spn_assert(!"Virtual base function called");
         return false;
     };
 
     virtual size_t available() const {
-        assert(!"Virtual base function called");
+        spn_assert(!"Virtual base function called");
         return -1;
     };
     virtual size_t available_for_write() const {
-        assert(!"Virtual base function called");
+        spn_assert(!"Virtual base function called");
         return -1;
     };
 
@@ -39,15 +39,15 @@ public:
     bool write(const char value) { return write(static_cast<uint8_t>(value)); }
 
     virtual size_t write(const uint8_t* const buffer, size_t length) {
-        assert(!"Virtual base function called");
+        spn_assert(!"Virtual base function called");
         return -1;
     };
     virtual bool write(const uint8_t value) {
-        assert(!"Virtual base function called");
+        spn_assert(!"Virtual base function called");
         return false;
     };
 
-    virtual void flush() { assert(!"Virtual base function called"); }
+    virtual void flush() { spn_assert(!"Virtual base function called"); }
 };
 
 } // namespace spn::io
