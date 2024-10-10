@@ -29,7 +29,7 @@ public:
     /// pipeline)
     void reschedule(time_ms time_from_now = time_ms{0}) {
         _time_from_now = time_from_now != time_ms(0) ? time_from_now : _time_from_now;
-        assert(_time_from_now > time_ms{});
+        spn_assert(_time_from_now > time_ms{});
         _timer = time::AlarmTimer(_time_from_now);
     };
 
@@ -59,7 +59,7 @@ public:
 
     /// Push a new future in the pipeline (inserting it in chronological order)
     void push(std::shared_ptr<Future>&& future) {
-        assert(_pipe.size() < _pipe.max_size());
+        spn_assert(_pipe.size() < _pipe.max_size());
         future->reschedule();
 
         size_t i = 0;
@@ -67,7 +67,7 @@ public:
             if (future->time_until_future().raw<int32_t>() < other_future->time_until_future().raw<int32_t>()) {
                 [[maybe_unused]] auto last_size = _pipe.size();
                 _pipe.insert(i, std::move(future));
-                assert(last_size + 1 == _pipe.size());
+                spn_assert(last_size + 1 == _pipe.size());
                 return;
             }
             i++;
@@ -77,12 +77,12 @@ public:
 
     /// Takes the first next future to fire from the pipeline
     [[nodiscard]] std::shared_ptr<Future> expire() {
-        assert(!_pipe.empty());
+        spn_assert(!_pipe.empty());
         if (_pipe.empty()) return nullptr;
 
         const auto future = _pipe.pop_front();
-        assert(future); // gracefully catch
-        assert(future->expired()); // gracefully catch
+        spn_assert(future); // gracefully catch
+        spn_assert(future->expired()); // gracefully catch
         if (!future->expired()) return nullptr;
         return future;
     }
@@ -133,8 +133,8 @@ public:
         // Second pass to build the string
         pipeline_repr(&result, false);
 
-        assert(result.size() <= total_length); // no reallocation
-        assert(result.capacity() == total_length); // no reallocation
+        spn_assert(result.size() <= total_length); // no reallocation
+        spn_assert(result.capacity() == total_length); // no reallocation
         return result;
     }
 

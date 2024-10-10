@@ -18,7 +18,7 @@ public:
     ~Pool() {
         for (size_t i = 0; i < _pointers.size(); ++i)
             depopulate().reset();
-        assert(_pointers.empty());
+        spn_assert(_pointers.empty());
     }
     Pool(const Pool& other) : _pointers(other._pointers), _lookup_index(other._lookup_index) {}
     Pool& operator=(const Pool& other) {
@@ -36,25 +36,25 @@ public:
 
     /// Populate the pool with a raw pointer object.
     void populate(T* obj) {
-        assert(!_pointers.full());
+        spn_assert(!_pointers.full());
         _pointers.emplace_back(std::shared_ptr<T>(obj));
     }
 
     /// Populate the pool with an r-value object.
     void populate(T&& obj) {
-        assert(!_pointers.full());
+        spn_assert(!_pointers.full());
         _pointers.emplace_back(std::make_shared<T>(std::move(obj)));
     }
 
     /// Populate the pool with a shared_ptr object.
     void populate(std::shared_ptr<T> obj) {
-        assert(!_pointers.full());
+        spn_assert(!_pointers.full());
         _pointers.emplace_back(std::move(obj));
     }
 
     /// Depopulate a single element from the pool.
     [[nodiscard]] Pointer&& depopulate() {
-        assert(!_pointers.empty());
+        spn_assert(!_pointers.empty());
         return _pointers.pop_front();
     }
 
@@ -63,7 +63,7 @@ public:
 
     /// Returns a pointer-object from the pool if available, or a nullptr;
     Pointer acquire() {
-        assert(is_fully_populated());
+        spn_assert(is_fully_populated());
         // Assume that it is most common for memory to be accessed and released in order; look in the back
         const auto skipped = _lookup_index;
         for (; _lookup_index < _pointers.size(); ++_lookup_index) {

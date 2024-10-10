@@ -101,8 +101,8 @@ public:
 
     void set_tunings(double Kp, double Ki, double Kd,
                      const Proportionality proportionality = Proportionality::ON_MEASUREMENT) {
-        assert(Kp >= 0 && Ki >= 0 && Kd >= 0);
-        assert(_sampling_time > time_ms{});
+        spn_assert(Kp >= 0 && Ki >= 0 && Kd >= 0);
+        spn_assert(_sampling_time > time_ms{});
 
         _proportionality = proportionality;
 

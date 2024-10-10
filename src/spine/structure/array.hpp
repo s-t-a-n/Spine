@@ -138,7 +138,7 @@ Array<T>::Array(Size max_size, T init_value) : Array(max_size) {
 
 template<typename T>
 Array<T>::Array(const std::initializer_list<T>& init_values) : Array(init_values.size()) {
-    assert(max_size() == init_values.size());
+    spn_assert(max_size() == init_values.size());
     auto i = 0;
     for (auto& obj : init_values) {
         m_store[i++] = obj;

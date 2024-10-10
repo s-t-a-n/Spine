@@ -1,6 +1,7 @@
 #pragma once
 
 #include "spine/core/debugging.hpp"
+#include "spine/core/types.hpp"
 #include "spine/structure/time/timers.hpp"
 #include "spine/structure/units/si.hpp"
 
@@ -23,35 +24,35 @@ public:
         time_ms maximal_off_time = time_ms{};
     };
 
-    using State = LogicalState;
+    using State = core::LogicalState;
 
     SRLatch(const Config&& cfg) : _cfg(std::move(cfg)), _last_turned(Timer(HAL::millis() - _cfg.minimal_off_time)) {}
 
     void initialize(){}; // boilerplate
 
     void new_reading(double value) {
-        if (_value == LogicalState::ON && _last_turned.time_since_last(Timer::NoReset) < _cfg.minimal_on_time) return;
-        if (_value == LogicalState::OFF && _last_turned.time_since_last(Timer::NoReset) < _cfg.minimal_off_time) return;
+        if (_value == State::ON && _last_turned.time_since_last(Timer::NoReset) < _cfg.minimal_on_time) return;
+        if (_value == State::OFF && _last_turned.time_since_last(Timer::NoReset) < _cfg.minimal_off_time) return;
 
         // If turned on longer than `maximal_on_time`, turn off
-        if (_cfg.maximal_on_time != time_ms{} && _value == LogicalState::ON
+        if (_cfg.maximal_on_time != time_ms{} && _value == State::ON
             && _last_turned.time_since_last(Timer::NoReset) > _cfg.maximal_on_time) {
             set(State::OFF);
             return;
         }
 
         // If turned off longer than `maximal_off_time`, turn on
-        if (_cfg.maximal_off_time != time_ms{} && _value == LogicalState::OFF
+        if (_cfg.maximal_off_time != time_ms{} && _value == State::OFF
             && _last_turned.time_since_last(Timer::NoReset) > _cfg.maximal_off_time) {
             set(State::ON);
             return;
         }
 
         if (value > _cfg.high) {
-            DBG("SRLatch: triggered by high value of %f (lim: %f)", value, _cfg.high);
+            SPN_DBG("SRLatch: triggered by high value of %f (lim: %f)", value, _cfg.high);
             set(State::ON);
         } else if (value < _cfg.low) {
-            DBG("SRLatch: triggered by low value of %f (lim: %f)", value, _cfg.low);
+            SPN_DBG("SRLatch: triggered by low value of %f (lim: %f)", value, _cfg.low);
             set(State::OFF);
         }
     }

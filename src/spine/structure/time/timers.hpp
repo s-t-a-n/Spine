@@ -34,7 +34,7 @@ public:
     /// for `future`=time_ms(200) and `absolute`=false, have this expire at 200 ms from now
     /// for `absolute`=true, future is absolute length of time offset on `millis()`
     AlarmTimer(time_ms future, bool absolute = false) : _future(absolute ? future : HAL::millis() + future) {
-        assert(!absolute || future > HAL::millis());
+        spn_assert(!absolute || future > HAL::millis());
     };
 
     /// Returns true if the timer has expired

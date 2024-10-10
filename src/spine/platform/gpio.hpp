@@ -1,9 +1,8 @@
 #pragma once
 
+#include "spine/core/meta/enum.hpp"
+#include "spine/core/types.hpp"
 #include "spine/structure/units/si.hpp"
-
-enum LogicalState { OFF, ON, UNDEFINED };
-enum class TriggerType { RISING_EDGE, FALLING_EDGE, RISING_AND_FALLING_EDGE, UNDEFINED };
 
 namespace spn::platform {
 
@@ -14,11 +13,11 @@ public:
         static_cast<GPIOImp*>(this)->initialize_impl();
         set_state(active);
     }
-    void set_state(LogicalState state) {
+    void set_state(core::LogicalState state) {
         static_cast<GPIOImp*>(this)->set_state_impl(state);
-        _active = state;
+        _active = core::meta::ENUM_IDX(state);
     }
-    void set_state(bool active) { set_state(static_cast<LogicalState>(active)); }
+    void set_state(bool active) { set_state(static_cast<core::LogicalState>(active)); }
     void flip() { set_state(!state()); }
     [[nodiscard]] bool state() const { return _active; }
 
@@ -76,7 +75,7 @@ struct AnalogueInput {
 
 template<typename GPIOImp>
 struct Interrupt {
-    using TriggerType = ::TriggerType;
+    using TriggerType = core::TriggerType;
 
     /// Intializes the interrupt (doesn't attach it)
     void initialize() { static_cast<GPIOImp>(this)->initialize(); }

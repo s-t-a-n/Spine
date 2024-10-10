@@ -74,7 +74,7 @@ public:
 private:
     /// Rearrange memory such that after rearranging, the elements start at `idx`
     void rearrange(Size idx) {
-        assert(idx + size() < Array<T>::max_size());
+        spn_assert(idx + size() < Array<T>::max_size());
 
         // todo: convert this brutal C-stuff into nice and fluffy CPP-stuff
         memmove((char*)&this->m_store[idx], (char*)&this->m_store[m_head], size() * sizeof(T));
@@ -84,7 +84,7 @@ private:
         // todo, optimize: only wipe elements that overlapped
         // todo: convert this brutal C-stuff into nice and fluffy CPP-stuff
         memset((char*)&this->m_store[0], '\0', new_head * sizeof(T)); // wipe all elements before `new_head`
-        assert(size() - new_tail < this->max_size());
+        spn_assert(size() - new_tail < this->max_size());
         memset((char*)&this->m_store[new_tail], '\0',
                (this->max_size() - new_tail) * sizeof(T)); // wipe all elements after `new_tail`
 
@@ -120,20 +120,20 @@ Vector<T>::Vector(T (&store)[CAP], ArrayBase::Size size) : Array<T>(store), m_ta
 
 template<typename T>
 T& Vector<T>::operator[](ArrayBase::Size index) {
-    assert(m_head + index < m_tail);
+    spn_assert(m_head + index < m_tail);
     return Array<T>::operator[](m_head + index);
 }
 
 template<typename T>
 const T& Vector<T>::operator[](ArrayBase::Size index) const {
-    assert(m_head + index < m_tail);
+    spn_assert(m_head + index < m_tail);
     return Array<T>::operator[](m_head + index);
 }
 
 template<typename T>
 void Vector<T>::push_back(const T& item) {
     if (m_tail >= this->max_size() && m_head > 0) rearrange(0);
-    assert(m_tail < this->max_size());
+    spn_assert(m_tail < this->max_size());
 
     if (m_tail < this->max_size()) this->m_store[m_tail++] = item;
 }
@@ -141,23 +141,23 @@ void Vector<T>::push_back(const T& item) {
 template<typename T>
 void Vector<T>::emplace_back(const T&& item) {
     if (m_tail >= this->max_size() && m_head > 0) rearrange(0);
-    assert(m_tail < this->max_size());
+    spn_assert(m_tail < this->max_size());
 
     if (m_tail < this->max_size()) {
-        assert(sizeof(item) == sizeof(T));
+        spn_assert(sizeof(item) == sizeof(T));
         this->m_store[m_tail++] = std::move(item);
     }
 }
 
 template<typename T>
 T& Vector<T>::peek_back() const {
-    assert(size() > 0);
+    spn_assert(size() > 0);
     return (this->m_store[m_tail - 1]);
 }
 
 template<typename T>
 [[nodiscard]] T&& Vector<T>::pop_back() {
-    assert(size() > 0);
+    spn_assert(size() > 0);
     if (m_tail > 0) {
         m_tail--;
         if (m_tail == m_head) {
@@ -170,7 +170,7 @@ template<typename T>
 
 template<typename T>
 void Vector<T>::push_front(const T& item) {
-    assert(this->size() < this->max_size());
+    spn_assert(this->size() < this->max_size());
     if (m_head > 0) {
         this->m_store[--m_head] = item;
         return;
@@ -203,13 +203,13 @@ void Vector<T>::emplace_front(const T&& item) {
 
 template<typename T>
 T& Vector<T>::peek_front() const {
-    assert(size() > 0);
+    spn_assert(size() > 0);
     return (this->m_store[m_head]);
 }
 
 template<typename T>
 T&& Vector<T>::pop_front() {
-    assert(size() > 0);
+    spn_assert(size() > 0);
     const auto cur_head = m_head++;
     if (m_tail == m_head) {
         m_tail = 0;
@@ -220,7 +220,7 @@ T&& Vector<T>::pop_front() {
 
 template<typename T>
 void Vector<T>::insert(ArrayBase::Size index, const T& item) {
-    assert(this->size() < this->m_max_size);
+    spn_assert(this->size() < this->m_max_size);
 
     if (index == 0) {
         push_front(item);
@@ -231,7 +231,7 @@ void Vector<T>::insert(ArrayBase::Size index, const T& item) {
         return;
     }
     if (m_tail >= this->max_size() && m_head > 0) rearrange(0);
-    assert(m_tail < this->max_size());
+    spn_assert(m_tail < this->max_size());
 
     // todo: convert this brutal C-stuff into nice and fluffy CPP-stuff
     memmove((char*)&this->m_store[m_head + index + 1], (char*)&this->m_store[m_head + index],
@@ -258,7 +258,7 @@ T Vector<T>::remove(ArrayBase::Size index) {
         }
         return removed;
     }
-    assert(!"remove was called with illegal index");
+    spn_assert(!"remove was called with illegal index");
     return {};
 }
 

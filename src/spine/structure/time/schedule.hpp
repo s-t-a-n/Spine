@@ -30,10 +30,10 @@ public:
     Schedule(const std::initializer_list<Block>& blocks) : _blocks(blocks) {
         time_s total_time = {};
         for (auto& b : _blocks) {
-            assert(time_s(b.duration) > time_s(0));
+            spn_assert(time_s(b.duration) > time_s(0));
             total_time += b.duration;
         }
-        assert(total_time <= time_h(24));
+        spn_assert(total_time <= time_h(24));
     }
 
     /// Returns the value in the block of `t` or 0

@@ -86,7 +86,7 @@ static uint8_t bcd2bin(uint8_t val) { return static_cast<uint8_t>(val - 6 * (val
  */
 DateTime::DateTime(time_t unix_timestamp)
     : _unix_timestamp{unix_timestamp}, _y2k_timestamp{static_cast<time_t>(unix_timestamp - UNIX_OFFSET)} {
-    assert(unix_timestamp - UNIX_OFFSET <= LONG_MAX);
+    spn_assert(unix_timestamp - UNIX_OFFSET <= LONG_MAX);
     gmtime_r(&_unix_timestamp, &_tm);
 }
 

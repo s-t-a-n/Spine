@@ -8,7 +8,7 @@ namespace spn::platform::detail {
 
 void fade_to(void (*set_value)(void*, double), void* imp, double value, double setpoint, double increment,
              time_ms increment_interval) {
-    assert(setpoint >= 0.0 && setpoint <= 1.0);
+    spn_assert(setpoint >= 0.0 && setpoint <= 1.0);
 
     const double decimals_of_diff = 1.0 / increment;
     double diff = std::round(std::fabs(value - setpoint) * decimals_of_diff) / decimals_of_diff;

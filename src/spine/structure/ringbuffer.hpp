@@ -8,7 +8,7 @@ namespace spn::structure {
 template<typename T>
 class RingBuffer {
 public:
-    RingBuffer(size_t capacity, T init_value = {}) : m_buffer(capacity, init_value) { assert(capacity > 0); }
+    RingBuffer(size_t capacity, T init_value = {}) : m_buffer(capacity, init_value) { spn_assert(capacity > 0); }
 
     /// Push an element into ringbuffer. Returns true if succesful.
     /// If provided `rollover` is true (default: false), elements can be overwritten if there is not enough space.

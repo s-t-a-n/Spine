@@ -21,7 +21,7 @@ public:
 
     /// Set the size of the string (this is not the same as the capacity!).
     void set_size(size_t size) {
-        assert(size <= capacity()); // do not allow reallocation
+        spn_assert(size <= capacity()); // do not allow reallocation
         _buffer.resize(std::min<>(size, capacity()));
     }
 

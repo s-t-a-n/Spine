@@ -32,7 +32,7 @@ public:
 
     /// Take a new sample, returns filtered value
     ValueType value(const ValueType sample) override {
-        assert(sample >= _cfg.input_lower_limit && sample <= _cfg.input_upper_limit);
+        spn_assert(sample >= _cfg.input_lower_limit && sample <= _cfg.input_upper_limit);
         return _value = _cfg.input_upper_limit - (sample - _cfg.input_lower_limit);
     }
 

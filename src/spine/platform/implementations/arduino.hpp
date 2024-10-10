@@ -1,4 +1,14 @@
 #pragma once
+
+#define SPINE_PLATFORM_CAP_UART
+#define SPINE_PLATFORM_CAP_GPIO
+#define SPINE_PLATFORM_CAP_GPIO_INTERRUPTS
+#define SPINE_PLATFORM_CAP_ADC
+#define SPINE_PLATFORM_CAP_PWM
+#define SPINE_PLATFORM_CAP_PRINT
+#define SPINE_PLATFORM_CAP_PRINTF
+#define SPINE_PLATFORM_CAP_MEMORY_METRICS
+
 #include "spine/core/debugging.hpp"
 #include "spine/core/logging.hpp"
 #include "spine/platform/gpio.hpp"
@@ -38,8 +48,8 @@ public:
 protected:
     void initialize_impl() { pinMode(_cfg.pin, OUTPUT); }
 
-    void set_state_impl(LogicalState state) {
-        if (state == LogicalState::ON) digitalWrite(_cfg.pin, !_cfg.active_on_low);
+    void set_state_impl(core::LogicalState state) {
+        if (state == core::LogicalState::ON) digitalWrite(_cfg.pin, !_cfg.active_on_low);
         else
             digitalWrite(_cfg.pin, _cfg.active_on_low);
     }
@@ -93,7 +103,7 @@ public:
 
     // value between 0 and 1 where 1 is the logical state ON
     void set_value(double value) {
-        assert(value >= 0.0 && value <= 1.0);
+        spn_assert(value >= 0.0 && value <= 1.0);
         if (_cfg.active_on_low) value = 1.0 - value;
 
         analogWrite(_cfg.pin, int(value * std::pow(2, _cfg.resolution)));
@@ -179,10 +189,10 @@ public:
     void attach_interrupt(void (*callback)() = nullptr, TriggerType trigger = TriggerType::UNDEFINED) {
         int mode_bits;
         auto callback_actual = callback ? callback : _callback;
-        //        assert(callback_actual);
+        //        spn_assert(callback_actual);
 
         auto mode_actual = trigger != TriggerType::UNDEFINED ? trigger : _mode;
-        //        assert(mode_actual != Mode::NOP);
+        //        spn_assert(mode_actual != Mode::NOP);
 
         switch (mode_actual) {
         case TriggerType::RISING_AND_FALLING_EDGE: mode_bits = 1; break;
@@ -197,7 +207,7 @@ public:
 #if defined(__AVR_ATmega8__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
         ::attachInterrupt(_cfg.pin, callback_actual, mode_bits);
 #else
-        assert(digitalPinToInterrupt(_cfg.pin) != NOT_AN_INTERRUPT);
+        spn_assert(digitalPinToInterrupt(_cfg.pin) != NOT_AN_INTERRUPT);
         ::attachInterrupt(digitalPinToInterrupt(_cfg.pin), callback_actual, mode_bits);
 #endif
     }
@@ -233,11 +243,11 @@ public:
     void initialize() override { _stream_ref->setTimeout(_cfg.timeout.raw<unsigned long>()); }
 
     size_t available() const override {
-        assert(_stream_ref);
+        spn_assert(_stream_ref);
         return static_cast<size_t>(_stream_ref->available());
     };
     size_t available_for_write() const override {
-        assert(_stream_ref);
+        spn_assert(_stream_ref);
         return static_cast<size_t>(_stream_ref->availableForWrite());
     }
 
@@ -264,17 +274,19 @@ private:
 struct ArduinoGPIO {
     using DigitalOutput = ArduinoDigitalOutput;
     using DigitalInput = ArduinoDigitalInput;
-    using AnalogueOutput = ArduinoAnalogueOutput;
-    using AnalogueInput = ArduinoAnalogueInput;
-
     using Interrupt = ArduinoInterrupt;
 };
 
-struct ArduinoConfig {
-    uint32_t baudrate;
+struct ArduinoAnalogue {
+    using AnalogueOutput = ArduinoAnalogueOutput;
+    using AnalogueInput = ArduinoAnalogueInput;
 };
 
-struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoUART> {
+struct ArduinoConfig {
+    uint32_t baudrate = 115200;
+};
+
+struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoAnalogue, ArduinoUART> {
     static void initialize(Config&& cfg) {
 #if defined(NATIVE)
         ARDUINO_MOCK_ALL();
@@ -294,7 +306,7 @@ struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoUAR
     };
 
     static void halt(const char* msg = NULL) {
-        LOG("Halting with reason: %s", msg ? msg : "[not specified]");
+        SPN_LOG("Halting with reason: %s", msg ? msg : "[not specified]");
         delay(time_s(2));
         noInterrupts();
         while (true) {

@@ -33,7 +33,7 @@ public:
     }
 
     double value() const {
-        assert(_value != DefaultSensorValue);
+        spn_assert(_value != DefaultSensorValue);
         return _value;
     }
 

@@ -22,7 +22,6 @@
 #include "spine/io/stream/transaction.hpp"
 #include "spine/platform/gpio.hpp"
 #include "spine/platform/hal.hpp"
-#include "spine/platform/platform.hpp"
 #include "spine/platform/protocols/uart.hpp"
 #include "spine/structure/array.hpp"
 #include "spine/structure/linebuffer.hpp"
@@ -40,15 +39,15 @@
 #include "spine/structure/vector.hpp"
 
 void setup() {
-    HAL::initialize(HAL::Config{.baudrate = 115200});
+    HAL::initialize(HAL::Config{}); // defaults to a baudrate of 115200 if HAL provides UART
     HAL::delay_ms(500); // give time for monitor to connect after flashing
-    LOG("Wake up");
+    SPN_LOG("Wake up");
 
-    LOG("End of setup. Entering main program.");
+    SPN_LOG("End of setup. Entering main program.");
 }
 
 void loop() {
-    DBG("loop");
+    SPN_DBG("loop");
     HAL::delay_ms(1000);
 }
 

@@ -50,7 +50,7 @@ public:
 
     BandPass(const Config&& cfg) : _cfg(std::move(cfg)) {
         static_assert(std::is_floating_point_v<ValueType>, "ValueType must be a floating point type");
-        assert(_cfg.mantissa >= 1.0 && _cfg.mantissa < 10.0); // sanity
+        spn_assert(_cfg.mantissa >= 1.0 && _cfg.mantissa < 10.0); // sanity
         BandPass::update_limits();
     }
 
@@ -65,9 +65,9 @@ public:
             return;
         }
 
-        DBG("--------------------------------------------------------------------------");
-        DBG("Bandpass rejected value of %f, limits: low: %f, high: %f", sample, _lower, _upper);
-        DBG("--------------------------------------------------------------------------");
+        SPN_DBG("--------------------------------------------------------------------------");
+        SPN_DBG("Bandpass rejected value of %f, limits: low: %f, high: %f", sample, _lower, _upper);
+        SPN_DBG("--------------------------------------------------------------------------");
 
         if (++_rejections > _cfg.rejection_limit) {
             if (_cfg.throw_on_rejection_limit) {
