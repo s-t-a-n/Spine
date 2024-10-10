@@ -9,23 +9,26 @@
 namespace spn::core {
 
 namespace {
-std::unique_ptr<ExceptionHandler> _g_handler = nullptr;
+std::unique_ptr<ExceptionHandler>& static_eh() {
+    static std::unique_ptr<ExceptionHandler> handler = nullptr;
+    return handler;
 }
+} // namespace
 
 void set_machine_exception_handler(std::unique_ptr<ExceptionHandler> handler) {
-    spn_assert(_g_handler == nullptr);
-    _g_handler.swap(handler);
+    if (static_eh() != nullptr) SPN_DBG("Replacing machine wide exception handler!");
+    static_eh().swap(handler);
 }
 
-ExceptionHandler* machine_exception_handler() { return _g_handler.get(); }
+ExceptionHandler* machine_exception_handler() { return static_eh().get(); }
 
 void Exception::throw_error() const {
     if (const auto eh = machine_exception_handler(); eh != nullptr) {
-        SPN_ERR("%s was thrown: %s", error_type(), _error_msg);
+        SPN_DBG("%s was thrown: %s", error_type(), _error_msg);
         eh->handle_exception(*this);
     }
 
-    SPN_ERR("%s was thrown: %s, halting without handling exception", error_type(), _error_msg);
+    SPN_WARN("%s was thrown: %s, halting without handling exception", error_type(), _error_msg);
     HAL::halt("Exception was thrown.");
 }
 } // namespace spn::core
