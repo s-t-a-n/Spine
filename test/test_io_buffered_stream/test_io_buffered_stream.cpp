@@ -134,25 +134,19 @@ int run_all_tests() {
     return UNITY_END();
 }
 
-#if defined(ARDUINO) && defined(EMBEDDED)
+#if defined(ARDUINO)
 #    include <Arduino.h>
 void setup() {
     // NOTE!!! Wait for >2 secs
     // if board doesn't support software reset via Serial.DTR/RTS
     delay(2000);
-
     run_all_tests();
 }
 
 void loop() {}
-#elif defined(ARDUINO)
-#    include <ArduinoFake.h>
-#endif
-
+#else
 int main(int argc, char** argv) {
-#if defined(ARDUINO)
-    ARDUINO_MOCK_ALL();
-#endif
     run_all_tests();
     return 0;
 }
+#endif

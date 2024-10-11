@@ -65,7 +65,9 @@ void ut_pool_allocation_basics() {
         TEST_ASSERT_EQUAL(false, bool(p.acquire()));
 
         // verify that a slice becomes available when the shared ptr reaches a single reference to self
-        { auto r = results.pop_back(); }
+        {
+            auto r = results.pop_back();
+        }
         TEST_ASSERT_EQUAL(true, bool(p.acquire()));
         TEST_ASSERT_EQUAL(results.size() * 2 + 1, sum_of_sp_usecounts(p));
 
@@ -154,25 +156,19 @@ int run_all_tests() {
     return UNITY_END();
 }
 
-#if defined(ARDUINO) && defined(EMBEDDED)
+#if defined(ARDUINO)
 #    include <Arduino.h>
 void setup() {
     // NOTE!!! Wait for >2 secs
     // if board doesn't support software reset via Serial.DTR/RTS
     delay(2000);
-
     run_all_tests();
 }
 
 void loop() {}
-#elif defined(ARDUINO)
-#    include <ArduinoFake.h>
-#endif
-
+#else
 int main(int argc, char** argv) {
-#if defined(ARDUINO)
-    ARDUINO_MOCK_ALL();
-#endif
     run_all_tests();
     return 0;
 }
+#endif
