@@ -17,6 +17,8 @@ public:
         double Kp;
         double Ki = 0;
         double Kd = 0;
+
+        bool operator==(const Tunings& other) const { return Kp == other.Kp && Ki == other.Ki && Kd == other.Kd; }
     };
 
     using Direction = PIDController::Direction;
