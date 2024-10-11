@@ -180,7 +180,7 @@ public:
     template<typename IdType>
     /// Directly trigger an event for a provided ID
     void trigger(IdType id, const Event::Data& data = {}) {
-        trigger(event(id, time_ms(0)));
+        trigger(event(id, time_ms(0), data));
     }
 
     template<typename IdType>
