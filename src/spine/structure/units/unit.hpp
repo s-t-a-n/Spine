@@ -10,6 +10,8 @@ namespace spn::core {
 template<typename U, typename M, typename T>
 class Unit {
 public:
+    using ValueType = T;
+
     Unit() = default;
     explicit Unit(const T length) : _value(length) {}
 

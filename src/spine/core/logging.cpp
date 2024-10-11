@@ -2,6 +2,8 @@
 
 #include "spine/platform/hal.hpp"
 
+#include <cinttypes>
+
 namespace spn::logging {
 
 namespace {
@@ -29,7 +31,7 @@ namespace detail {
 
 const char* get_current_time() {
     static char time_buffer[32];
-    snprintf(time_buffer, sizeof(time_buffer), "%08u", static_cast<uint32_t>(HAL::millis().raw()));
+    snprintf(time_buffer, sizeof(time_buffer), "%08" PRIu32, static_cast<uint32_t>(HAL::millis().raw()));
     return time_buffer;
 }
 

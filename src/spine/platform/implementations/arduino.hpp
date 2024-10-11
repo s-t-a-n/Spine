@@ -95,9 +95,7 @@ public:
     ~ArduinoAnalogueOutput() {}
 
     void initialize() {
-#if defined(EMBEDDED)
         analogWriteResolution(_cfg.resolution);
-#endif
         set_value(0.0);
     }
 

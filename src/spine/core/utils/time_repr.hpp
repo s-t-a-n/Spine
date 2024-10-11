@@ -4,6 +4,7 @@
 
 #include <array>
 // #include <charconv>
+#include <cinttypes>
 #include <cstring>
 #include <iterator>
 #include <numeric>
@@ -55,7 +56,7 @@ inline std::string repr(const TimeType& t) {
                                             : "unknown";
 
     /// todo: this is a workaround, see issue with charconv: https://github.com/s-t-a-n/Spine/issues/21
-    auto size = std::snprintf(buffer.data(), buffer.size(), "%i%s", raw, unit);
+    auto size = std::snprintf(buffer.data(), buffer.size(), "%" PRId64 "%s", static_cast<int64_t>(raw), unit);
     if (size < 0 || static_cast<size_t>(size) >= buffer.size()) {
         return "Error";
     }
