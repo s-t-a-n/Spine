@@ -1,6 +1,5 @@
 #pragma once
 
-#include "spine/core/meta/enum.hpp"
 #include "spine/core/types.hpp"
 #include "spine/structure/units/si.hpp"
 
@@ -9,26 +8,30 @@ namespace spn::platform {
 template<typename GPIOImp>
 class DigitalOutput {
 public:
+    using LogicalState = core::LogicalState;
+
     void initialize(bool active = false) {
         static_cast<GPIOImp*>(this)->initialize_impl();
         set_state(active);
     }
     void set_state(core::LogicalState state) {
         static_cast<GPIOImp*>(this)->set_state_impl(state);
-        _active = core::meta::ENUM_IDX(state);
+        _active = state;
     }
     void set_state(bool active) { set_state(static_cast<core::LogicalState>(active)); }
     void flip() { set_state(!state()); }
-    [[nodiscard]] bool state() const { return _active; }
+    LogicalState state() const { return _active; }
 
 private:
-    bool _active = false;
+    LogicalState _active = LogicalState::OFF;
 };
 
 template<typename GPIOImp>
 struct DigitalInput {
+    using LogicalState = core::LogicalState;
+
     void initialize() { static_cast<GPIOImp>(this)->initialize(); }
-    [[nodiscard]] bool state() const { return static_cast<GPIOImp>(this)->state(); }
+    LogicalState state() const { return static_cast<GPIOImp>(this)->state(); }
 };
 
 namespace detail {
