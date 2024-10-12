@@ -304,7 +304,7 @@ struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoAna
     };
 
     static void halt(const char* msg = NULL) {
-        SPN_LOG("Halting with reason: %s", msg ? msg : "[not specified]");
+        SPN_LOG("Halted with reason: %s", msg ? msg : "[not specified]");
         delay(time_s(2));
         noInterrupts();
         while (true) {
