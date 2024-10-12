@@ -28,6 +28,9 @@ public:
     PIDController(double* const input, double* const output, double* const setpoint, const double Kp, const double Ki,
                   const double Kd, const Proportionality proportionality, const Direction controllerDirection)
         : _user_input(input), _user_output(output), _user_setpoint(setpoint) {
+        spn_assert(input);
+        spn_assert(output);
+        spn_assert(setpoint);
         PIDController::set_controller_direction(controllerDirection);
         PIDController::set_tunings(Kp, Ki, Kd, proportionality);
         _last_time = HAL::millis() - _sampling_time;
@@ -56,14 +59,14 @@ public:
             const double dInput = (input - _last_reading);
             _cumulative_output += (_ki * error);
 
-            /*Add Proportional on Measurement, if P_ON_M is specified*/
+            /*Add Proportional on Measurement, if ON_MEASUREMENT is specified*/
             if (_proportionality == Proportionality::ON_MEASUREMENT) _cumulative_output -= _kp * dInput;
 
             if (_cumulative_output > _output_upper_limit) _cumulative_output = _output_upper_limit;
             else if (_cumulative_output < _output_lower_limit)
                 _cumulative_output = _output_lower_limit;
 
-            /*Add Proportional on Error, if P_ON_E is specified*/
+            /*Add Proportional on Error, if ON_ERROR is specified*/
             double output;
             if (_proportionality == Proportionality::ON_ERROR) output = _kp * error;
             else

@@ -22,6 +22,7 @@ public:
     };
 
     using Direction = PIDController::Direction;
+    using Proportionality = PIDController::Proportionality;
 
     struct Config {
         Tunings tunings = Tunings{.Kp = 20.0, .Ki = 0.3, .Kd = 0.1};
@@ -29,7 +30,9 @@ public:
         double output_lower_limit = 0;
         double output_upper_limit = 255;
         time_ms sample_interval = time_ms(100);
-        PIDController::Direction direction = PIDController::Direction::FORWARD;
+
+        Proportionality proportionality = Proportionality::ON_ERROR;
+        Direction direction = Direction::FORWARD;
     };
 
     struct TuneConfig {
@@ -43,9 +46,8 @@ public:
 
 public:
     PID(Config&& cfg)
-        : _cfg(cfg),
-          _pid_backend(PIDController(&_input, &_output, &_setpoint, _cfg.tunings.Kp, _cfg.tunings.Ki, _cfg.tunings.Kd,
-                                     PIDController::Proportionality::ON_MEASUREMENT, _cfg.direction)) {
+        : _cfg(cfg), _pid_backend(PIDController(&_input, &_output, &_setpoint, _cfg.tunings.Kp, _cfg.tunings.Ki,
+                                                _cfg.tunings.Kd, _cfg.proportionality, _cfg.direction)) {
         spn_assert(time_ms(_cfg.sample_interval).raw<>() > 0);
     }
     PID(const Config& cfg) : PID(Config(cfg)) {}
@@ -61,7 +63,9 @@ public:
     void set_target_setpoint(double value) { _setpoint = value; }
 
     /// Set the controller's tuning parameters
-    void set_tunings(const Tunings& tunings) { _pid_backend.set_tunings(tunings.Kp, tunings.Ki, tunings.Kd); }
+    void set_tunings(const Tunings& tunings, const Proportionality proportionality = Proportionality::ON_ERROR) {
+        _pid_backend.set_tunings(tunings.Kp, tunings.Ki, tunings.Kd, proportionality);
+    }
 
     /// Returns the controller's tuning parameters
     Tunings tunings() const {

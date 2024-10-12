@@ -16,6 +16,7 @@ int main() {
                                      .output_lower_limit = 0,
                                      .output_upper_limit = 255,
                                      .sample_interval = time_ms(100),
+                                     .proportionality = PID::Proportionality::ON_ERROR,
                                      .direction = PID::Direction::FORWARD};
     auto pid = PID(pid_cfg);
 
