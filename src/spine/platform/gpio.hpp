@@ -38,6 +38,7 @@ namespace detail {
 void fade_to(void (*set_value)(void*, double), void* imp, double value, double setpoint, double increment,
              time_ms increment_interval);
 }
+
 template<typename GPIOImp>
 class AnalogueOutput {
 public:

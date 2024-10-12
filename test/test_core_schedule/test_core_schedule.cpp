@@ -5,7 +5,7 @@
 
 namespace {
 
-using spn::core::time::Schedule;
+using Schedule = spn::structure::time::Schedule;
 
 void ut_schedule_basics() {
     // assignment

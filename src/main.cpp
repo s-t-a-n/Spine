@@ -15,7 +15,6 @@
 #include "spine/filter/implementations/invert.hpp"
 #include "spine/filter/implementations/mapped_range.hpp"
 #include "spine/filter/implementations/passthrough.hpp"
-#include "spine/io/sensor.hpp"
 #include "spine/io/stream/buffered_stream.hpp"
 #include "spine/io/stream/implementations/mock.hpp"
 #include "spine/io/stream/stream.hpp"

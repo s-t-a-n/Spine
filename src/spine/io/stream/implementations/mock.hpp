@@ -15,31 +15,15 @@ public:
         size_t output_buffer_size;
     };
 
-    MockStream(const Config&& cfg)
-        : Stream(), _cfg(cfg), _stdin(_cfg.input_buffer_size), _stdout(_cfg.output_buffer_size), _active_in(&_stdin),
-          _active_out(&_stdout){};
+    MockStream(const Config&& cfg);
     ~MockStream() override = default;
 
 public:
     void initialize() override {}
 
-    void inject_bytestream(const std::vector<uint8_t>& byte_stream) {
-        swap_streams();
-        write(byte_stream.data(), byte_stream.size());
-        swap_streams();
-    }
+    void inject_bytestream(const std::vector<uint8_t>& byte_stream);
 
-    std::optional<std::vector<uint8_t>> extract_bytestream() {
-        swap_streams(); // swap input and outputbuffer
-        const auto bytes_to_read = available();
-        auto byte_stream = std::vector<uint8_t>();
-        byte_stream.reserve(bytes_to_read); // allocate enough
-        byte_stream.resize(bytes_to_read); // until c++23, this is stop truncation
-        byte_stream.resize(read(byte_stream.data(), bytes_to_read)); // resize to bytes actually read
-        byte_stream.shrink_to_fit(); // trim off the fat
-        swap_streams(); // swap the streams back around
-        return byte_stream;
-    }
+    std::optional<std::vector<uint8_t>> extract_bytestream();
 
     using Stream::write;
     bool write(const uint8_t value) override { return _active_out->push(value); }
@@ -54,11 +38,7 @@ public:
     void flush() override {}
 
 protected:
-    void swap_streams() {
-        spn_assert(_active_in != nullptr);
-        spn_assert(_active_out != nullptr);
-        std::swap(_active_in, _active_out);
-    }
+    void swap_streams();
 
 private:
     Config _cfg;

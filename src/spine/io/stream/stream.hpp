@@ -1,7 +1,6 @@
 #pragma once
 
 #include "spine/core/debugging.hpp"
-// #include "spine/platform/hal.hpp"
 #include "spine/structure/linebuffer.hpp"
 
 #include <memory>

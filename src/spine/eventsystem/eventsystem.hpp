@@ -39,30 +39,10 @@ public:
         explicit Data(double value) : _value(value) {}
         explicit Data(uint32_t value) : _value(value) {}
 
-        double value() const {
-            spn_assert(_value);
-            if (!_value) return {};
-            spn_assert(std::holds_alternative<double>(*_value));
-            return std::get<double>(*_value);
-        }
-        uint32_t unsigned_value() const {
-            spn_assert(_value);
-            if (!_value) return {};
-            spn_assert(std::holds_alternative<uint32_t>(*_value));
-            return std::get<uint32_t>(*_value);
-        }
-        time_ms ms() const {
-            spn_assert(_value);
-            if (!_value) return {};
-            spn_assert(std::holds_alternative<time_ms>(*_value));
-            return std::get<time_ms>(*_value);
-        }
-        time_s s() const {
-            spn_assert(_value);
-            if (!_value) return {};
-            spn_assert(std::holds_alternative<time_s>(*_value));
-            return std::get<time_s>(*_value);
-        }
+        double value() const;
+        uint32_t unsigned_value() const;
+        time_ms ms() const;
+        time_s s() const;
 
         bool has_value() const { return bool(_value); }
 
@@ -121,30 +101,9 @@ public:
 public:
     using EventHandlerMap = std::unique_ptr<Vector<EventHandler*>>;
 
-    EventSystem(const Config& cfg) //
-        : _cfg(cfg), //
-          _map(Array<EventHandlerMap>(cfg.events_count)), //
-          _pipeline(Pipeline(cfg.events_cap)), //
-          _store({cfg.events_cap}) {
-        for (size_t i = 0; i < _cfg.events_count; i++) {
-            _map[i] = std::make_unique<Vector<EventHandler*>>(_cfg.handler_cap);
-        }
+    EventSystem(const Config& cfg);
 
-        for (size_t i = 0; i < _cfg.events_cap; i++) {
-            _store.populate(std::make_shared<Event>());
-        }
-    }
-
-    ~EventSystem() {
-        for (size_t i = 0; i < _map.size(); i++) {
-            _map[i].reset();
-        }
-        for (size_t i = 0; i < _store.size(); ++i) {
-            auto ev = _store.depopulate();
-            ev.reset();
-        }
-        spn_assert(_store.size() == 0);
-    }
+    ~EventSystem();
 
 public:
     std::string pipeline_as_string() const { return _pipeline.to_string(); }
@@ -158,24 +117,14 @@ public:
         _map[idx]->push_back(handler);
     };
 
-    void detach(EventHandler& handler);
+    void detach(EventHandler& handler) { spn_assert(!"not implemented"); };
 
     /// Directly trigger a provided event
-    void trigger(const std::shared_ptr<Event>& event) {
-        spn_assert(event);
-        trigger(*event.get());
-    }
+    void trigger(const std::shared_ptr<Event>& event);
 
     /// Directly trigger a provided event
-    void trigger(const Event& event) {
-        const auto id = event.id();
-        spn_assert(id < _map.size());
-        spn_assert(_map[id] != nullptr);
-        spn_assert(!_map[id]->empty());
-        for (auto handler : *_map[id]) {
-            handler->handle_event(event);
-        }
-    };
+    void trigger(const Event& event);
+    ;
 
     template<typename IdType>
     /// Directly trigger an event for a provided ID
@@ -206,22 +155,7 @@ public:
     void schedule(std::shared_ptr<Event>&& event) { _pipeline.push(std::move(event)); }
 
     /// Main loop of event system. It is crucial that this loop is called often enough to fire events in time
-    void loop() {
-        while (_pipeline.contains_expired_futures()) {
-            // we have futures ready to be processed
-            auto future = _pipeline.expire();
-            spn_assert(future != nullptr);
-            auto event = *reinterpret_cast<Event*>(future.get());
-            trigger(event);
-        }
-
-        if (_cfg.delay_between_ticks) {
-            if (_pipeline.contains_futures())
-                HAL::delay_ms(std::min(_pipeline.time_until_next_future().raw(), _cfg.max_delay_between_ticks.raw()));
-            else
-                HAL::delay(_cfg.min_delay_between_ticks);
-        }
-    }
+    void loop();
 
 private:
     const Config _cfg;
@@ -233,5 +167,3 @@ protected:
 };
 
 } // namespace spn::core
-
-// todo: metrics, have a meta event fire and check the skew of it's supposed arrival time and it's actual arrival time

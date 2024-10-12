@@ -185,10 +185,12 @@ struct MockConfig {
 
 // since no situation is feasible where more than one `Platform` exist at the same time and this is lazy mockery
 // this can safely be a global singleton. obviously thread-unsafe.
-static inline struct MockState {
+struct MockState {
     time_t millis = 0;
     time_t micros = 0;
-} g_mock_state;
+};
+
+MockState& MockStateInstance();
 
 struct Mock : Platform<Mock, MockConfig, MockGPIO, MockAnalogue, MockUART> {
     static void initialize(Config&& cfg){};
@@ -206,10 +208,10 @@ struct Mock : Platform<Mock, MockConfig, MockGPIO, MockAnalogue, MockUART> {
 
     static void printflush() {}
 
-    static time_ms millis() { return time_ms(g_mock_state.millis + g_mock_state.micros / 1000); }
-    static time_us micros() { return time_us(g_mock_state.micros + g_mock_state.millis * 1000); }
-    static void delay_us(time_us us) { g_mock_state.micros += us.raw(); }
-    static void delay_ms(time_ms ms) { g_mock_state.millis += ms.raw(); }
+    static time_ms millis() { return time_ms(MockStateInstance().millis + MockStateInstance().micros / 1000); }
+    static time_us micros() { return time_us(MockStateInstance().micros + MockStateInstance().millis * 1000); }
+    static void delay_us(time_us us) { MockStateInstance().micros += us.raw(); }
+    static void delay_ms(time_ms ms) { MockStateInstance().millis += ms.raw(); }
 
     static unsigned long free_memory() { return 0; };
 };
