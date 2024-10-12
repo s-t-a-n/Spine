@@ -2,7 +2,6 @@ name: release
 
 on:
   push:
-    branches: [ main ]
     tags:
       - 'v*'  # Trigger on version tag pushes (e.g., v1.0.0)
 
@@ -44,10 +43,11 @@ jobs:
           pip install platformio
 
       - name: Create GitHub Release
-        if: github.event_name == 'push' && github.ref_type == 'tag'  # Only run on tag push events
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
+          body_path: CHANGELOG.md
           draft: false
           prerelease: false
