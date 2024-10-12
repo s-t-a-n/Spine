@@ -44,10 +44,11 @@ jobs:
           pip install platformio
 
       - name: Create GitHub Release
-        if: github.event_name == 'push' && github.ref_type == 'tag'  # Only run on tag push events
+        if: github.ref == 'refs/heads/main' && github.ref_type == 'tag' && github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
+          body_path: CHANGELOG.md
           draft: false
           prerelease: false
