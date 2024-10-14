@@ -42,7 +42,7 @@ public:
 
     void set_controller_direction(const Direction direction);
 
-    void set_sampling_time(const time_ms sampling_time);
+    void set_sampling_time(const k_time_ms sampling_time);
 
     double Kp() const { return _kp; }
     double Ki() const { return _ki; }
@@ -62,11 +62,11 @@ private:
     double* _user_setpoint = nullptr; //   PID, freeing the user from having to constantly tell us
     //   what these values are.  with pointers we'll just know.
 
-    time_ms _last_time{};
+    k_time_ms _last_time{};
     double _cumulative_output = 0;
     double _last_reading = 0;
 
-    time_ms _sampling_time = time_ms{100};
+    k_time_ms _sampling_time = k_time_ms{100};
     double _output_lower_limit = 0;
     double _output_upper_limit = 255;
     Proportionality _proportionality = Proportionality::ON_MEASUREMENT;

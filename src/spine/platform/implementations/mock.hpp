@@ -23,6 +23,7 @@
 #    include <cstdint>
 #    include <cstdlib>
 #    include <cstring>
+#    include <iostream>
 #    include <limits>
 #    include <memory>
 #    include <type_traits>
@@ -186,8 +187,8 @@ struct MockConfig {
 // since no situation is feasible where more than one `Platform` exist at the same time and this is lazy mockery
 // this can safely be a global singleton. obviously thread-unsafe.
 struct MockState {
-    time_t millis = 0;
-    time_t micros = 0;
+    k_time_ms millis = k_time_ms(0);
+    k_time_us micros = k_time_us(0);
 };
 
 MockState& MockStateInstance();
@@ -198,20 +199,28 @@ struct Mock : Platform<Mock, MockConfig, MockGPIO, MockAnalogue, MockUART> {
     static void halt(const char* msg = nullptr) {}
 
     template<typename T>
-    static void print(T& msg){};
+    static void print(T& msg) {
+        std::cout << msg;
+    };
     template<typename T>
-    static void println(T& msg){};
+    static void println(T& msg) {
+        std::cout << msg << std::endl;
+    };
     template<typename T>
-    static void print(T&& msg){};
+    static void print(T&& msg) {
+        std::cout << msg;
+    };
     template<typename T>
-    static void println(T&& msg){};
+    static void println(T&& msg) {
+        std::cout << msg << std::endl;
+    };
 
     static void printflush() {}
 
-    static time_ms millis() { return time_ms(MockStateInstance().millis + MockStateInstance().micros / 1000); }
-    static time_us micros() { return time_us(MockStateInstance().micros + MockStateInstance().millis * 1000); }
-    static void delay_us(time_us us) { MockStateInstance().micros += us.raw(); }
-    static void delay_ms(time_ms ms) { MockStateInstance().millis += ms.raw(); }
+    static k_time_ms millis() { return k_time_ms(MockStateInstance().millis + MockStateInstance().micros / 1000); }
+    static k_time_us micros() { return k_time_us(MockStateInstance().micros + MockStateInstance().millis * 1000); }
+    static void delay_us(k_time_us us) { MockStateInstance().micros += us; }
+    static void delay_ms(k_time_ms ms) { MockStateInstance().millis += ms; }
 
     static unsigned long free_memory() { return 0; };
 };

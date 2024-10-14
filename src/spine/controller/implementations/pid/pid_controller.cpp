@@ -106,9 +106,9 @@ void PIDController::set_controller_direction(const PIDController::Direction dire
     }
 }
 
-void PIDController::set_sampling_time(const time_ms sampling_time) {
+void PIDController::set_sampling_time(const k_time_ms sampling_time) {
     // adjust sample
-    if (sampling_time > time_ms(0)) {
+    if (sampling_time > k_time_ms(0)) {
         double ratio = sampling_time.raw<double>() / _sampling_time.raw<double>();
         _ki *= ratio;
         _kd /= ratio;

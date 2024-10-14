@@ -87,25 +87,25 @@ struct Platform {
 #endif
 
     /// Returns the milliseconds expired since application start up (rolls around)
-    static time_ms millis() { return PlatformImp::millis(); }
+    static k_time_ms millis() { return PlatformImp::millis(); }
 
     /// Returns the microseconds expired since application start up (rolls around)
-    static time_us micros() { return PlatformImp::micros(); }
+    static k_time_us micros() { return PlatformImp::micros(); }
 
     /// Sleep this thread for any provided amount of time (minimum: milliseconds)
-    static void delay(time_ms ms) { PlatformImp::delay_ms(time_ms(ms)); };
+    static void delay(k_time_ms ms) { PlatformImp::delay_ms(k_time_ms(ms)); };
 
     /// Sleep this thread for any provided amount of time (minimum: microseconds)
-    static void delay_us(time_us us) { PlatformImp::delay_us(us); };
+    static void delay_us(k_time_us us) { PlatformImp::delay_us(us); };
 
     /// Sleep this thread for the provided amount of time in milliseconds
-    static void delay_ms(time_ms ms) { PlatformImp::delay_ms(ms); };
+    static void delay_ms(k_time_ms ms) { PlatformImp::delay_ms(ms); };
 
     /// Sleep this thread for the provided `us` microseconds
-    static void delay_us(uint32_t us) { PlatformImp::delay_us(time_us(us)); };
+    static void delay_us(uint32_t us) { PlatformImp::delay_us(k_time_us(us)); };
 
     /// Sleep this thread for the provided `ms` in milliseconds
-    static void delay_ms(uint32_t ms) { PlatformImp::delay_ms(time_ms(ms)); };
+    static void delay_ms(uint32_t ms) { PlatformImp::delay_ms(k_time_ms(ms)); };
 
 #if defined(SPINE_PLATFORM_CAP_MEMORY_METRICS)
     /// Returns the amount of allocatable bytes

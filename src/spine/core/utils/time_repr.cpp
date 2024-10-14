@@ -27,7 +27,8 @@ namespace spn::core::utils {
  */
 
 // Function to parse a string like "10us", "2h", or "1d" to a Time object
-std::optional<std::variant<time_us, time_ms, time_s, time_m, time_h, time_d>> parse_time(const std::string_view input) {
+std::optional<std::variant<k_time_us, k_time_ms, k_time_s, k_time_m, k_time_h, k_time_d>>
+parse_time(const std::string_view input) {
     if (input.empty()) return std::nullopt;
 
     // Find the position of the first non-digit character
@@ -38,12 +39,12 @@ std::optional<std::variant<time_us, time_ms, time_s, time_m, time_h, time_d>> pa
     int value = std::stoi(std::string(input.substr(0, pos)));
     std::string_view unit = input.substr(pos);
 
-    if (unit == "us") return time_us(value);
-    if (unit == "ms") return time_ms(value);
-    if (unit == "s") return time_s(value);
-    if (unit == "m") return time_m(value);
-    if (unit == "h") return time_h(value);
-    if (unit == "d") return time_d(value);
+    if (unit == "us") return k_time_us(value);
+    if (unit == "ms") return k_time_ms(value);
+    if (unit == "s") return k_time_s(value);
+    if (unit == "m") return k_time_m(value);
+    if (unit == "h") return k_time_h(value);
+    if (unit == "d") return k_time_d(value);
 
     return std::nullopt; // Unknown or unsupported unit
 }

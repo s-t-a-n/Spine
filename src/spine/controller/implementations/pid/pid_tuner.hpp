@@ -39,7 +39,7 @@ public:
     /// znMode: Ziegler-Nichols tuning mode (znModeBasicPID, znModeLessOvershoot, znModeNoOvershoot)
     /// tuningCycles: number of cycles that the tuning runs for (optional, default is 10)
     void set_target_input_value(double target) { targetInputValue = target; }
-    void set_loop_interval(time_ms interval) { loopInterval = interval; }
+    void set_loop_interval(k_time_ms interval) { loopInterval = interval; }
 
     /// Set hysteresis; the minimal overshoot over `targetInputValue`
     /// This is to discourage a sensor bouncing below and over the `targetInputValue` causing a cycle with a false
@@ -57,12 +57,12 @@ public:
     void set_tuning_cycles(int tuneCycles) { cycles = tuneCycles; }
 
     /// Must be called immediately before the tuning loop starts
-    void start_tuning_loop(time_ms ms);
+    void start_tuning_loop(k_time_ms ms);
 
     /// Automatically tune PID
     /// This function must be run in a loop at the same speed as the PID loop being tuned
     /// See README for more details - https://github.com/jackw01/arduino-pid-autotuner/blob/master/README.md
-    double do_autotune(double input, time_ms ms);
+    double do_autotune(double input, k_time_ms ms);
 
     /// Get results of most recent tuning
     double get_Kp() const { return kp; };
@@ -79,7 +79,7 @@ private:
 private:
     double targetInputValue = 0;
     double targetHysteresis = 0;
-    time_ms loopInterval = {};
+    k_time_ms loopInterval = {};
     double minOutput = 0, maxOutput = 0;
     Aggressiveness znMode = Aggressiveness::NoOvershoot;
     int cycles = 10;
@@ -87,7 +87,7 @@ private:
     int cycle = 0; // current cycle
     bool output = false; // is output on
     double outputValue = 0; // current output value
-    time_ms t1 = {}, t2 = {}, tHigh = {}, tLow = {};
+    k_time_ms t1 = {}, t2 = {}, tHigh = {}, tLow = {};
     double max = 0, min = 0;
     double pAverage = 0, iAverage = 0, dAverage = 0;
     double kp = 0, ki = 0, kd = 0;

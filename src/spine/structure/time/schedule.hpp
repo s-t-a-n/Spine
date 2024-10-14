@@ -15,8 +15,8 @@ namespace spn::structure::time {
 class Schedule {
 public:
     struct Block {
-        time_s start; // start time of block
-        time_s duration; // length of block
+        k_time_s start; // start time of block
+        k_time_s duration; // length of block
         double value; // active value for block
     };
 
@@ -30,10 +30,10 @@ public:
     Schedule(const std::initializer_list<Block>& blocks);
 
     /// Returns the value in the block of `t` or 0
-    double value_at(const time_s t) const;
+    double value_at(const k_time_s t) const;
 
     /// Returns the start of the block after time `t` or the maximum length of 24 hours
-    time_s start_of_next_block(const time_s t) const;
+    k_time_s start_of_next_block(const k_time_s t) const;
 
 private:
     spn::structure::Array<Block> _blocks;

@@ -25,27 +25,28 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
     SPN_LOG("Starting autotune");
 
     using spn::structure::time::AlarmTimer;
-    const auto block_until_setpoint = [&](const double setpoint, time_ms timeout = time_ms(0), bool saturated = false) {
+    const auto block_until_setpoint = [&](const double setpoint, k_time_ms timeout = k_time_ms(0),
+                                          bool saturated = false) {
         auto timer = AlarmTimer(timeout);
-        while (process_getter() < setpoint && (!timer.expired() || timeout == time_ms(0))) {
+        while (process_getter() < setpoint && (!timer.expired() || timeout == k_time_ms(0))) {
             process_setter(_cfg.output_upper_limit);
             if (loop) loop();
             SPN_DBG("Waiting until temperature of %.2f C reaches %.2f C, saturating thermal capacitance",
                     process_getter(), setpoint);
-            HAL::delay(time_ms(1000));
+            HAL::delay(k_time_ms(1000));
         }
         process_setter(_cfg.output_lower_limit);
         if (loop) loop();
         if (saturated) return;
-        while (process_getter() > setpoint && (!timer.expired() || timeout == time_ms(0))) {
+        while (process_getter() > setpoint && (!timer.expired() || timeout == k_time_ms(0))) {
             SPN_DBG("Waiting until temperature of %.2f C reaches %.2f C, unloading thermal capacitance",
                     process_getter(), setpoint);
-            HAL::delay(time_ms(1000));
+            HAL::delay(k_time_ms(1000));
         }
     };
 
     if (tune_config.startpoint > 0) {
-        block_until_setpoint(tune_config.startpoint, time_m(30), true);
+        block_until_setpoint(tune_config.startpoint, k_time_m(30), true);
     }
 
     PIDAutotuner tuner = PIDAutotuner();
@@ -89,14 +90,14 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
     auto previous_cycle_start = HAL::millis();
     while (!tuner.is_finished()) {
         // This loop must run at the same speed as the PID control loop being tuned
-        time_ms iteration_start = HAL::millis();
+        k_time_ms iteration_start = HAL::millis();
 
         if (const auto cycle = tuner.get_cycle(); cycle == previous_cycle + 1) {
             previous_cycle++;
             const auto duration = HAL::millis() - previous_cycle_start;
-            [[maybe_unused]] const time_ms remaining = (tune_config.cycles - cycle) * duration;
-            SPN_DBG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, time_s(duration).printable(),
-                    time_m(remaining).printable());
+            [[maybe_unused]] const k_time_ms remaining = (tune_config.cycles - cycle) * duration;
+            SPN_DBG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, k_time_s(duration).printable(),
+                    k_time_m(remaining).printable());
             previous_cycle_start = HAL::millis();
         }
 
@@ -116,7 +117,7 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
         process_setter(control_value);
 
         // This loop must run at the same speed as the PID control loop being tuned
-        const auto interval = time_ms(1);
+        const auto interval = k_time_ms(1);
         while (HAL::millis() - iteration_start < _cfg.sample_interval) {
             if (loop) {
                 loop();

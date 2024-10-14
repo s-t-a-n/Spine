@@ -2,18 +2,18 @@
 
 namespace spn::controller {
 
-void PIDAutotuner::start_tuning_loop(time_ms ms) {
+void PIDAutotuner::start_tuning_loop(k_time_ms ms) {
     cycle = 0; // Cycle counter
     output = true; // Current output state
     outputValue = maxOutput;
     t1 = t2 = ms; // Times used for calculating period
-    tHigh = tLow = time_ms{}; // More time variables
+    tHigh = tLow = k_time_ms{}; // More time variables
     max = -1000000000000; // Max input
     min = 1000000000000; // Min input
     pAverage = iAverage = dAverage = 0;
 }
 
-double PIDAutotuner::do_autotune(double input, time_ms ms) {
+double PIDAutotuner::do_autotune(double input, k_time_ms ms) {
     // Useful information on the algorithm used (Ziegler-Nichols method/Relay method)
     // http://www.processcontrolstuff.net/wp-content/uploads/2015/02/relay_autot-2.pdf
     // https://en.wikipedia.org/wiki/Ziegler%E2%80%93Nichols_method

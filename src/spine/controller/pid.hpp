@@ -29,7 +29,7 @@ public:
 
         double output_lower_limit = 0;
         double output_upper_limit = 255;
-        time_ms sample_interval = time_ms(100);
+        k_time_ms sample_interval = k_time_ms(100);
 
         Proportionality proportionality = Proportionality::ON_ERROR;
         Direction direction = Direction::FORWARD;
