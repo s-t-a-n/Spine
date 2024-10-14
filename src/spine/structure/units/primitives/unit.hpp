@@ -4,12 +4,13 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace spn::core {
+namespace spn::structure::units {
 
 /// Abstract unit with UnitTag U, Magnitude tag M, and ValueType T
 template<typename U, typename M, typename T>
 class Unit {
 public:
+    using UnitTag = U;
     using ValueType = T;
 
     Unit() = default;
@@ -145,4 +146,6 @@ operator/(const AT multiplier, const Unit<U, M, T>& value) {
     return Unit<U, M, T>{multiplier / value.raw()};
 }
 
-} // namespace spn::core
+} // namespace spn::structure::units
+
+namespace spnu = spn::structure::units;
