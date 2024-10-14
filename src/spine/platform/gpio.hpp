@@ -36,7 +36,7 @@ struct DigitalInput {
 
 namespace detail {
 void fade_to(void (*set_value)(void*, double), void* imp, double value, double setpoint, double increment,
-             time_ms increment_interval);
+             k_time_ms increment_interval);
 }
 
 template<typename GPIOImp>
@@ -55,7 +55,7 @@ public:
     double value() const { return _value; }
 
     /// Set a `value` in a (short) amount of time to reduce sudden rushes of current
-    void fade_to(double setpoint, double increment = 0.1, time_ms increment_interval = time_ms(250)) {
+    void fade_to(double setpoint, double increment = 0.1, k_time_ms increment_interval = k_time_ms(250)) {
         const auto set_v = [](void* imp, double value) -> void { ((AnalogueOutput*)imp)->set_value(value); };
         spn::platform::detail::fade_to(set_v, (void*)this, _value, setpoint, increment, increment_interval);
         _value = setpoint;

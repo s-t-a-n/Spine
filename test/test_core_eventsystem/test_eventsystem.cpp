@@ -91,7 +91,7 @@ void ut_ev_basics() {
     TEST_ASSERT_EQUAL(true, handler.event_handler_ctr == 0);
 
     {
-        auto event = sc.event(Events::EventA, time_ms(100), Event::Data());
+        auto event = sc.event(Events::EventA, k_time_ms(100), Event::Data());
         TEST_ASSERT_EQUAL(events_cap + 1, sum_of_sp_usecounts(sc.store()));
         sc.trigger(event);
     }
@@ -103,31 +103,31 @@ void ut_ev_basics() {
     for (auto& ev : sc.pipeline().pipe()) {
         TEST_ASSERT_EQUAL(true, i++ == 0);
         TEST_ASSERT_EQUAL(true, ev != nullptr);
-        TEST_ASSERT_EQUAL(true, ev->future() > time_ms(0));
-        TEST_ASSERT_EQUAL(true, ev->time_until_future() > time_ms(0));
+        TEST_ASSERT_EQUAL(true, ev->future() > k_time_ms(0));
+        TEST_ASSERT_EQUAL(true, ev->time_until_future() > k_time_ms(0));
     }
 
-    sc.schedule(sc.event(Events::EventA, time_ms(100), Event::Data()));
+    sc.schedule(sc.event(Events::EventA, k_time_ms(100), Event::Data()));
     TEST_ASSERT_EQUAL(1, handler.event_handler_ctr);
 
     // test if event is processed at the right time
     sc.loop();
     TEST_ASSERT_EQUAL(1, handler.event_handler_ctr);
-    HAL::delay(time_ms(100));
+    HAL::delay(k_time_ms(100));
     sc.loop();
     TEST_ASSERT_EQUAL(2, handler.event_handler_ctr);
 
     // test if seconds properly convert to milliseconds
     handler.event_handler_ctr = 0;
     {
-        auto event = sc.event(Events::EventA, time_s(2), Event::Data());
+        auto event = sc.event(Events::EventA, k_time_s(2), Event::Data());
         sc.schedule(std::move(event));
     }
     // test if event is processed at the right time
-    HAL::delay(time_ms(1500));
+    HAL::delay(k_time_ms(1500));
     sc.loop();
     TEST_ASSERT_EQUAL(0, handler.event_handler_ctr);
-    HAL::delay(time_ms(2000));
+    HAL::delay(k_time_ms(2000));
     sc.loop();
     TEST_ASSERT_EQUAL(1, handler.event_handler_ctr);
 }
@@ -148,30 +148,30 @@ void ut_ev_repeat_use() {
     TEST_ASSERT_EQUAL(true, handler.event_handler_ctr == 0);
 
     for (int i = 0; i < event_cap; ++i) {
-        auto event = sc.event(Events::EventA, time_ms(i), Event::Data());
+        auto event = sc.event(Events::EventA, k_time_ms(i), Event::Data());
         TEST_ASSERT_EQUAL(false, event == nullptr);
         sc.schedule(std::move(event));
     }
-    TEST_ASSERT_EQUAL(true, sc.event(Events::EventA, time_ms(1), Event::Data()) == nullptr);
-    HAL::delay(time_ms(event_cap));
+    TEST_ASSERT_EQUAL(true, sc.event(Events::EventA, k_time_ms(1), Event::Data()) == nullptr);
+    HAL::delay(k_time_ms(event_cap));
     sc.loop();
     TEST_ASSERT_EQUAL(event_cap, handler.event_handler_ctr);
 
     for (int i = 0; i < event_cap; ++i) {
-        auto event = sc.event(Events::EventA, time_ms(i), Event::Data());
+        auto event = sc.event(Events::EventA, k_time_ms(i), Event::Data());
         TEST_ASSERT_EQUAL(false, event == nullptr);
         sc.schedule(std::move(event));
     }
-    TEST_ASSERT_EQUAL(true, sc.event(Events::EventA, time_ms(1), Event::Data()) == nullptr);
-    HAL::delay(time_ms(event_cap));
+    TEST_ASSERT_EQUAL(true, sc.event(Events::EventA, k_time_ms(1), Event::Data()) == nullptr);
+    HAL::delay(k_time_ms(event_cap));
     sc.loop();
     TEST_ASSERT_EQUAL(2 * event_cap, handler.event_handler_ctr);
 
     // check proper roll around of pool
     for (int i = 0; i < event_cap * 10; ++i) {
-        auto event = sc.event(Events::EventA, time_ms(i), Event::Data());
+        auto event = sc.event(Events::EventA, k_time_ms(i), Event::Data());
         TEST_ASSERT_EQUAL(false, event == nullptr);
-        TEST_ASSERT_EQUAL(true, bool(sc.event(Events::EventA, time_ms(i), Event::Data())));
+        TEST_ASSERT_EQUAL(true, bool(sc.event(Events::EventA, k_time_ms(i), Event::Data())));
     }
 }
 

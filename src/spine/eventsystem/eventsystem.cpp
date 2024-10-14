@@ -16,18 +16,18 @@ uint32_t Event::Data::unsigned_value() const {
     return std::get<uint32_t>(*_value);
 }
 
-time_ms Event::Data::ms() const {
+k_time_ms Event::Data::ms() const {
     spn_assert(_value);
     if (!_value) return {};
-    spn_assert(std::holds_alternative<time_ms>(*_value));
-    return std::get<time_ms>(*_value);
+    spn_assert(std::holds_alternative<k_time_ms>(*_value));
+    return std::get<k_time_ms>(*_value);
 }
 
-time_s Event::Data::s() const {
+k_time_s Event::Data::s() const {
     spn_assert(_value);
     if (!_value) return {};
-    spn_assert(std::holds_alternative<time_s>(*_value));
-    return std::get<time_s>(*_value);
+    spn_assert(std::holds_alternative<k_time_s>(*_value));
+    return std::get<k_time_s>(*_value);
 }
 
 EventSystem::EventSystem(const EventSystem::Config& cfg) //

@@ -35,16 +35,16 @@ struct Zephyr : Platform<Zephyr, ZephyrConfig> {
         k_panic(); // Halt the system in Zephyr
     }
 
-    static time_ms millis() { return time_ms(k_uptime_get()); }
-    static time_us micros() { return time_us(k_ticks_to_us_near32(k_uptime_ticks())); }
-    static void delay_us(time_us us) {
+    static k_time_ms millis() { return k_time_ms(k_uptime_get()); }
+    static k_time_us micros() { return k_time_us(k_ticks_to_us_near32(k_uptime_ticks())); }
+    static void delay_us(k_time_us us) {
         if (us.raw() >= 1000) {
             k_msleep(us.raw() / 1000);
         } else {
             k_busy_wait(us.raw()); // Busy wait for shorter delays
         }
     }
-    static void delay_ms(time_ms ms) { k_msleep(ms.raw()); }
+    static void delay_ms(k_time_ms ms) { k_msleep(ms.raw()); }
 };
 
 } // namespace spn::platform

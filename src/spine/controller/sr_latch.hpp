@@ -18,10 +18,10 @@ public:
     struct Config {
         double high;
         double low;
-        time_ms minimal_on_time = time_ms{};
-        time_ms maximal_on_time = time_ms{};
-        time_ms minimal_off_time = time_ms{};
-        time_ms maximal_off_time = time_ms{};
+        k_time_ms minimal_on_time = k_time_ms{};
+        k_time_ms maximal_on_time = k_time_ms{};
+        k_time_ms minimal_off_time = k_time_ms{};
+        k_time_ms maximal_off_time = k_time_ms{};
     };
 
     using State = core::LogicalState;

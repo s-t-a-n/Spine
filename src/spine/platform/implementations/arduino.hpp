@@ -233,7 +233,7 @@ class ArduinoUART : public UART<ArduinoUART> {
 public:
     struct Config {
         ::Stream* stream; // Arduino HardwareSerial stream, typically 'Serial'
-        time_ms timeout = time_ms(1000); //
+        k_time_ms timeout = k_time_ms(1000); //
     };
 
     ArduinoUART(Config&& cfg) : _cfg(std::move(cfg)), _stream_ref(static_cast<UART_T*>(_cfg.stream)) {}
@@ -305,7 +305,7 @@ struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoAna
 
     static void halt(const char* msg = NULL) {
         SPN_LOG("Halted with reason: %s", msg ? msg : "[not specified]");
-        delay(time_s(2));
+        delay(k_time_s(2));
         noInterrupts();
         while (true) {
         };
@@ -330,10 +330,10 @@ struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoAna
 
     static void printflush() { Serial.flush(); }
 
-    static time_ms millis() { return time_ms(::millis()); }
-    static time_us micros() { return time_us(::micros()); }
-    static void delay_us(time_us us) { ::delayMicroseconds(us.raw<uint32_t>()); }
-    static void delay_ms(time_ms ms) { ::delay(ms.raw<uint32_t>()); }
+    static k_time_ms millis() { return k_time_ms(::millis()); }
+    static k_time_us micros() { return k_time_us(::micros()); }
+    static void delay_us(k_time_us us) { ::delayMicroseconds(us.raw<uint32_t>()); }
+    static void delay_ms(k_time_ms ms) { ::delay(ms.raw<uint32_t>()); }
 
     static unsigned long free_memory();
 };

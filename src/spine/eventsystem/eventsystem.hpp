@@ -34,20 +34,20 @@ public:
         // todo: can this be made more useful and less closed for expansion?
     public:
         Data() = default;
-        explicit Data(time_ms time) : _value(time) {}
-        explicit Data(time_s time) : _value(time) {}
+        explicit Data(k_time_ms time) : _value(time) {}
+        explicit Data(k_time_s time) : _value(time) {}
         explicit Data(double value) : _value(value) {}
         explicit Data(uint32_t value) : _value(value) {}
 
         double value() const;
         uint32_t unsigned_value() const;
-        time_ms ms() const;
-        time_s s() const;
+        k_time_ms ms() const;
+        k_time_s s() const;
 
         bool has_value() const { return bool(_value); }
 
     private:
-        using Value = std::variant<double, uint32_t, time_s, time_ms>;
+        using Value = std::variant<double, uint32_t, k_time_s, k_time_ms>;
         std::optional<Value> _value;
     };
 
@@ -94,8 +94,8 @@ public:
         size_t events_cap; // maximal possible events to be processed
         size_t handler_cap; // maximal amount of handlers per event
         bool delay_between_ticks;
-        time_us min_delay_between_ticks = time_ms(100);
-        time_us max_delay_between_ticks = time_ms(1000);
+        k_time_us min_delay_between_ticks = k_time_ms(100);
+        k_time_us max_delay_between_ticks = k_time_ms(1000);
     };
 
 public:
@@ -129,12 +129,12 @@ public:
     template<typename IdType>
     /// Directly trigger an event for a provided ID
     void trigger(IdType id, const Event::Data& data = {}) {
-        trigger(event(id, time_ms(0), data));
+        trigger(event(id, k_time_ms(0), data));
     }
 
     template<typename IdType>
     /// Returns an event for the given id, time_from_now and data
-    std::shared_ptr<Event> event(IdType id, const time_ms& time_from_now, const Event::Data& data = {}) {
+    std::shared_ptr<Event> event(IdType id, const k_time_ms& time_from_now, const Event::Data& data = {}) {
         auto event = _store.acquire();
         spn_assert(event); // catch gracefully here for use in nested calls
         if (!event) return nullptr;
@@ -147,7 +147,7 @@ public:
 
     template<typename IdType>
     /// Schedule an event to happen in `time_from_now` time
-    void schedule(IdType id, const time_ms& time_from_now, const Event::Data& data = {}) {
+    void schedule(IdType id, const k_time_ms& time_from_now, const Event::Data& data = {}) {
         schedule(event(id, time_from_now, data));
     }
 

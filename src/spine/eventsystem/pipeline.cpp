@@ -4,11 +4,11 @@
 
 namespace spn::eventsystem {
 
-Future::Future(time_ms time_from_now) : _time_from_now(time_from_now), _timer(AlarmTimer(time_from_now)) {}
+Future::Future(k_time_ms time_from_now) : _time_from_now(time_from_now), _timer(AlarmTimer(time_from_now)) {}
 
-void Future::reschedule(time_ms time_from_now) {
-    _time_from_now = time_from_now != time_ms(0) ? time_from_now : _time_from_now;
-    spn_assert(_time_from_now > time_ms{});
+void Future::reschedule(k_time_ms time_from_now) {
+    _time_from_now = time_from_now != k_time_ms(0) ? time_from_now : _time_from_now;
+    spn_assert(_time_from_now > k_time_ms{});
     _timer = AlarmTimer(_time_from_now);
 }
 
@@ -46,13 +46,13 @@ std::string Pipeline::to_string() const {
     return result;
 }
 
-time_ms Pipeline::time_until_next_future() const {
+k_time_ms Pipeline::time_until_next_future() const {
     if (!contains_futures()) {
-        return time_ms(0);
+        return k_time_ms(0);
     }
-    time_ms future = _pipe.peek_front()->future();
-    time_ms current = HAL::millis();
-    return future <= current ? time_ms(0) : future - current;
+    k_time_ms future = _pipe.peek_front()->future();
+    k_time_ms current = HAL::millis();
+    return future <= current ? k_time_ms(0) : future - current;
 }
 
 std::shared_ptr<Future> Pipeline::expire() {
