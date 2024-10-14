@@ -34,6 +34,8 @@
 #include "spine/structure/time/schedule.hpp"
 #include "spine/structure/time/timers.hpp"
 #include "spine/structure/tuple.hpp"
+#include "spine/structure/units/primitives/compound_unit.hpp"
+#include "spine/structure/units/primitives/unit.hpp"
 #include "spine/structure/units/si.hpp"
 #include "spine/structure/vector.hpp"
 
