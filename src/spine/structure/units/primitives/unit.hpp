@@ -1,5 +1,7 @@
 #pragma once
 
+#include "spine/core/exception.hpp"
+
 #include <cmath>
 #include <cstdint>
 #include <type_traits>
@@ -13,26 +15,32 @@ public:
     using UnitTag = U;
     using ValueType = T;
 
-    Unit() = default;
-    explicit Unit(const T length) : _value(length) {}
+    static_assert(std::is_arithmetic_v<T>, "ValueType T must be an arithmetic type.");
 
-    template<typename ValueType = T>
-    ValueType raw() const {
-        return static_cast<ValueType>(_value);
-    }
+    constexpr Unit() = default;
+    constexpr explicit Unit(const T length) : _value(length) {}
+
+    Unit(const Unit&) = default;
+    Unit& operator=(const Unit&) = default;
+    Unit(Unit&&) = default;
+    Unit& operator=(Unit&&) = default;
+
+    constexpr ValueType raw() const { return _value; }
 
     bool is_negative() const { return _value < 0; }
-    uint32_t printable() const { return static_cast<uint32_t>(std::abs(_value)); }
+    bool is_integral() const {
+        if constexpr (std::is_integral_v<T>) return true;
+        return std::floor(_value) == _value;
+    }
 
-    template<typename TagOther>
-    Unit(const Unit<U, TagOther, T>& other) : _value(from_other(other)) {}
+    template<typename MOther>
+    Unit(const Unit<U, MOther, T>& other) : _value(from_other(other)) {}
 
     template<typename MOther>
     Unit<U, M, T>& operator=(const Unit<U, MOther, T>& other) {
         _value = from_other(other);
         return *this;
     }
-
     template<typename MOther>
     Unit<U, M, T>& operator=(Unit<U, MOther, T>&& other) {
         _value = from_other(other);
@@ -40,111 +48,88 @@ public:
     }
 
     template<typename MOther>
+    [[nodiscard]] Unit<U, M, T> operator+(const Unit<U, MOther, T>& other) const {
+        return Unit<U, M, T>{_value + from_other(other)};
+    }
+    template<typename MOther>
+    [[nodiscard]] Unit<U, M, T> operator-(const Unit<U, MOther, T>& other) const {
+        return Unit<U, M, T>{_value - from_other(other)};
+    }
+    [[nodiscard]] Unit operator-() const { return Unit(-_value); }
+    template<typename MOther>
     Unit<U, M, T>& operator-=(const Unit<U, MOther, T>& other) {
         _value -= from_other(other);
         return *this;
     }
-
     template<typename MOther>
     Unit<U, M, T>& operator+=(const Unit<U, MOther, T>& other) {
         _value += from_other(other);
         return *this;
     }
 
+    template<typename AT>
+    std::enable_if_t<std::is_arithmetic_v<AT>, Unit> operator*(const AT& scalar) const {
+        return Unit{_value * scalar};
+    }
+    template<typename AT>
+    std::enable_if_t<std::is_arithmetic_v<AT>, Unit&> operator*=(const AT& scalar) {
+        _value *= scalar;
+        return *this;
+    }
+    template<typename AT>
+    std::enable_if_t<std::is_arithmetic_v<AT>, Unit> operator/(const AT& scalar) const {
+        if (scalar == 0) spn::throw_exception(runtime_exception("tried to divide by zero"));
+        return Unit{_value / scalar};
+    }
+    template<typename AT>
+    std::enable_if_t<std::is_arithmetic_v<AT>, Unit&> operator/=(const AT& scalar) {
+        if (scalar == 0) spn::throw_exception(runtime_exception("tried to divide by zero"));
+        _value /= scalar;
+        return *this;
+    }
+
     template<typename MOther>
-    Unit<U, M, T> operator*(const Unit<U, MOther, T>& other) const {
-        return Unit<U, M, T>{_value * from_other(other)};
+    bool operator==(const Unit<U, MOther, T>& other) const {
+        if constexpr (std::is_integral_v<T>) return _value == from_other(other);
+        return approximately_equal(_value, from_other(other));
     }
-
-    // template<typename ArithmeticType>
-    // Unit<Tag> operator*(const ArithmeticType multiplier) const {
-    //     static_assert(std::is_arithmetic_v<ArithmeticType>, "Multiplier must be arithmetic");
-    //     return Unit<Tag>{_value * multiplier};
-    // }
-
-    template<typename TagOther>
-    Unit<U, M, T> operator+(const Unit<U, TagOther, T>& other) const {
-        return Unit<U, M, T>{_value + from_other(other)};
+    template<typename MOther>
+    bool operator!=(const Unit<U, MOther, T>& other) const {
+        return !(*this == other);
     }
-
-    template<typename TagOther>
-    Unit<U, M, T> operator-(const Unit<U, TagOther, T>& other) const {
-        return Unit<U, M, T>{_value - from_other(other)};
-    }
-
-    template<typename TagOther>
-    Unit<U, M, T> operator/(const Unit<U, TagOther, T>& other) const {
-        return Unit<U, M, T>{_value / from_other(other)};
-    }
-
-    // template<typename ArithmeticType>
-    // Unit<Tag> operator/(const ArithmeticType multiplier) const {
-    //     static_assert(std::is_arithmetic_v<ArithmeticType>, "Divider must be arithmetic");
-    //     return Unit<Tag>{_value / multiplier};
-    // }
-
-    template<typename TagOther>
-    bool operator==(const Unit<U, TagOther, T>& other) const {
-        return _value == from_other(other);
-    }
-
-    template<typename TagOther>
-    bool operator!=(const Unit<U, TagOther, T>& other) const {
-        return _value != from_other(other);
-    }
-
-    template<typename TagOther>
-    bool operator<(const Unit<U, TagOther, T>& other) const {
+    template<typename MOther>
+    bool operator<(const Unit<U, MOther, T>& other) const {
         return _value < from_other(other);
     }
-
-    template<typename TagOther>
-    bool operator>(const Unit<U, TagOther, T>& other) const {
+    template<typename MOther>
+    bool operator>(const Unit<U, MOther, T>& other) const {
         return _value > from_other(other);
     }
-
-    template<typename TagOther>
-    bool operator<=(const Unit<U, TagOther, T>& other) const {
+    template<typename MOther>
+    bool operator<=(const Unit<U, MOther, T>& other) const {
         return _value <= from_other(other);
     }
-
-    template<typename TagOther>
-    bool operator>=(const Unit<U, TagOther, T>& other) const {
+    template<typename MOther>
+    bool operator>=(const Unit<U, MOther, T>& other) const {
         return _value >= from_other(other);
     }
 
 private:
-    T _value = 0;
+    static constexpr ValueType epsilon = std::numeric_limits<ValueType>::epsilon();
 
-    template<typename TagOther>
-    T from_other(const Unit<U, TagOther, T>& other) const {
-        return static_cast<T>(TagOther::Magnitude / M::Magnitude * other.raw());
+    bool approximately_equal(ValueType a, ValueType b) const {
+        return std::fabs(a - b) <= epsilon * std::max(std::fabs(a), std::fabs(b));
+    }
+
+private:
+    ValueType _value = 0;
+
+    template<typename MOther>
+    ValueType from_other(const Unit<U, MOther, T>& other) const {
+        constexpr auto ratio = MOther::Magnitude / M::Magnitude;
+        return ratio * other.raw();
     }
 };
-
-template<typename U, typename M, typename T, typename AT>
-std::enable_if_t<std::is_arithmetic_v<AT> && !std::is_same_v<AT, Unit<U, M, T>>, Unit<U, M, T>>
-operator*(const Unit<U, M, T>& value, const AT multiplier) {
-    return Unit<U, M, T>{value.raw() * multiplier};
-}
-
-template<typename U, typename M, typename T, typename AT>
-std::enable_if_t<std::is_arithmetic_v<AT> && !std::is_same_v<AT, Unit<U, M, T>>, Unit<U, M, T>>
-operator*(const AT multiplier, const Unit<U, M, T>& value) {
-    return Unit<U, M, T>{multiplier * value.raw()};
-}
-
-template<typename U, typename M, typename T, typename AT>
-std::enable_if_t<std::is_arithmetic_v<AT> && !std::is_same_v<AT, Unit<U, M, T>>, Unit<U, M, T>>
-operator/(const Unit<U, M, T>& value, const AT multiplier) {
-    return Unit<U, M, T>{value.raw() / multiplier};
-}
-
-template<typename U, typename M, typename T, typename AT>
-std::enable_if_t<std::is_arithmetic_v<AT> && !std::is_same_v<AT, Unit<U, M, T>>, Unit<U, M, T>>
-operator/(const AT multiplier, const Unit<U, M, T>& value) {
-    return Unit<U, M, T>{multiplier / value.raw()};
-}
 
 } // namespace spn::structure::units
 

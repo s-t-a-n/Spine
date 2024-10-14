@@ -8,6 +8,6 @@ namespace spn::structure::units {
 struct TagVolume {};
 } // namespace spn::structure::units
 
-// Volume, with unit: liter
-using liter_ml = spnu::Unit<spnu::TagVolume, spnu::Milli, spnu::RealRawType>;
-using liter = spnu::Unit<spnu::TagVolume, spnu::Base, spnu::RealRawType>;
+// Volume, with unit: litre
+using litre_ml = spnu::Unit<spnu::TagVolume, spnu::Milli, spnu::RealRawType>;
+using litre = spnu::Unit<spnu::TagVolume, spnu::Base, spnu::RealRawType>;
