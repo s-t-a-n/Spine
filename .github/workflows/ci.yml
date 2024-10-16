@@ -52,7 +52,7 @@ jobs:
         run: pio test -e unittest
 
       - name: Find and run examples
-        run: sh ./examples/build.sh
+        run: sh ./examples/build.sh default_envs
 
   linter:
     if: github.event.pull_request.draft == false
