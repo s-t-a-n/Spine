@@ -19,6 +19,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -->
 
+## [0.2.0] - 2024-10-16
+
+### Added
+
+- Units: add compound type to express relations like litre per minute
+- Added remaining SI-units
+
+### Changed
+
+- Change `time` to `k_time` (uint32 that tracks the 'kernel' uptime timer overflow) and add a new `time` that uses a
+  floating point for algorithmic use
+- Revamped `Unit` base class for all SI-units to publish a sane set of arithmetics
+- More verbose exception handling
+
 ## [0.1.0] - 2024-10-12
 
 ### Added
