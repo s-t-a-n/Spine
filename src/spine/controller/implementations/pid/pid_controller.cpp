@@ -81,11 +81,11 @@ void PIDController::set_output_limits(double Min, double Max) {
 
 void PIDController::set_tunings(double Kp, double Ki, double Kd, const PIDController::Proportionality proportionality) {
     spn_assert(Kp >= 0 && Ki >= 0 && Kd >= 0);
-    spn_assert(_sampling_time > time_ms{});
+    spn_assert(_sampling_time > k_time_ms{});
 
     _proportionality = proportionality;
 
-    const auto sampletime_in_seconds = _sampling_time.raw<double>() / 1000.0;
+    const auto sampletime_in_seconds = static_cast<double>(_sampling_time.raw()) / 1000.0;
     _kp = Kp;
     _ki = Ki * sampletime_in_seconds;
     _kd = Kd / sampletime_in_seconds;
@@ -109,7 +109,7 @@ void PIDController::set_controller_direction(const PIDController::Direction dire
 void PIDController::set_sampling_time(const k_time_ms sampling_time) {
     // adjust sample
     if (sampling_time > k_time_ms(0)) {
-        double ratio = sampling_time.raw<double>() / _sampling_time.raw<double>();
+        double ratio = static_cast<double>(sampling_time.raw()) / static_cast<double>(_sampling_time.raw());
         _ki *= ratio;
         _kd /= ratio;
         _sampling_time = sampling_time;

@@ -6,7 +6,7 @@ PID::PID(PID::Config&& cfg)
     : _cfg(cfg),
       _pid_backend(PIDController(&_input, &_output, &_setpoint, _cfg.tunings.Kp, _cfg.tunings.Ki, _cfg.tunings.Kd,
                                  PIDController::Proportionality::ON_MEASUREMENT, _cfg.direction)) {
-    spn_assert(time_ms(_cfg.sample_interval).raw<>() > 0);
+    spn_assert(k_time_ms(_cfg.sample_interval).raw() > 0);
 }
 
 void PID::initialize() {
@@ -95,9 +95,9 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
         if (const auto cycle = tuner.get_cycle(); cycle == previous_cycle + 1) {
             previous_cycle++;
             const auto duration = HAL::millis() - previous_cycle_start;
-            [[maybe_unused]] const k_time_ms remaining = (tune_config.cycles - cycle) * duration;
-            SPN_DBG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, k_time_s(duration).printable(),
-                    k_time_m(remaining).printable());
+            [[maybe_unused]] const k_time_ms remaining = duration * (tune_config.cycles - cycle);
+            SPN_DBG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, k_time_s(duration).raw(),
+                    k_time_m(remaining).raw());
             previous_cycle_start = HAL::millis();
         }
 

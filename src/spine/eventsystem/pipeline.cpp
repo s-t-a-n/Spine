@@ -72,7 +72,7 @@ void Pipeline::push(std::shared_ptr<Future>&& future) {
 
     size_t i = 0;
     for (auto& other_future : _pipe) {
-        if (future->time_until_future().raw<int32_t>() < other_future->time_until_future().raw<int32_t>()) {
+        if (future->time_until_future() < other_future->time_until_future()) {
             [[maybe_unused]] auto last_size = _pipe.size();
             _pipe.insert(i, std::move(future));
             spn_assert(last_size + 1 == _pipe.size());

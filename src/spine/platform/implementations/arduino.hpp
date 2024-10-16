@@ -238,7 +238,7 @@ public:
 
     ArduinoUART(Config&& cfg) : _cfg(std::move(cfg)), _stream_ref(static_cast<UART_T*>(_cfg.stream)) {}
 
-    void initialize() override { _stream_ref->setTimeout(_cfg.timeout.raw<unsigned long>()); }
+    void initialize() override { _stream_ref->setTimeout(_cfg.timeout.raw()); }
 
     size_t available() const override {
         spn_assert(_stream_ref);
@@ -332,8 +332,8 @@ struct Arduino : public Platform<Arduino, ArduinoConfig, ArduinoGPIO, ArduinoAna
 
     static k_time_ms millis() { return k_time_ms(::millis()); }
     static k_time_us micros() { return k_time_us(::micros()); }
-    static void delay_us(k_time_us us) { ::delayMicroseconds(us.raw<uint32_t>()); }
-    static void delay_ms(k_time_ms ms) { ::delay(ms.raw<uint32_t>()); }
+    static void delay_us(k_time_us us) { ::delayMicroseconds(us.raw()); }
+    static void delay_ms(k_time_ms ms) { ::delay(ms.raw()); }
 
     static unsigned long free_memory();
 };

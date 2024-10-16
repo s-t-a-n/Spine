@@ -7,7 +7,7 @@ Schedule::Schedule(const Schedule::Config&& cfg) : Schedule(cfg.blocks) {}
 Schedule::Schedule(const std::initializer_list<Block>& blocks) : _blocks(blocks) {
     k_time_s total_time = {};
     for (auto& b : _blocks) {
-        spn_assert(time_s(b.duration) > k_time_s(0));
+        spn_assert(k_time_s(b.duration) > k_time_s(0));
         total_time += b.duration;
     }
     spn_assert(total_time <= k_time_h(24));

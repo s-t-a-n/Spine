@@ -15,7 +15,7 @@ int main() {
     const auto pid_cfg = PID::Config{.tunings = pid_tunings,
                                      .output_lower_limit = 0,
                                      .output_upper_limit = 255,
-                                     .sample_interval = time_ms(100),
+                                     .sample_interval = k_time_ms(100),
                                      .proportionality = PID::Proportionality::ON_ERROR,
                                      .direction = PID::Direction::FORWARD};
     auto pid = PID(pid_cfg);
