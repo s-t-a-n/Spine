@@ -25,7 +25,7 @@ bool AlarmTimer::expired() {
         return true;
     }
 
-    if (_future.raw<int32_t>() <= HAL::millis().raw<int32_t>()) {
+    if (_future <= HAL::millis()) {
         _expired = true;
         return true;
     }
