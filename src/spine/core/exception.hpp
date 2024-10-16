@@ -6,24 +6,25 @@ namespace spn::core {
 class Exception;
 
 struct ExceptionHandler {
-    virtual ~ExceptionHandler(){};
+    virtual ~ExceptionHandler() = default;
     virtual void handle_exception(const Exception& exception){};
 };
 
-/// Set a machine global exception handler which will be called when an exception is thrown
-void set_machine_exception_handler(std::unique_ptr<ExceptionHandler> handler);
+/// Set a machine global exception handler which will be called when an exception is thrown. Returns the old handler.
+std::unique_ptr<ExceptionHandler> set_machine_exception_handler(std::unique_ptr<ExceptionHandler> handler);
 
 /// Returns global exception handler
 ExceptionHandler* machine_exception_handler();
 
 class Exception {
 public:
-    Exception(const char* error_msg) : _error_msg(error_msg){};
-    Exception(const Exception& other) : _error_msg(other._error_msg) {}
+    explicit Exception(const char* error_msg) : _error_msg(error_msg){};
+    Exception(const Exception& other) = default;
     virtual ~Exception() = default;
 
     void throw_error() const;
     virtual const char* error_type() const { return "Exception"; };
+    const char* what() const { return _error_msg; }
 
 protected:
     const char* _error_msg;
