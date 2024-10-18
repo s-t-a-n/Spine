@@ -11,3 +11,6 @@ struct TagVolume {};
 // Volume, with unit: litre
 using litre_ml = spnu::Unit<spnu::TagVolume, spnu::Milli, spnu::RealRawType>;
 using litre = spnu::Unit<spnu::TagVolume, spnu::Base, spnu::RealRawType>;
+
+// Volume, with unit: cubic_metre
+using cubic_metre = spnu::Unit<spnu::TagVolume, spnu::Kilo, spnu::RealRawType>;

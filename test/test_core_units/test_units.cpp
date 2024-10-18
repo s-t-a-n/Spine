@@ -130,6 +130,7 @@ void ut_unit_real_time_printable() {
 void ut_unit_magnitudes() {
     TEST_ASSERT_EQUAL(true, newton(1500) == newton_k(1.5));
     TEST_ASSERT_DOUBLE_WITHIN(1e-15, 1.0, joule_p(joule_G(1e-21)).raw());
+    TEST_ASSERT_EQUAL(true, litre(1000) == cubic_metre(1));
 }
 
 void ut_unit_temperature_convert() {
