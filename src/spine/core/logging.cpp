@@ -49,8 +49,10 @@ void print(const LogLevel level, const char* filename, const int line_number, co
     space_used += vsnprintf(msg_buffer + space_used, sizeof(msg_buffer) - space_used, fmt, args);
     va_end(args);
 
-    space_used += snprintf(msg_buffer + space_used, sizeof(msg_buffer) - space_used, " (%s:%d %s)", filename,
-                           line_number, function_name);
+    if (level == LogLevel::DEBUG) {
+        space_used += snprintf(msg_buffer + space_used, sizeof(msg_buffer) - space_used, " (%s:%d %s)", filename,
+                               line_number, function_name);
+    }
 
 #if defined(SPN_LOG_OVERLOAD)
     SPN_LOG_OVERLOAD(level, msg_buffer);
