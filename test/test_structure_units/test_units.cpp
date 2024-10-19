@@ -137,11 +137,11 @@ void ut_unit_temperature_convert() {
     auto t_k = kelvin(100);
     auto t_c = celsius(100);
 
-    TEST_ASSERT_EQUAL(true, convert_to_celsius(t_c) == t_c);
-    TEST_ASSERT_EQUAL(true, convert_to_celsius(t_k).raw() == t_k.raw() - 273.15);
+    TEST_ASSERT_EQUAL(true, to_celsius(t_c) == t_c);
+    TEST_ASSERT_EQUAL(true, to_celsius(t_k).raw() == t_k.raw() - 273.15);
 
-    TEST_ASSERT_EQUAL(true, convert_to_kelvin(t_k) == t_k);
-    TEST_ASSERT_EQUAL(true, convert_to_kelvin(t_c).raw() == t_c.raw() + 273.15);
+    TEST_ASSERT_EQUAL(true, to_kelvin(t_k) == t_k);
+    TEST_ASSERT_EQUAL(true, to_kelvin(t_c).raw() == t_c.raw() + 273.15);
 }
 
 void ut_unit_exception_handling() {
