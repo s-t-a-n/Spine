@@ -23,7 +23,8 @@ void PID::new_reading(double value, k_time_ms now) {
 }
 
 PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<void(double)> process_setter,
-                           std::function<double(void)> process_getter, std::function<void(void)> loop) const {
+                           std::function<double(void)> process_getter, std::function<void(void)> loop,
+                           std::function<k_time_ms()> uptime, std::function<void(k_time_ms)> sleep) const {
     SPN_LOG("Starting autotune");
 
     using spn::structure::time::AlarmTimer;
@@ -35,7 +36,7 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
             if (loop) loop();
             SPN_DBG("Waiting until temperature of %.2f C reaches %.2f C, saturating thermal capacitance",
                     process_getter(), setpoint);
-            HAL::delay(k_time_ms(1000));
+            sleep(k_time_ms(1000));
         }
         process_setter(_cfg.output_lower_limit);
         if (loop) loop();
@@ -43,7 +44,7 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
         while (process_getter() > setpoint && (!timer.expired() || timeout == k_time_ms(0))) {
             SPN_DBG("Waiting until temperature of %.2f C reaches %.2f C, unloading thermal capacitance",
                     process_getter(), setpoint);
-            HAL::delay(k_time_ms(1000));
+            sleep(k_time_ms(1000));
         }
     };
 
@@ -85,22 +86,22 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
 
     // This must be called immediately before the tuning loop
     // Must be called with the current time in microseconds
-    tuner.start_tuning_loop(HAL::millis());
+    tuner.start_tuning_loop(uptime());
 
     // Run a loop until tuner.isFinished() returns true
     auto previous_cycle = 0;
-    auto previous_cycle_start = HAL::millis();
+    auto previous_cycle_start = uptime();
     while (!tuner.is_finished()) {
         // This loop must run at the same speed as the PID control loop being tuned
-        k_time_ms iteration_start = HAL::millis();
+        k_time_ms iteration_start = uptime();
 
         if (const auto cycle = tuner.get_cycle(); cycle == previous_cycle + 1) {
             previous_cycle++;
-            const auto duration = HAL::millis() - previous_cycle_start;
+            const auto duration = uptime() - previous_cycle_start;
             [[maybe_unused]] const k_time_ms remaining = duration * (tune_config.cycles - cycle);
             SPN_DBG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, k_time_s(duration).raw(),
                     k_time_m(remaining).raw());
-            previous_cycle_start = HAL::millis();
+            previous_cycle_start = uptime();
         }
 
         // Get input value here (temperature, encoder position, velocity, etc)
@@ -120,11 +121,11 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
 
         // This loop must run at the same speed as the PID control loop being tuned
         const auto interval = k_time_ms(1);
-        while (HAL::millis() - iteration_start < _cfg.sample_interval) {
+        while (uptime() - iteration_start < _cfg.sample_interval) {
             if (loop) {
                 loop();
             }
-            HAL::delay(interval);
+            sleep(interval);
         }
     }
     process_setter(0); // Turn the output off.

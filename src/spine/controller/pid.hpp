@@ -72,7 +72,9 @@ public:
 
     /// Autotune the proportional weights for the target_setpoint
     Tunings autotune(const TuneConfig& tune_config, std::function<void(double)> process_setter,
-                     std::function<double(void)> process_getter, std::function<void(void)> loop = {}) const;
+                     std::function<double(void)> process_getter, std::function<void(void)> loop = {},
+                     std::function<k_time_ms(void)> uptime = HAL::millis,
+                     std::function<void(k_time_ms)> sleep = HAL::delay) const;
 
     /// Get the controller response
     double response() const {
