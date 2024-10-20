@@ -64,8 +64,11 @@ public:
         return Tunings{.Kp = _pid_backend.Kp(), .Ki = _pid_backend.Ki(), .Kd = _pid_backend.Kd()};
     }
 
-    /// Set latest reading
+    /// Set latest reading (update happens based on system clock)
     void new_reading(double value);
+
+    /// Set latest reading with arbitrary now (which is used to calculate time to update)
+    void new_reading(double value, k_time_ms now);
 
     /// Autotune the proportional weights for the target_setpoint
     Tunings autotune(const TuneConfig& tune_config, std::function<void(double)> process_setter,

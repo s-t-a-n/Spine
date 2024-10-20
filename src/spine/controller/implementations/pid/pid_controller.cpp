@@ -1,5 +1,8 @@
 #include "spine/controller/implementations/pid/pid_controller.hpp"
 
+#include "spine/core/debugging.hpp"
+#include "spine/platform/hal.hpp"
+
 namespace spn::controller {
 
 PIDController::PIDController(double* const input, double* const output, double* const setpoint, const double Kp,
@@ -27,8 +30,7 @@ void PIDController::initialize() {
     }
 }
 
-bool PIDController::update() {
-    const auto now = HAL::millis();
+bool PIDController::update(const k_time_ms now) {
     if (const auto timeChange = (now - _last_time); timeChange >= _sampling_time) {
         /*Compute all the working error variables*/
         const double input = *_user_input;

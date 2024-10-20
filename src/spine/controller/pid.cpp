@@ -15,9 +15,11 @@ void PID::initialize() {
     _pid_backend.initialize();
 }
 
-void PID::new_reading(double value) {
+void PID::new_reading(double value) { new_reading(value, HAL::millis()); }
+
+void PID::new_reading(double value, k_time_ms now) {
     _input = value;
-    _pid_backend.update();
+    _pid_backend.update(now);
 }
 
 PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<void(double)> process_setter,

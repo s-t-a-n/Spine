@@ -13,9 +13,7 @@
  * - remove unnecessary functionality
  **********************************************************************************************/
 
-#include "spine/core/debugging.hpp"
-#include "spine/platform/hal.hpp"
-#include "spine/structure/units/si.hpp"
+#include "spine/structure/units/time.hpp"
 
 namespace spn::controller {
 
@@ -33,7 +31,7 @@ public:
 
     void initialize();
 
-    bool update();
+    bool update(const k_time_ms now);
 
     void set_output_limits(double Min, double Max);
 
