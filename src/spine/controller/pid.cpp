@@ -99,7 +99,7 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
             previous_cycle++;
             const auto duration = uptime() - previous_cycle_start;
             [[maybe_unused]] const k_time_ms remaining = duration * (tune_config.cycles - cycle);
-            SPN_DBG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, k_time_s(duration).raw(),
+            SPN_LOG("Cycle %i complete in %u seconds, remaining: %u minutes", cycle, k_time_s(duration).raw(),
                     k_time_m(remaining).raw());
             previous_cycle_start = uptime();
         }
@@ -110,7 +110,7 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
         // Call tunePID() with the input value and current time in microseconds
         const double control_value = tuner.do_autotune(process_value, iteration_start);
 
-        SPN_LOG("Cycle %i/%i: PV: %f, CV: %f", tuner.get_cycle(), tune_config.cycles, process_value, control_value);
+        SPN_DBG("Cycle %i/%i: PV: %f, CV: %f", tuner.get_cycle(), tune_config.cycles, process_value, control_value);
 
         // Set the output - tunePid() will return values within the range configured
         // by setOutputRange(). Don't change the value or the tuning results will be
