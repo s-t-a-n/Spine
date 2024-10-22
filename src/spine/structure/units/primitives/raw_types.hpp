@@ -4,9 +4,9 @@
 
 namespace spn::structure::units {
 
-using RealRawType = double;
+using RealRawType = float;
 using IntegerRawType = long long;
 using KernelTimeRawType = time_t;
-using TimeRawType = double;
+using TimeRawType = float;
 
 } // namespace spn::structure::units

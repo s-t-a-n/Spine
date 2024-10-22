@@ -5,8 +5,8 @@
 
 namespace spn::controller {
 
-PIDController::PIDController(double* const input, double* const output, double* const setpoint, const double Kp,
-                             const double Ki, const double Kd, const PIDController::Proportionality proportionality,
+PIDController::PIDController(float* const input, float* const output, float* const setpoint, const float Kp,
+                             const float Ki, const float Kd, const PIDController::Proportionality proportionality,
                              const PIDController::Direction controllerDirection)
     : _user_input(input), _user_output(output), _user_setpoint(setpoint) {
     spn_assert(input);
@@ -17,7 +17,7 @@ PIDController::PIDController(double* const input, double* const output, double* 
     _last_time = HAL::millis() - _sampling_time;
 }
 
-PIDController::PIDController(double* Input, double* Output, double* Setpoint, double Kp, double Ki, double Kd,
+PIDController::PIDController(float* Input, float* Output, float* Setpoint, float Kp, float Ki, float Kd,
                              PIDController::Direction ControllerDirection)
     : PIDController(Input, Output, Setpoint, Kp, Ki, Kd, Proportionality::ON_ERROR, ControllerDirection) {}
 void PIDController::initialize() {
@@ -33,9 +33,9 @@ void PIDController::initialize() {
 bool PIDController::update(const k_time_ms now) {
     if (const auto timeChange = (now - _last_time); timeChange >= _sampling_time) {
         /*Compute all the working error variables*/
-        const double input = *_user_input;
-        const double error = *_user_setpoint - input;
-        const double dInput = (input - _last_reading);
+        const float input = *_user_input;
+        const float error = *_user_setpoint - input;
+        const float dInput = (input - _last_reading);
         _cumulative_output += (_ki * error);
 
         /*Add Proportional on Measurement, if ON_MEASUREMENT is specified*/
@@ -46,7 +46,7 @@ bool PIDController::update(const k_time_ms now) {
             _cumulative_output = _output_lower_limit;
 
         /*Add Proportional on Error, if ON_ERROR is specified*/
-        double output;
+        float output;
         if (_proportionality == Proportionality::ON_ERROR) output = _kp * error;
         else
             output = 0;
@@ -67,7 +67,7 @@ bool PIDController::update(const k_time_ms now) {
     return false;
 }
 
-void PIDController::set_output_limits(double Min, double Max) {
+void PIDController::set_output_limits(float Min, float Max) {
     if (Min >= Max) return;
     _output_lower_limit = Min;
     _output_upper_limit = Max;
@@ -81,13 +81,13 @@ void PIDController::set_output_limits(double Min, double Max) {
         _cumulative_output = _output_lower_limit;
 }
 
-void PIDController::set_tunings(double Kp, double Ki, double Kd, const PIDController::Proportionality proportionality) {
+void PIDController::set_tunings(float Kp, float Ki, float Kd, const PIDController::Proportionality proportionality) {
     spn_assert(Kp >= 0 && Ki >= 0 && Kd >= 0);
     spn_assert(_sampling_time > k_time_ms{});
 
     _proportionality = proportionality;
 
-    const auto sampletime_in_seconds = static_cast<double>(_sampling_time.raw()) / 1000.0;
+    const auto sampletime_in_seconds = _sampling_time.raw() / 1000.0f;
     _kp = Kp;
     _ki = Ki * sampletime_in_seconds;
     _kd = Kd / sampletime_in_seconds;
@@ -111,7 +111,7 @@ void PIDController::set_controller_direction(const PIDController::Direction dire
 void PIDController::set_sampling_time(const k_time_ms sampling_time) {
     // adjust sample
     if (sampling_time > k_time_ms(0)) {
-        double ratio = static_cast<double>(sampling_time.raw()) / static_cast<double>(_sampling_time.raw());
+        float ratio = sampling_time.raw() / _sampling_time.raw();
         _ki *= ratio;
         _kd /= ratio;
         _sampling_time = sampling_time;

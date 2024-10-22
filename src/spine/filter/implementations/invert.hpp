@@ -8,7 +8,7 @@
 
 namespace spn::filter {
 
-template<typename ValueType = double>
+template<typename ValueType = float>
 /// Filter that takes a value and inverts it
 class Invert : public Filter<ValueType> {
 public:
@@ -23,7 +23,7 @@ public:
     ~Invert() override = default;
 
     /// Provides a normalized inverter
-    static std::unique_ptr<Invert> NormalizedInverter(double input_lower_limit = 0.0, double input_upper_limit = 1.0) {
+    static std::unique_ptr<Invert> NormalizedInverter(float input_lower_limit = 0.0, float input_upper_limit = 1.0) {
         return std::make_unique<Invert>(Config{
             .input_lower_limit = input_lower_limit,
             .input_upper_limit = input_upper_limit,

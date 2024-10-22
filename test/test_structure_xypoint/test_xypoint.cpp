@@ -9,12 +9,12 @@ using namespace spn::structure;
 namespace {
 
 void ut_xypoint_basics() {
-    typedef XYPoint<double> vec;
+    typedef XYPoint<float> vec;
 
-    vec a(DBL_MIN, DBL_MAX);
-    vec b(DBL_MAX, DBL_MAX);
+    vec a(FLT_MIN, FLT_MAX);
+    vec b(FLT_MAX, FLT_MAX);
 
-    TEST_ASSERT_TRUE(a.x == DBL_MIN && a.y == DBL_MAX);
+    TEST_ASSERT_TRUE(a.x == FLT_MIN && a.y == FLT_MAX);
 
     TEST_ASSERT_TRUE(b != a);
     TEST_ASSERT_TRUE(!(a == b));
@@ -50,7 +50,7 @@ void ut_xypoint_operator_overloads() {
 }
 
 void ut_xypoint_math() {
-    typedef XYPoint<double> vec;
+    typedef XYPoint<float> vec;
 
     vec a(1, 2);
     vec b(4, 5);
@@ -64,15 +64,15 @@ void ut_xypoint_math() {
     c.subtract(b);
     TEST_ASSERT_TRUE(c == a - b);
 
-    for (double i = -100; i < 100; i++) {
+    for (float i = -100; i < 100; i++) {
         c = a;
         c.scalar_multiplication(i);
         TEST_ASSERT_TRUE(c == vec(i * a.x, i * a.y));
     }
 
     c = a;
-    double m = c.mag();
-    TEST_ASSERT_TRUE(m == sqrt(5));
+    float m = c.mag();
+    TEST_ASSERT_TRUE(m == sqrtf(5));
 
     c = a;
     c.normalize();

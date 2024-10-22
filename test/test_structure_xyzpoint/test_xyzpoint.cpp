@@ -9,12 +9,12 @@ using namespace spn::structure;
 namespace {
 
 void ut_xyzpoint_basics() {
-    typedef XYZPoint<double> vec;
+    typedef XYZPoint<float> vec;
 
-    vec a(DBL_MIN, 0, DBL_MAX);
-    vec b(DBL_MAX, DBL_MAX, DBL_MAX);
+    vec a(FLT_MIN, 0, FLT_MAX);
+    vec b(FLT_MAX, FLT_MAX, FLT_MAX);
 
-    TEST_ASSERT_TRUE(a.x == DBL_MIN && a.y == 0 && a.z == DBL_MAX);
+    TEST_ASSERT_TRUE(a.x == FLT_MIN && a.y == 0 && a.z == FLT_MAX);
 
     TEST_ASSERT_TRUE(b != a);
     TEST_ASSERT_TRUE(!(a == b));
@@ -50,7 +50,7 @@ void ut_xyzpoint_operator_overloads() {
 }
 
 void ut_xyzpoint_math() {
-    typedef XYZPoint<double> vec;
+    typedef XYZPoint<float> vec;
 
     vec a(1, 2, 3);
     vec b(4, 5, 6);
@@ -65,15 +65,15 @@ void ut_xyzpoint_math() {
     c.subtract(b);
     TEST_ASSERT_TRUE(c == a - b);
 
-    for (double i = -100; i < 100; i++) {
+    for (float i = -100; i < 100; i++) {
         c = a;
         c.scalar_multiplication(i);
         TEST_ASSERT_TRUE(c == vec(i * a.x, i * a.y, i * a.z));
     }
 
     c = a;
-    double m = c.mag();
-    TEST_ASSERT_TRUE(m == sqrt(14));
+    float m = c.mag();
+    TEST_ASSERT_TRUE(m == sqrtf(14));
 
     c = a;
     c.normalize();

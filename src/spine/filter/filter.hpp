@@ -2,7 +2,7 @@
 
 namespace spn::filter {
 
-template<typename ValueType = double>
+template<typename ValueType = float>
 /// Interface class Filter (used in filterstack)
 class Filter {
 public:

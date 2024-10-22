@@ -11,7 +11,7 @@
 
 namespace spn::filter {
 
-template<typename ValueType = double>
+template<typename ValueType = float>
 /// Filter that accepts new values within a logarithmic distance of the last value
 class BandPass : public Filter<ValueType> {
 public:

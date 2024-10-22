@@ -1,9 +1,9 @@
 #include <spine/controller/pid.hpp>
 
-double get_sensor_reading() {
+float get_sensor_reading() {
     return 50.0; // get some sensor reading
 }
-void set_actuator_pv(double value) {
+void set_actuator_pv(float value) {
     (void)value; // set some actuator
 }
 
@@ -31,7 +31,7 @@ int main() {
 
     // AUTOTUNE
     const auto process_getter = [&]() { return get_sensor_reading(); };
-    const auto process_setter = [&](double value) { set_actuator_pv(value); };
+    const auto process_setter = [&](float value) { set_actuator_pv(value); };
     const auto process_loop = [&]() { /* run necessary loops to have hardware function. Runs every millisecond */ };
     auto tune_cfg = PID::TuneConfig{.setpoint = 100.0,
                                     .startpoint = 90.0,

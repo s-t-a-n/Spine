@@ -31,10 +31,7 @@ public:
     }
 
     bool is_negative() const { return _value < 0; }
-    bool is_integral() const {
-        if constexpr (std::is_integral_v<VT>) return true;
-        return std::floor(_value) == _value;
-    }
+    static constexpr bool is_integral() { return std::is_integral_v<VT>; }
 
     template<typename MOther>
     Unit(const Unit<UT, MOther, VT>& other) : _value(from_other(other)) {}
@@ -140,7 +137,8 @@ private:
 
     template<typename MOther>
     ValueType from_other(const Unit<UT, MOther, VT>& other) const {
-        constexpr auto ratio = MOther::Magnitude / MT::Magnitude;
+        constexpr float ratio = MOther::Magnitude / MT::Magnitude;
+        if constexpr (is_integral()) return std::round(ratio * other.raw());
         return ratio * other.raw();
     }
 };

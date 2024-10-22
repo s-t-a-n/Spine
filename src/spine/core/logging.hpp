@@ -26,9 +26,12 @@ void print(LogLevel level, const char* filename, int line_number, const char* fu
 /// A user overloadable logging macro that takes a log level (see above) and a printf-style statement
 #define SPN_LOG_IMPL(level, ...)                                                                                       \
     {                                                                                                                  \
+        _Pragma("GCC diagnostic push");                                                                                \
+        _Pragma("GCC diagnostic ignored \"-Wdouble-promotion\"");                                                      \
         if (spn::logging::is_loggable(level)) {                                                                        \
             spn::logging::detail::print(level, __FILE__, __LINE__, __func__, __VA_ARGS__);                             \
         }                                                                                                              \
+        _Pragma("GCC diagnostic pop");                                                                                 \
     }
 
 } // namespace spn::logging

@@ -16,8 +16,8 @@ public:
     using Timer = spn::structure::time::Timer;
 
     struct Config {
-        double high;
-        double low;
+        float high;
+        float low;
         k_time_ms minimal_on_time = k_time_ms{};
         k_time_ms maximal_on_time = k_time_ms{};
         k_time_ms minimal_off_time = k_time_ms{};
@@ -30,7 +30,7 @@ public:
 
     void initialize(){}; // boilerplate
 
-    void new_reading(double value);
+    void new_reading(float value);
     bool response() const { return _value == State::ON; }
 
 protected:

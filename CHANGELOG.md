@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Changed all doubles to floats for performance and memory reasons
+
 ### Fixed
 
 - Fixed minor CI-problems such as cache validation

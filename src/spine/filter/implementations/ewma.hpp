@@ -8,7 +8,7 @@
 
 namespace spn::filter {
 
-template<typename ValueType = double>
+template<typename ValueType = float>
 /// Exponential weighted moving average
 class EWMA : public Filter<ValueType> {
 public:

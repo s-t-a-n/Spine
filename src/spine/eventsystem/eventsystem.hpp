@@ -36,10 +36,10 @@ public:
         Data() = default;
         explicit Data(k_time_ms time) : _value(time) {}
         explicit Data(k_time_s time) : _value(time) {}
-        explicit Data(double value) : _value(value) {}
+        explicit Data(float value) : _value(value) {}
         explicit Data(uint32_t value) : _value(value) {}
 
-        double value() const;
+        float value() const;
         uint32_t unsigned_value() const;
         k_time_ms ms() const;
         k_time_s s() const;
@@ -47,7 +47,7 @@ public:
         bool has_value() const { return bool(_value); }
 
     private:
-        using Value = std::variant<double, uint32_t, k_time_s, k_time_ms>;
+        using Value = std::variant<float, uint32_t, k_time_s, k_time_ms>;
         std::optional<Value> _value;
     };
 

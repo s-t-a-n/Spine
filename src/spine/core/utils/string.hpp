@@ -20,9 +20,9 @@ bool ends_with(const std::string_view& strv, const std::string_view& needle);
 /// was found
 std::size_t find_first_of(const std::string_view& strv, const std::string_view& delimiters);
 
-/// Returns a double read from a string_view, or 0 when no double could be found
-// double to_double(const std::string_view& sv) ;
+/// Returns a float read from a string_view, or 0 when no float could be found
+// float to_float(const std::string_view& sv) ;
 
-double to_double(const std::string_view& sv);
+float to_float(const std::string_view& sv);
 
 } // namespace spn::core::utils
