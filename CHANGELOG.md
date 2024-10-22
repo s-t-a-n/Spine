@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
 <!--
+
+## [Unreleased] - DATE
 
 ### Added
 
@@ -18,6 +18,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 -->
+
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Fixed
+
+- Fixed minor CI-problems such as cache validation
+
+### Removed
 
 ## [0.2.0] - 2024-10-16
 

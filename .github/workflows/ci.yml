@@ -15,26 +15,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Cache pip
+      - name: Cache platformio and pip
         uses: actions/cache@v4
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          path: |
+            ~/.cache/pip
+            ~/.platformio
+          key: ${{ runner.os }}-pip-${{ hashFiles('platformio.ini') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache PlatformIO
-        uses: actions/cache@v4
-        with:
-          path: ~/.platformio
-          key: ${{ runner.os }}-platformio-${{ hashFiles('**/platformio.ini') }}
-          restore-keys: |
-            ${{ runner.os }}-platformio-
+            ${{ runner.os }}-platformio-pip-${{ hashFiles('platformio.ini') }}
+            ${{ runner.os }}-platformio-pip-
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.10'
 
       - name: Install PlatformIO
         run: |
@@ -52,7 +47,7 @@ jobs:
         run: pio test -e unittest
 
       - name: Find and run examples
-        run: sh ./examples/build.sh default_envs
+        run: bash ./examples/build.sh default_envs
 
   linter:
     if: github.event.pull_request.draft == false
