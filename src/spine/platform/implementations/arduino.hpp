@@ -100,11 +100,11 @@ public:
     }
 
     // value between 0 and 1 where 1 is the logical state ON
-    void set_value(double value) {
-        spn_assert(value >= 0.0 && value <= 1.0);
-        if (_cfg.active_on_low) value = 1.0 - value;
+    void set_value(float value) {
+        spn_assert(value >= 0.0f && value <= 1.0f);
+        if (_cfg.active_on_low) value = 1.0f - value;
 
-        analogWrite(_cfg.pin, int(value * std::pow(2, _cfg.resolution)));
+        analogWrite(_cfg.pin, int(value * powf(2, _cfg.resolution)));
     }
 
 private:
@@ -124,7 +124,7 @@ public:
         if (_cfg.pull_up) pinMode(_cfg.pin, INPUT_PULLUP);
     }
 
-    //     void set_reference_voltage(double voltage, bool external = false) {
+    //     void set_reference_voltage(float voltage, bool external = false) {
     //         // https://www.arduino.cc/reference/en/language/functions/analog-io/analogreference/
     // #    if defined(__AVR_ATmega8__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
     //         constexpr auto v330 = DEFAULT;
@@ -146,15 +146,15 @@ public:
     //         }
     //     }
 
-    double read() const {
+    float read() const {
         // todo: noise suppression?
         //  const auto sample_count = 50;
-        //  double sample_cum = 0;
+        //  float sample_cum = 0;
         //  for (int i = 0; i < sample_count; ++i) {
         //      sample_cum += analogRead(_cfg.pin);
         //      delay(1);
         //  }
-        //  double sample = sample_cum / sample_count;
+        //  float sample = sample_cum / sample_count;
         return analogRead(_cfg.pin) / 1024.0; // assume 10-bit resolution
     }
 

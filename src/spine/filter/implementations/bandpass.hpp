@@ -11,7 +11,7 @@
 
 namespace spn::filter {
 
-template<typename ValueType = double>
+template<typename ValueType = float>
 /// Filter that accepts new values within a logarithmic distance of the last value
 class BandPass : public Filter<ValueType> {
 public:
@@ -50,7 +50,7 @@ public:
 
     BandPass(const Config&& cfg) : _cfg(std::move(cfg)) {
         static_assert(std::is_floating_point_v<ValueType>, "ValueType must be a floating point type");
-        spn_assert(_cfg.mantissa >= 1.0 && _cfg.mantissa < 10.0); // sanity
+        spn_assert(_cfg.mantissa >= 1.0f && _cfg.mantissa < 10.0f); // sanity
         BandPass::update_limits();
     }
 

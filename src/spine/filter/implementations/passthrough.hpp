@@ -8,7 +8,7 @@
 
 namespace spn::filter {
 
-template<typename ValueType = double>
+template<typename ValueType = float>
 /// Filter that does nothing but pas through values. Meant for stubbing applications
 class Passthrough : public Filter<ValueType> {
 public:

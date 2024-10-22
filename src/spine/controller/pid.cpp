@@ -15,20 +15,20 @@ void PID::initialize() {
     _pid_backend.initialize();
 }
 
-void PID::new_reading(double value) { new_reading(value, HAL::millis()); }
+void PID::new_reading(float value) { new_reading(value, HAL::millis()); }
 
-void PID::new_reading(double value, k_time_ms now) {
+void PID::new_reading(float value, k_time_ms now) {
     _input = value;
     _pid_backend.update(now);
 }
 
-PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<void(double)> process_setter,
-                           std::function<double(void)> process_getter, std::function<void(void)> loop,
+PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<void(float)> process_setter,
+                           std::function<float(void)> process_getter, std::function<void(void)> loop,
                            std::function<k_time_ms()> uptime, std::function<void(k_time_ms)> sleep) const {
     SPN_LOG("Starting autotune");
 
     using spn::structure::time::AlarmTimer;
-    const auto block_until_setpoint = [&](const double setpoint, k_time_ms timeout = k_time_ms(0),
+    const auto block_until_setpoint = [&](const float setpoint, k_time_ms timeout = k_time_ms(0),
                                           bool saturated = false) {
         auto timer = AlarmTimer(timeout);
         while (process_getter() < setpoint && (!timer.expired() || timeout == k_time_ms(0))) {
@@ -105,10 +105,10 @@ PID::Tunings PID::autotune(const PID::TuneConfig& tune_config, std::function<voi
         }
 
         // Get input value here (temperature, encoder position, velocity, etc)
-        const double process_value = process_getter();
+        const float process_value = process_getter();
 
         // Call tunePID() with the input value and current time in microseconds
-        const double control_value = tuner.do_autotune(process_value, iteration_start);
+        const float control_value = tuner.do_autotune(process_value, iteration_start);
 
         SPN_DBG("Cycle %i/%i: PV: %f, CV: %f", tuner.get_cycle(), tune_config.cycles, process_value, control_value);
 

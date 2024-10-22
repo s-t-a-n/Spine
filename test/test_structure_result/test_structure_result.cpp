@@ -15,8 +15,8 @@ namespace {
 using namespace spn::core;
 
 void ut_result_basics() {
-    using ParserResult = Result<double>;
-    const auto stage_entry = [](double input) -> ParserResult { return ParserResult(input); };
+    using ParserResult = Result<float>;
+    const auto stage_entry = [](float input) -> ParserResult { return ParserResult(input); };
     const auto stage_count = [](ParserResult&& p) -> ParserResult {
         if (p.is_failed()) return p;
         return ParserResult{p.value() + 1};
@@ -35,16 +35,16 @@ void ut_result_basics() {
 void ut_result_basic_parser() {
     class Parser {
     public:
-        using ParserResult = Result<double, std::string>;
+        using ParserResult = Result<float, std::string>;
 
         Parser() {}
 
-        ParserResult parse(double input) {
+        ParserResult parse(float input) {
             _result = stage_entry(input);
             _result = stage_double();
             return _result;
         }
-        ParserResult parse_with_error(double input) {
+        ParserResult parse_with_error(float input) {
             _result = stage_entry(input);
             _result = stage_error();
             _result = stage_double();
@@ -52,7 +52,7 @@ void ut_result_basic_parser() {
         }
 
     protected:
-        ParserResult stage_entry(double input) { return {input}; }
+        ParserResult stage_entry(float input) { return {input}; }
         ParserResult stage_double() {
             if (_result.is_failed()) return _result;
 
@@ -88,39 +88,39 @@ void ut_result_basic_parser() {
 void ut_result_chain() {
     class Parser {
     public:
-        using ParseResult = spn::structure::Result<double, std::string, int>;
+        using ParseResult = spn::structure::Result<float, std::string, int>;
 
         Parser() {}
 
-        ParseResult parse(double input) {
-            return stage_entry(input).chain([this](double value) { return stage_double(value); });
+        ParseResult parse(float input) {
+            return stage_entry(input).chain([this](float value) { return stage_double(value); });
         }
 
-        ParseResult parse_with_error(double input) {
+        ParseResult parse_with_error(float input) {
             return stage_entry(input)
-                .chain([this](double value) { return stage_error(value); })
-                .chain([this](double value) { return stage_double(value); });
+                .chain([this](float value) { return stage_error(value); })
+                .chain([this](float value) { return stage_double(value); });
         }
 
-        ParseResult parse_with_early_success(double input) {
+        ParseResult parse_with_early_success(float input) {
             return stage_entry(input)
-                .chain([this](double value) { return stage_early_success(value); })
-                .chain([this](double value) { return stage_error(value); })
-                .chain([this](double value) { return stage_double(value); });
+                .chain([this](float value) { return stage_early_success(value); })
+                .chain([this](float value) { return stage_error(value); })
+                .chain([this](float value) { return stage_double(value); });
         }
 
     protected:
-        ParseResult stage_entry(double input) { return ParseResult::intermediary(input); }
+        ParseResult stage_entry(float input) { return ParseResult::intermediary(input); }
 
-        ParseResult stage_double(double value) {
+        ParseResult stage_double(float value) {
             if (value == 0) {
                 return ParseResult::failed("stage_double: value was 0");
             }
             return ParseResult(value * 2);
         }
 
-        ParseResult stage_error(double value) { return ParseResult::failed("stage_error"); }
-        ParseResult stage_early_success(double value) { return ParseResult(42); }
+        ParseResult stage_error(float value) { return ParseResult::failed("stage_error"); }
+        ParseResult stage_early_success(float value) { return ParseResult(42); }
     };
 
     Parser p;
@@ -153,14 +153,14 @@ void ut_result_chain_intermediary() {
     class Parser {
     public:
         struct ParserHandle {
-            explicit ParserHandle(double v) : value(v) {}
-            double value;
+            explicit ParserHandle(float v) : value(v) {}
+            float value;
         };
-        using ParseResult = spn::structure::Result<double, std::string, ParserHandle>;
+        using ParseResult = spn::structure::Result<float, std::string, ParserHandle>;
 
         Parser() {}
 
-        ParseResult parse(double input) {
+        ParseResult parse(float input) {
             return stage_entry(input)
                 .chain([this](ParserHandle handle) { return stage_n(handle); })
                 .chain([this](ParserHandle handle) { return stage_n(handle); })
@@ -168,7 +168,7 @@ void ut_result_chain_intermediary() {
         }
 
     protected:
-        ParseResult stage_entry(double input) { return ParseResult::intermediary(ParserHandle(input)); }
+        ParseResult stage_entry(float input) { return ParseResult::intermediary(ParserHandle(input)); }
 
         ParseResult stage_n(ParserHandle handle) {
             if (handle.value == 0) {

@@ -8,7 +8,7 @@
 
 namespace spn::filter {
 
-template<typename ValueType = double>
+template<typename ValueType = float>
 /// Filter that map a value from an input range to an output range
 class MappedRange : public Filter<ValueType> {
 public:
@@ -27,7 +27,7 @@ public:
     ~MappedRange() override = default;
 
     /// Provides a filter that returns a percentage for a value in a given range
-    static std::unique_ptr<MappedRange> Percentage(double input_lower_limit = 0.0, double input_upper_limit = 1.0) {
+    static std::unique_ptr<MappedRange> Percentage(float input_lower_limit = 0.0, float input_upper_limit = 1.0) {
         return std::make_unique<MappedRange>(Config{.input_lower_limit = input_lower_limit,
                                                     .input_upper_limit = input_upper_limit,
                                                     .output_lower_limit = 0,
@@ -35,7 +35,7 @@ public:
     }
 
     /// Provides a filter that returns a permillage for a value in a given range
-    static std::unique_ptr<MappedRange> Permillage(double input_lower_limit = 0.0, double input_upper_limit = 1.0) {
+    static std::unique_ptr<MappedRange> Permillage(float input_lower_limit = 0.0, float input_upper_limit = 1.0) {
         return std::make_unique<MappedRange>(Config{.input_lower_limit = input_lower_limit,
                                                     .input_upper_limit = input_upper_limit,
                                                     .output_lower_limit = 0,

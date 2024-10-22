@@ -4,76 +4,76 @@ namespace spn::structure::units {
 
 // SI magnitude tags
 struct Atto {
-    static constexpr double Magnitude = 1e-18;
+    static constexpr float Magnitude = 1e-18f;
 };
 struct Femto {
-    static constexpr double Magnitude = 1e-15;
+    static constexpr float Magnitude = 1e-15f;
 };
 struct Pico {
-    static constexpr double Magnitude = 1e-12;
+    static constexpr float Magnitude = 1e-12f;
 };
 struct Nano {
-    static constexpr double Magnitude = 1e-9;
+    static constexpr float Magnitude = 1e-9f;
 };
 struct Micro {
-    static constexpr double Magnitude = 1e-6;
+    static constexpr float Magnitude = 1e-6f;
 };
 struct Milli {
-    static constexpr double Magnitude = 1e-3;
+    static constexpr float Magnitude = 1e-3f;
 };
 struct Centi {
-    static constexpr double Magnitude = 1e-2;
+    static constexpr float Magnitude = 1e-2f;
 };
 struct Deci {
-    static constexpr double Magnitude = 1e-1;
+    static constexpr float Magnitude = 1e-1f;
 };
 struct Deca {
-    static constexpr double Magnitude = 1e1;
+    static constexpr float Magnitude = 1e1f;
 };
 struct Hecto {
-    static constexpr double Magnitude = 1e2;
+    static constexpr float Magnitude = 1e2f;
 };
 struct Kilo {
-    static constexpr double Magnitude = 1e3;
+    static constexpr float Magnitude = 1e3f;
 };
 struct Mega {
-    static constexpr double Magnitude = 1e6;
+    static constexpr float Magnitude = 1e6f;
 };
 struct Giga {
-    static constexpr double Magnitude = 1e9;
+    static constexpr float Magnitude = 1e9f;
 };
 struct Tera {
-    static constexpr double Magnitude = 1e12;
+    static constexpr float Magnitude = 1e12f;
 };
 struct Peta {
-    static constexpr double Magnitude = 1e15;
+    static constexpr float Magnitude = 1e15f;
 };
 struct Exa {
-    static constexpr double Magnitude = 1e18;
+    static constexpr float Magnitude = 1e18f;
 };
 
 struct Base {
-    static constexpr double Magnitude = 1.0;
+    static constexpr float Magnitude = 1.0f;
 };
 
 // time types
 struct Minute {
-    static constexpr double Magnitude = 60.0;
+    static constexpr float Magnitude = 60.0f;
 };
 struct Hour {
-    static constexpr double Magnitude = 60 * 60;
+    static constexpr float Magnitude = 60.0f * 60.0f;
 };
 struct Day {
-    static constexpr double Magnitude = 60 * 60 * 24;
+    static constexpr float Magnitude = 60.0f * 60.0f * 24.0f;
 };
 struct Week {
-    static constexpr double Magnitude = Day::Magnitude * 7;
+    static constexpr float Magnitude = Day::Magnitude * 7.0f;
 };
 struct Month {
-    static constexpr double Magnitude = Week::Magnitude * 4;
+    static constexpr float Magnitude = Week::Magnitude * 4.0f;
 };
 struct Year {
-    static constexpr double Magnitude = Day::Magnitude * 365;
+    static constexpr float Magnitude = Day::Magnitude * 365.0f;
 };
 
 } // namespace spn::structure::units

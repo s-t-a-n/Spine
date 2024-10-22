@@ -13,7 +13,7 @@ Schedule::Schedule(const std::initializer_list<Block>& blocks) : _blocks(blocks)
     spn_assert(total_time <= k_time_h(24));
 }
 
-double Schedule::value_at(const k_time_s t) const {
+float Schedule::value_at(const k_time_s t) const {
     for (auto& b : _blocks) {
         const auto is_today = t >= b.start && t < b.start + b.duration;
         const auto is_after_midnight = b.start + b.duration > k_time_h(24) && t < b.start + b.duration - k_time_h(24);

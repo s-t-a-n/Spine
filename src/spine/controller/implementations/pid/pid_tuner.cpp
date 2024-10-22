@@ -13,7 +13,7 @@ void PIDAutotuner::start_tuning_loop(k_time_ms ms) {
     pAverage = iAverage = dAverage = 0;
 }
 
-double PIDAutotuner::do_autotune(double input, k_time_ms ms) {
+float PIDAutotuner::do_autotune(float input, k_time_ms ms) {
     // Useful information on the algorithm used (Ziegler-Nichols method/Relay method)
     // http://www.processcontrolstuff.net/wp-content/uploads/2015/02/relay_autot-2.pdf
     // https://en.wikipedia.org/wiki/Ziegler%E2%80%93Nichols_method
@@ -57,10 +57,10 @@ double PIDAutotuner::do_autotune(double input, k_time_ms ms) {
         // Formula given is Ku = 4d / πa
         // d is the amplitude of the output signal
         // a is the amplitude of the input signal
-        const double ku = (4.0 * ((maxOutput - minOutput) / 2.0)) / (M_PI * (max - min) / 2.0);
+        const float ku = (4.0f * ((maxOutput - minOutput) / 2.0f)) / (float(M_PI) * (max - min) / 2.0f);
 
         // Calculate Tu (period of output oscillations)
-        const double tu = tLow.raw() + tHigh.raw();
+        const float tu = tLow.raw() + tHigh.raw();
 
         // How gains are calculated
         // PID control algorithm needs Kp, Ki, and Kd
@@ -79,7 +79,7 @@ double PIDAutotuner::do_autotune(double input, k_time_ms ms) {
         // Constants
         // https://en.wikipedia.org/wiki/Ziegler%E2%80%93Nichols_method
 
-        double kpConstant, tiConstant, tdConstant;
+        float kpConstant, tiConstant, tdConstant;
         if (znMode == Aggressiveness::BasicPID) {
             kpConstant = 0.6;
             tiConstant = 0.5;

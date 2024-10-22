@@ -35,7 +35,7 @@ struct DigitalInput {
 };
 
 namespace detail {
-void fade_to(void (*set_value)(void*, double), void* imp, double value, double setpoint, double increment,
+void fade_to(void (*set_value)(void*, float), void* imp, float value, float setpoint, float increment,
              k_time_ms increment_interval);
 }
 
@@ -46,23 +46,23 @@ public:
     void initialize() { static_cast<GPIOImp>(this)->initialize(); }
 
     /// Set the output to the provided `value`
-    void set_value(double value) {
+    void set_value(float value) {
         _value = value;
         ((GPIOImp*)(this))->set_value(value);
     }
 
     /// Returns the currently active value
-    double value() const { return _value; }
+    float value() const { return _value; }
 
     /// Set a `value` in a (short) amount of time to reduce sudden rushes of current
-    void fade_to(double setpoint, double increment = 0.1, k_time_ms increment_interval = k_time_ms(250)) {
-        const auto set_v = [](void* imp, double value) -> void { ((AnalogueOutput*)imp)->set_value(value); };
+    void fade_to(float setpoint, float increment = 0.1, k_time_ms increment_interval = k_time_ms(250)) {
+        const auto set_v = [](void* imp, float value) -> void { ((AnalogueOutput*)imp)->set_value(value); };
         spn::platform::detail::fade_to(set_v, (void*)this, _value, setpoint, increment, increment_interval);
         _value = setpoint;
     }
 
 private:
-    double _value = 0;
+    float _value = 0;
 };
 
 template<typename GPIOImp>
@@ -71,7 +71,7 @@ struct AnalogueInput {
     void initialize() { static_cast<GPIOImp>(this)->initialize(); }
 
     /// Reads the Analogue input port/pin
-    double read() { return static_cast<GPIOImp>(this)->read(); }
+    float read() { return static_cast<GPIOImp>(this)->read(); }
 };
 
 // todo: Add an ADC/DAC configuration blocks to set up stuff like read/write resolution, ref voltage and sampling

@@ -18,9 +18,9 @@ using kelvin = spnu::Unit<spnu::TagTemperatureKelvin, spnu::Base, spnu::RealRawT
 using celsius = spnu::Unit<spnu::TagTemperatureCelsius, spnu::Base, spnu::RealRawType>;
 
 /// Convert a spnu::kelvin to spnu::celsius
-inline celsius to_celsius(kelvin t) { return celsius(t.raw() - 273.15); }
+inline celsius to_celsius(kelvin t) { return celsius(t.raw() - 273.15f); }
 inline celsius to_celsius(celsius t) { return t; }
 
 /// Convert a spnu::celsius to spnu::kelvin
-inline kelvin to_kelvin(celsius t) { return kelvin(t.raw() + 273.15); }
+inline kelvin to_kelvin(celsius t) { return kelvin(t.raw() + 273.15f); }
 inline kelvin to_kelvin(kelvin t) { return t; }

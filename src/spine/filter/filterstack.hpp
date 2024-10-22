@@ -9,7 +9,7 @@
 
 namespace spn::filter {
 
-template<typename ValueType = double>
+template<typename ValueType = float>
 /// Stack of filters. Any value provided to this stack will pass through all filters in the stack
 class Stack {
 public:
@@ -28,7 +28,7 @@ public:
     }
 
     /// Take a new sample, returns filtered value
-    ValueType value(const double new_sample) {
+    ValueType value(const float new_sample) {
         ValueType new_value = new_sample;
         for (auto& sf : _filters) {
             spn_assert(sf.get() != nullptr);

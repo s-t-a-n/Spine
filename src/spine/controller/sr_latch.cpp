@@ -2,7 +2,7 @@
 
 namespace spn::controller {
 
-void SRLatch::new_reading(double value) {
+void SRLatch::new_reading(float value) {
     if (_value == State::ON && _last_turned.time_since_last(Timer::NoReset) < _cfg.minimal_on_time) return;
     if (_value == State::OFF && _last_turned.time_since_last(Timer::NoReset) < _cfg.minimal_off_time) return;
 

@@ -14,9 +14,9 @@ namespace spn::controller {
 class PID {
 public:
     struct Tunings {
-        double Kp;
-        double Ki = 0;
-        double Kd = 0;
+        float Kp;
+        float Ki = 0;
+        float Kd = 0;
 
         bool operator==(const Tunings& other) const { return Kp == other.Kp && Ki == other.Ki && Kd == other.Kd; }
     };
@@ -27,8 +27,8 @@ public:
     struct Config {
         Tunings tunings = Tunings{.Kp = 20.0, .Ki = 0.3, .Kd = 0.1};
 
-        double output_lower_limit = 0;
-        double output_upper_limit = 255;
+        float output_lower_limit = 0;
+        float output_upper_limit = 255;
         k_time_ms sample_interval = k_time_ms(100);
 
         Proportionality proportionality = Proportionality::ON_ERROR;
@@ -36,9 +36,9 @@ public:
     };
 
     struct TuneConfig {
-        double setpoint;
-        double startpoint = 0;
-        double hysteresis = 0.01;
+        float setpoint;
+        float startpoint = 0;
+        float hysteresis = 0.01;
         bool satured_at_start = true;
         int cycles = 10;
         PIDAutotuner::Aggressiveness aggressiveness = PIDAutotuner::Aggressiveness::LessOvershoot;
@@ -52,7 +52,7 @@ public:
     void initialize();
 
     /// Set the target setpoint
-    void set_target_setpoint(double value) { _setpoint = value; }
+    void set_target_setpoint(float value) { _setpoint = value; }
 
     /// Set the controller's tuning parameters
     void set_tunings(const Tunings& tunings, const Proportionality proportionality = Proportionality::ON_ERROR) {
@@ -65,37 +65,37 @@ public:
     }
 
     /// Set latest reading (update happens based on system clock)
-    void new_reading(double value);
+    void new_reading(float value);
 
     /// Set latest reading with arbitrary now (which is used to calculate time to update)
-    void new_reading(double value, k_time_ms now);
+    void new_reading(float value, k_time_ms now);
 
     /// Autotune the proportional weights for the target_setpoint
-    Tunings autotune(const TuneConfig& tune_config, std::function<void(double)> process_setter,
-                     std::function<double(void)> process_getter, std::function<void(void)> loop = {},
+    Tunings autotune(const TuneConfig& tune_config, std::function<void(float)> process_setter,
+                     std::function<float(void)> process_getter, std::function<void(void)> loop = {},
                      std::function<k_time_ms(void)> uptime = HAL::millis,
                      std::function<void(k_time_ms)> sleep = HAL::delay) const;
 
     /// Get the controller response
-    double response() const {
+    float response() const {
         spn_assert(!std::isnan(_output));
         return _output;
     }
 
     /// Get the error between the setpoint and input
-    double error() const { return std::fabs(_setpoint - _input); }
+    float error() const { return std::fabs(_setpoint - _input); }
 
     /// Get the setpoint
-    double setpoint() const { return _setpoint; }
+    float setpoint() const { return _setpoint; }
 
 private:
     Config _cfg;
 
     PIDController _pid_backend;
 
-    double _setpoint = 0;
-    double _input = 0;
-    double _output = 0;
+    float _setpoint = 0;
+    float _input = 0;
+    float _output = 0;
 };
 
 } // namespace spn::controller

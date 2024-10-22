@@ -2,11 +2,11 @@
 
 namespace spn::core {
 
-double Event::Data::value() const {
+float Event::Data::value() const {
     spn_assert(_value);
     if (!_value) return {};
-    spn_assert(std::holds_alternative<double>(*_value));
-    return std::get<double>(*_value);
+    spn_assert(std::holds_alternative<float>(*_value));
+    return std::get<float>(*_value);
 }
 
 uint32_t Event::Data::unsigned_value() const {

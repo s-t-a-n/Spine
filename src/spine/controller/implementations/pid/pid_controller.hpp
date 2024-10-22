@@ -23,50 +23,50 @@ public:
     enum class Proportionality { ON_MEASUREMENT, ON_ERROR };
 
     // commonly used functions **************************************************************************
-    PIDController(double* const input, double* const output, double* const setpoint, const double Kp, const double Ki,
-                  const double Kd, const Proportionality proportionality, const Direction controllerDirection);
+    PIDController(float* const input, float* const output, float* const setpoint, const float Kp, const float Ki,
+                  const float Kd, const Proportionality proportionality, const Direction controllerDirection);
 
-    PIDController(double* Input, double* Output, double* Setpoint, double Kp, double Ki, double Kd,
+    PIDController(float* Input, float* Output, float* Setpoint, float Kp, float Ki, float Kd,
                   Direction ControllerDirection);
 
     void initialize();
 
     bool update(const k_time_ms now);
 
-    void set_output_limits(double Min, double Max);
+    void set_output_limits(float Min, float Max);
 
-    void set_tunings(double Kp, double Ki, double Kd,
+    void set_tunings(float Kp, float Ki, float Kd,
                      const Proportionality proportionality = Proportionality::ON_MEASUREMENT);
 
     void set_controller_direction(const Direction direction);
 
     void set_sampling_time(const k_time_ms sampling_time);
 
-    double Kp() const { return _kp; }
-    double Ki() const { return _ki; }
-    double Kd() const { return _kd; }
+    float Kp() const { return _kp; }
+    float Ki() const { return _ki; }
+    float Kd() const { return _kd; }
 
     Direction direction() const { return _controller_direction; }
 
 private:
-    double _kp = 0; // * (P)roportional Tuning Parameter
-    double _ki = 0; // * (I)ntegral Tuning Parameter
-    double _kd = 0; // * (D)erivative Tuning Parameter
+    float _kp = 0; // * (P)roportional Tuning Parameter
+    float _ki = 0; // * (I)ntegral Tuning Parameter
+    float _kd = 0; // * (D)erivative Tuning Parameter
 
     enum Direction _controller_direction = Direction::FORWARD;
 
-    double* _user_input = nullptr; // * Pointers to the Input, Output, and Setpoint variables
-    double* _user_output = nullptr; //   This creates a hard link between the variables and the
-    double* _user_setpoint = nullptr; //   PID, freeing the user from having to constantly tell us
+    float* _user_input = nullptr; // * Pointers to the Input, Output, and Setpoint variables
+    float* _user_output = nullptr; //   This creates a hard link between the variables and the
+    float* _user_setpoint = nullptr; //   PID, freeing the user from having to constantly tell us
     //   what these values are.  with pointers we'll just know.
 
     k_time_ms _last_time{};
-    double _cumulative_output = 0;
-    double _last_reading = 0;
+    float _cumulative_output = 0;
+    float _last_reading = 0;
 
     k_time_ms _sampling_time = k_time_ms{100};
-    double _output_lower_limit = 0;
-    double _output_upper_limit = 255;
+    float _output_lower_limit = 0;
+    float _output_upper_limit = 255;
     Proportionality _proportionality = Proportionality::ON_MEASUREMENT;
 };
 

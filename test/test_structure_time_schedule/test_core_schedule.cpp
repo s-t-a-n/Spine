@@ -22,7 +22,7 @@ void ut_schedule_basics() {
                              Schedule::Block{.start = second, .duration = duration, .value = second_value},
                              Schedule::Block{.start = third, .duration = duration, .value = third_value}});
 
-    const auto test_f = [&s, &duration](k_time_s block, double last_value, double value, double next_value,
+    const auto test_f = [&s, &duration](k_time_s block, float last_value, float value, float next_value,
                                         k_time_s next_block) {
         const auto shortly_before_block = k_time_s(block) - k_time_s(1);
         TEST_ASSERT_EQUAL(true, s.start_of_next_block(shortly_before_block) == block);

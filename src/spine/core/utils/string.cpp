@@ -45,23 +45,23 @@ std::size_t find_first_of(const std::string_view& strv, const std::string_view& 
     return std::string::npos;
 }
 
-/// Returns a double read from a string_view, or 0 when no double could be found
-// double to_double(const std::string_view& sv) {
-//     double result;
+/// Returns a float read from a string_view, or 0 when no float could be found
+// float to_float(const std::string_view& sv) {
+//     float result;
 //
 //     auto [ptr, ec] = std::from_chars(sv.data(), sv.data() + sv.size(), result);
 //     if (ec == std::errc()) {
 //         return result;
 //     }
-//     return 0.0;
+//     return 0.0f;
 // }
 
-double to_double(const std::string_view& sv) {
+float to_float(const std::string_view& sv) {
     char* end;
-    double result = std::strtod(sv.data(), &end);
+    float result = std::strtof(sv.data(), &end);
 
     if (end == sv.data() || *end != '\0') {
-        return 0.0; // Handle conversion error
+        return 0.0f; // Handle conversion error
     }
 
     return result;

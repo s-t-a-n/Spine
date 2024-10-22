@@ -84,12 +84,12 @@ public:
 
     ~MockAnalogueOutput() = default;
 
-    void initialize() { set_value(0.0); }
+    void initialize() { set_value(0.0f); }
 
     // value between 0 and 1 where 1 is the logical state ON
-    void set_value(double value) {
-        spn_assert(value >= 0.0 && value <= 1.0);
-        if (_cfg.active_on_low) value = 1.0 - value;
+    void set_value(float value) {
+        spn_assert(value >= 0.0f && value <= 1.0f);
+        if (_cfg.active_on_low) value = 1.0f - value;
     }
 
 private:
@@ -107,7 +107,7 @@ public:
     MockAnalogueInput(const Config&& cfg) : _cfg(std::move(cfg)) {}
 
     void initialize() {}
-    double read() const { return 0; }
+    float read() const { return 0; }
 
 private:
     const Config _cfg;
