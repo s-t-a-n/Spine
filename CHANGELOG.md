@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Added SPN_PLATFORM_CAP_DOUBLE build flag that can be set to use doubles where
+  applicable (default: not set). For now this is only used by structure/units.
+
 ### Changed
 
 - Changed all doubles to floats for performance and memory reasons
