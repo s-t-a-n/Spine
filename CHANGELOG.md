@@ -19,16 +19,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -->
 
-## [Unreleased]
+## [0.3.0] - 2024-10-22
 
 ### Added
 
+- Add cubic_metre to structure/units
+- Adds `new_reading()` override to PID class to allow passing an arbitrary time for simulated time passed.
+- Adds extra lambda arguments to PID::Autotune to allow arbitrary sleep/uptime functions to be passed
 - Added SPN_PLATFORM_CAP_DOUBLE build flag that can be set to use doubles where
   applicable (default: not set). For now this is only used by structure/units.
 
 ### Changed
 
-- Changed all doubles to floats for performance and memory reasons
+- Only print filename/line/function in calls to SPN_DBG (so not for SPN_LOG/SPN_WARN)
+- Change convert_to_kelvin to to_kelvin for consistency in structure/units/temperature.hpp
+- Changed all doubles to floats for performance and memory reasons. Adds non-default build flag
+  `SPN_PLATFORM_CAP_DOUBLE` to use doubles where applicable (only in structure/units at the moment).
 
 ### Fixed
 
