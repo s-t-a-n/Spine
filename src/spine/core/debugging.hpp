@@ -22,7 +22,7 @@
 #    define spn_assert(__SPINEDEBUG_condition)                                                                         \
         {                                                                                                              \
             if (!(__SPINEDEBUG_condition)) {                                                                           \
-                SPN_ERR("Assertion failed: '%s'", #__SPINEDEBUG_condition);                                            \
+                SPN_DBG("Assertion failed: '%s'", #__SPINEDEBUG_condition);                                            \
                 spn::throw_exception(::spn::assertion_exception(#__SPINEDEBUG_condition));                             \
             }                                                                                                          \
         }
@@ -31,7 +31,7 @@
 #    define spn_expect(__SPINEDEBUG_condition)                                                                         \
         {                                                                                                              \
             if (!(__SPINEDEBUG_condition)) {                                                                           \
-                SPN_ERR("Expectation failed: '%s'", #__SPINEDEBUG_condition);                                          \
+                SPN_DBG("Expectation failed: '%s'", #__SPINEDEBUG_condition);                                          \
             }                                                                                                          \
         }
 

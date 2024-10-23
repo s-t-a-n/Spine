@@ -19,6 +19,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -->
 
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Fixed
+
+- `spn_assert` was not printing the file, linenumber and function because of use of the `SPN_ERR()` call. This fixes
+  that by making spn_assert print through `SPN_DBG()`
+
+### Removed
+
 ## [0.3.0] - 2024-10-22
 
 ### Added
