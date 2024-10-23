@@ -37,7 +37,7 @@ const char* get_current_time() {
 
 void print(const LogLevel level, const char* filename, const int line_number, const char* function_name,
            const char* fmt, ...) {
-    char msg_buffer[SPINE_DEBUG_BUFFER_SIZE];
+    char msg_buffer[SPINE_LOGGING_MAX_MSG_SIZE];
     size_t space_used = 0;
 
 #ifndef SPN_LOG_OVERLOAD

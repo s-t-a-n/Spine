@@ -2,8 +2,8 @@
 
 #include "spine/core/exception.hpp"
 
-#ifndef SPINE_DEBUG_BUFFER_SIZE
-#    define SPINE_DEBUG_BUFFER_SIZE 256
+#ifndef SPINE_LOGGING_MAX_MSG_SIZE
+#    define SPINE_LOGGING_MAX_MSG_SIZE 256
 #endif
 
 namespace spn::logging {

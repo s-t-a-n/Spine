@@ -23,7 +23,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Added zephyr/Kconfig to control builddefines in Zephyr's tooling
+
 ### Changed
+
+- Changed builddefine `SPINE_DEBUG_BUFFER_SIZE` to `SPINE_LOGGING_MAX_MSG_SIZE`
 
 ### Fixed
 
